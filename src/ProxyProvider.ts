@@ -1,6 +1,7 @@
 import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers'
 import { ProviderError } from './Errors/ProviderError'
-import container from './Providers'
+import { Notify } from './Notify/Notify';
+import Container  from './Providers/index';
 
 export const applyProxy = async (target: any, thisArg: any, argumentsList: any, address: string) => {
     try {
@@ -18,7 +19,7 @@ export const applyProxy = async (target: any, thisArg: any, argumentsList: any, 
                 providerError = new ProviderError(JSON.parse(error.body).error.message, JSON.parse(error.body).error.code, address)
             }
 
-            container.get('Notify').error(providerError)
+            Container.get<Notify>('Notify').error(providerError)
             error.DappSonar = true
         }
         throw error

@@ -1,8 +1,8 @@
+
 import bowser from 'bowser'
 import { ContractError } from '../Errors/ContractError'
 import { ProviderError } from '../Errors/ProviderError'
 import { Notify } from './Notify'
-
 
 export class NotifyLog implements Notify {
 

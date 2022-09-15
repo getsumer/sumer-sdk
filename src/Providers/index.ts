@@ -3,19 +3,23 @@ import { Notify } from "../Notify/Notify";
 import { NotifyApi } from "../Notify/NotifyApi";
 import { NotifyLog } from "../Notify/NotifyLog";
 import { NotifyVoid } from "../Notify/NotifyVoid";
-import container from "simple-di";
+import { Container } from 'typedi';
 
 
-container.register('Notify', (): Notify => {
+Container.set('Api', (): Api => new Api(DappSonar.apikey));
+
+Container.set('Notify', ((): Notify => {
     if (process.env.NODE_ENV === 'test') {
         return new NotifyVoid()
     }
+    console.log(process.env.NODE_ENV)
     if (process.env.NODE_ENV === 'production') {
-        return new NotifyApi(container.get('Api'))
+        return new NotifyApi(Container.get<Api>('Api'))
     }
     return new NotifyLog()
-});
+})());
 
-container.register('Api', (): Api => new Api(DappSonar.apikey));
 
-export default container
+export default Container
+
+

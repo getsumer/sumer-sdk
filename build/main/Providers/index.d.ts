@@ -1,2 +1,2 @@
-import container from "simple-di";
-export default container;
+import { Container } from 'typedi';
+export default Container;
