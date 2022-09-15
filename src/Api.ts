@@ -9,6 +9,7 @@ class Api {
         this.headers = {
             Authorization: `Bearer ${key}`
         }
+        console.log(this.headers)
     }
 
 
