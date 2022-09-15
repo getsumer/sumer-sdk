@@ -1,11 +1,11 @@
 import { ProxyProvider } from '../src/ProxyProvider'
 import { DappSonar } from '../src/DappSonar'
 import { ProviderError } from '../src/Errors/ProviderError'
-import { Notify } from '../src/Notify'
 import { ContractError } from '../src/Errors/ContractError'
 import { deployContract, MockProvider } from 'ethereum-waffle'
 import ERC20 from "./fixtures/build/ERC20.json";
 import { ethers, Wallet } from 'ethers'
+import container from '../src/Providers'
 
 const WALLET_PUBLIC_ADDRESS = '0x14791697260E4c9A71f18484C9f997B308e59325'
 const WALLET_PRIVATE_ADDRESS = '0x0123456789012345678901234567890123456789012345678901234567890123'
@@ -31,7 +31,8 @@ describe('Test user can use Provider as expected', () => {
             }
         }
         const proxy = new ProxyProvider(mockProvider)
-        provider = new DappSonar(proxy, 1)
+        provider = new DappSonar(proxy,'123', 1)
+
         jest.resetAllMocks();
     })
 
@@ -71,20 +72,21 @@ describe('Test Dappson catch fails from Provider', () => {
             selectedAddress: WALLET_PUBLIC_ADDRESS
         }
         const proxy = new ProxyProvider(mockProvider)
-        provider = new DappSonar(proxy, 1)
+        provider = new DappSonar(proxy, '123',1)
     })
 
     it('DappSonar catch failure sign message, user reject', async () => {
-        const spy = jest.spyOn(Notify, 'error')
+        
+        const spy = jest.spyOn(container.get('Notify'), 'error')
 
         const signer = provider.getSigner()
         try {
             await signer.signMessage('message')
         } catch (e) { }
-        expect(Notify.error).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(1);
         const error = new ProviderError(`This is a raw message`, 4001, WALLET_PUBLIC_ADDRESS)
 
-        expect(Notify.error).toHaveBeenCalledWith(
+        expect(spy).toHaveBeenCalledWith(
             expect.objectContaining(error)
         );
         spy.mockClear()
@@ -93,7 +95,7 @@ describe('Test Dappson catch fails from Provider', () => {
 
     it('DappSonar catch failure on contract build method', async () => {
 
-        const spy = jest.spyOn(Notify, 'error')
+        const spy = jest.spyOn(container.get('Notify'), 'error')
 
         const walletAddress = provider.actualAddres
 
@@ -128,7 +130,7 @@ describe('Test Dappson catch fails from Provider', () => {
             await USDTContract.approve(walletAddress, false);
         } catch (_e) { }
 
-        expect(Notify.error).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(1);
 
         const error = new ContractError(CONTRACT_ADDRESS,
             'approve',
@@ -136,7 +138,7 @@ describe('Test Dappson catch fails from Provider', () => {
             WALLET_PUBLIC_ADDRESS,
             "invalid BigNumber value")
 
-        expect(Notify.error).toHaveBeenCalledWith(
+        expect(spy).toHaveBeenCalledWith(
             expect.objectContaining(error)
         );
         spy.mockClear()
@@ -145,10 +147,10 @@ describe('Test Dappson catch fails from Provider', () => {
     })
 
     it(`Revert on call send transaction`, async () => {
-        const spy = jest.spyOn(Notify, 'error')
+        const spy = jest.spyOn(container.get('Notify'), 'error')
 
         const web3Provider = new MockProvider();
-        const provider = new DappSonar(new ProxyProvider(web3Provider.provider))
+        const provider = new DappSonar(new ProxyProvider(web3Provider.provider),'123')
         provider.getWallets = () => web3Provider.getWallets()
 
         const wallets = provider.getWallets();
@@ -168,21 +170,21 @@ describe('Test Dappson catch fails from Provider', () => {
         } catch (e) {
         }
 
-        expect(Notify.error).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(1);
         const error = new ProviderError(
             expect.any(String),
             'INVALID_ARGUMENT', wallet.address)
 
-        expect(Notify.error).toHaveBeenCalledWith(
+        expect(spy).toHaveBeenCalledWith(
             expect.objectContaining(error)
         );
         spy.mockClear()
     })
 
     it(`Contract revert on call no exist function`, async () => {
-        const spy = jest.spyOn(Notify, 'error')
+        const spy = jest.spyOn(container.get('Notify'), 'error')
         const web3Provider = new MockProvider();
-        const provider = new DappSonar(new ProxyProvider(web3Provider.provider))
+        const provider = new DappSonar(new ProxyProvider(web3Provider.provider),'123')
         provider.getWallets = () => web3Provider.getWallets()
         const [wallet] = provider.getWallets();
         const token = await deployContract(wallet, ERC20, [wallet.address, 1000]);
@@ -209,12 +211,12 @@ describe('Test Dappson catch fails from Provider', () => {
             await TokenContract.thisFunctionNoExist()
         } catch (e) {
         }
-        expect(Notify.error).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(2);
         const p_error = new ProviderError('VM Exception while processing transaction: revert', -32000, '0x17ec8597ff92c3f44523bdc65bf0f1be632917ff')
         const c_error = new ContractError(contractAddres, 'thisFunctionNoExist', [], wallet.address, 'missing revert data in call exception; Transaction reverted without a reason string')
 
-        expect(Notify.error).toHaveBeenNthCalledWith(1, expect.objectContaining(p_error));
-        expect(Notify.error).toHaveBeenNthCalledWith(2, expect.objectContaining(c_error));
+        expect(spy).toHaveBeenNthCalledWith(1, expect.objectContaining(p_error));
+        expect(spy).toHaveBeenNthCalledWith(2, expect.objectContaining(c_error));
         spy.mockClear()
     });
 });
@@ -233,56 +235,56 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
         jest.clearAllMocks();
     });
     it('-32600', async () => {
-        const spy = jest.spyOn(Notify, 'error')
+        const spy = jest.spyOn(container.get('Notify'), 'error')
         try {
             await provider.getGasPrice()
         } catch (e) {
         }
 
-        expect(Notify.error).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(1);
         const error = new ProviderError(
             'invalid json request',
             -32600, WALLET_PUBLIC_ADDRESS)
 
-        expect(Notify.error).toHaveBeenCalledWith(
+        expect(spy).toHaveBeenCalledWith(
             expect.objectContaining(error))
         spy.mockClear()
     })
     it(`-32601`, async () => {
-        const spy = jest.spyOn(Notify, 'error')
+        const spy = jest.spyOn(container.get('Notify'), 'error')
         try {
             await provider.send('noExistMethod',)
         } catch (e) {
         }
 
-        expect(Notify.error).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(1);
         const error = new ProviderError(
             'The method noExistMethod does not exist/is not available',
             -32601, WALLET_PUBLIC_ADDRESS)
 
-        expect(Notify.error).toHaveBeenCalledWith(
+        expect(spy).toHaveBeenCalledWith(
             expect.objectContaining(error))
         spy.mockClear()
     })
     it(`-32602`, async () => {
-        const spy = jest.spyOn(Notify, 'error')
+        const spy = jest.spyOn(container.get('Notify'), 'error')
         try {
             await provider.send('eth_call', [])
         } catch (e) {
         }
 
-        expect(Notify.error).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(1);
         const error = new ProviderError(
             'missing value for required argument 0',
             -32602, WALLET_PUBLIC_ADDRESS)
 
-        expect(Notify.error).toHaveBeenCalledWith(
+        expect(spy).toHaveBeenCalledWith(
             expect.objectContaining(error))
         spy.mockClear()
     })
 
     it(`Contract Revert on no exist function`, async () => {
-        const spy = jest.spyOn(Notify, 'error')
+        const spy = jest.spyOn(container.get('Notify'), 'error')
 
         let wallet = new ethers.Wallet(WALLET_PRIVATE_ADDRESS, provider);
         const noExistAbiFragment = [{
@@ -307,17 +309,17 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
             console.log(tx)
         } catch (e) {
         }
-        expect(Notify.error).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(2);
         const p_error = new ProviderError('invalid json request', -32600, WALLET_PUBLIC_ADDRESS)
         const c_error = new ProviderError(expect.any(String), "CALL_EXCEPTION", WALLET_PUBLIC_ADDRESS)
 
-        expect(Notify.error).toHaveBeenNthCalledWith(1, expect.objectContaining(p_error));
-        expect(Notify.error).toHaveBeenNthCalledWith(2, expect.objectContaining(c_error));
+        expect(spy).toHaveBeenNthCalledWith(1, expect.objectContaining(p_error));
+        expect(spy).toHaveBeenNthCalledWith(2, expect.objectContaining(c_error));
         spy.mockClear()
     });
 
     it(`Contract Revert on send transaction`, async () => {
-        const spy = jest.spyOn(Notify, 'error')
+        const spy = jest.spyOn(container.get('Notify'), 'error')
         try {
             const web3Provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/29eaeb3e15234a2c93e9045c949192e6')
 
@@ -334,14 +336,14 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
             console.log(submittedTx)
         } catch (e) {
         }
-        expect(Notify.error).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(1);
         const error = new ContractError(CONTRACT_ADDRESS,
             "transfer",
             ["0x15c72944b325a3E1c7a4DBdc6F883bD5948d3D9f", 10, { "gasLimit": 10000 }],
             WALLET_PUBLIC_ADDRESS,
             'insufficient funds for intrinsic transaction cost')
 
-        expect(Notify.error).toHaveBeenNthCalledWith(1, expect.objectContaining(error));
+        expect(spy).toHaveBeenNthCalledWith(1, expect.objectContaining(error));
 
 
         spy.mockClear()

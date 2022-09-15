@@ -31,9 +31,11 @@
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
+    "axios": "^0.27.2",
     "babel-jest": "^27.1.5",
     "bowser": "^2.11.0",
-    "ethers": "^5.7.0"
+    "ethers": "^5.7.0",
+    "simple-di": "^1.1.1"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",

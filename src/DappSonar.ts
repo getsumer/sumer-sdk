@@ -3,24 +3,27 @@ import { ExternalProvider, JsonRpcFetchFunc, Networkish, Provider, TransactionRe
 import { BytesLike, ethers, Signer } from 'ethers'
 import { Contract } from './Contract'
 import { ProviderError } from './Errors/ProviderError'
-import { Notify } from './Notify'
+import container from './Providers'
 
 export class DappSonar extends Web3Provider {
+  static apikey: string
   [key: string]: any;
 
-  public static Contract (addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider) {
+  public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider) {
     return new Contract(addressOrName, contractInterface, signerOrProvider)
   }
   public actualAddres: string | undefined
 
-  constructor (_provider: ExternalProvider | JsonRpcFetchFunc, network?: Networkish) {
+  constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key: string, network?: Networkish,) {
     super(_provider, network)
+
     super.listAccounts().then((a) => {
       this.actualAddres = a[0]
     })
+    this.apikey = key
   }
 
-  public async sendTransaction (signedTransaction: string | Promise<string>): Promise<TransactionResponse> {
+  public async sendTransaction(signedTransaction: string | Promise<string>): Promise<TransactionResponse> {
     try {
       const response = await super.sendTransaction(signedTransaction)
 
@@ -35,7 +38,7 @@ export class DappSonar extends Web3Provider {
         }
 
         const providerError = new ProviderError(error.message, error.code, from)
-        Notify.error(providerError)
+        container.get('Notify').error(providerError)
         error.DappSonar = true
       }
       throw error
