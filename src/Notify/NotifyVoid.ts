@@ -3,8 +3,12 @@ import { ProviderError } from '../Errors/ProviderError'
 import { Notify } from './Notify'
 
 export class NotifyVoid implements Notify {
+    error(_msg: ContractError | ProviderError): void {
+        return
+    }
 
-    public error(_msg: ContractError | ProviderError) {
+    static error(_msg: ContractError | ProviderError) {
+
         return
     }
 }

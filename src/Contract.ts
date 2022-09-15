@@ -2,8 +2,7 @@ import { Fragment, JsonFragment } from '@ethersproject/abi'
 import { Provider } from '@ethersproject/providers'
 import { BaseContract, ethers, Signer } from 'ethers'
 import { ContractError } from './Errors/ContractError'
-import { Notify } from './Notify/Notify'
-import container from './Providers'
+import { NotifyBuilder } from './Notify/Notify'
 
 export class Contract {
     public baseContract: BaseContract
@@ -33,7 +32,7 @@ export class Contract {
                             address,
                             error.reason
                         )
-                        container.get<Notify>('Notify').error(contracError)
+                        NotifyBuilder.build().error(contracError)
                         error.DappSonar = true
                     }
                     throw error

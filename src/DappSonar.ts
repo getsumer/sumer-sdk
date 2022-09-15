@@ -3,8 +3,7 @@ import { ExternalProvider, JsonRpcFetchFunc, Networkish, Provider, TransactionRe
 import { BytesLike, ethers, Signer } from 'ethers'
 import { Contract } from './Contract'
 import { ProviderError } from './Errors/ProviderError'
-import { Notify } from './Notify/Notify'
-import container from './Providers'
+import { NotifyBuilder } from './Notify/Notify'
 
 export class DappSonar extends Web3Provider {
   static apikey: string
@@ -39,7 +38,7 @@ export class DappSonar extends Web3Provider {
         }
 
         const providerError = new ProviderError(error.message, error.code, from)
-        container.get<Notify>('Notify').error(providerError)
+        NotifyBuilder.build().error(providerError)
         error.DappSonar = true
       }
       throw error
