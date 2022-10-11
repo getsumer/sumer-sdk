@@ -17,7 +17,7 @@ export class NotifyBuilder {
         if (env === 'test') {
             return NotifyVoid
         }
-        if (env === 'development') {
+        if (undefined === DappSonar.apikey) {
             return new NotifyLog()
         }
         const api = new Api(DappSonar.apikey)
