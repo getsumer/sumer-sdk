@@ -13,7 +13,7 @@ export interface Notify {
 export class NotifyBuilder {
     static build(_env?: string): Notify {
         const env = _env ?? process.env.NODE_ENV
-        console.log('env', env)
+        console.log('env',  DappSonar.apikey)
         if (env === 'test') {
             return NotifyVoid
         }
