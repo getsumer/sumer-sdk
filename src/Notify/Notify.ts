@@ -17,10 +17,10 @@ export class NotifyBuilder {
         if (env === 'test') {
             return NotifyVoid
         }
-        if (env === 'production') {
-            const api = new Api(DappSonar.apikey)
-            return new NotifyApi(api)
+        if (env === 'development') {
+            return new NotifyLog()
         }
-        return new NotifyLog()
+        const api = new Api(DappSonar.apikey)
+        return new NotifyApi(api)
     }
 }
