@@ -1,3 +1,4 @@
+import { Api } from './../Api';
 import { ContractError } from '../Errors/ContractError';
 import { ProviderError } from '../Errors/ProviderError';
 import { Notify } from './Notify';

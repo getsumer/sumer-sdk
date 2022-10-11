@@ -1,4 +1,4 @@
-
+import { Api } from './../Api';
 import bowser from 'bowser'
 import { ContractError } from '../Errors/ContractError'
 import { ProviderError } from '../Errors/ProviderError'
@@ -14,9 +14,9 @@ export class NotifyApi implements Notify {
             message: msg.toString(),
             timestamp: Date.now(),
             wallet: msg.address,
-            meta: this.meta()
+            metadata: this.meta()
         }
-        console.log(log, this.client)
+        this.client.send(log)
     }
 
     private meta() {
