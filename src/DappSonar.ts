@@ -6,11 +6,11 @@ import { ProviderError } from './Errors/ProviderError'
 import { NotifyBuilder } from './Notify/Notify'
 
 export class DappSonar extends Web3Provider {
-  static apikey: string
+  static apikey?: string
   [key: string]: any;
   public actualAddres: string | undefined
 
-  constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key: string, network?: Networkish,) {
+  constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key?: string, network?: Networkish,) {
     super(_provider, network)
 
     super.listAccounts().then((a) => {
