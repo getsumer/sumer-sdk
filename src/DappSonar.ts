@@ -8,10 +8,6 @@ import { NotifyBuilder } from './Notify/Notify'
 export class DappSonar extends Web3Provider {
   static apikey: string
   [key: string]: any;
-
-  public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider) {
-    return new Contract(addressOrName, contractInterface, signerOrProvider)
-  }
   public actualAddres: string | undefined
 
   constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key: string, network?: Networkish,) {
@@ -21,6 +17,10 @@ export class DappSonar extends Web3Provider {
       this.actualAddres = a[0]
     })
     this.apikey = key
+  }
+
+  public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider) {
+    return new Contract(addressOrName, contractInterface, signerOrProvider)
   }
 
   public async sendTransaction(signedTransaction: string | Promise<string>): Promise<TransactionResponse> {
