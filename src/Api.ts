@@ -1,4 +1,4 @@
-class Api {
+export class Api {
     static _instance: Api;
     private headers: any
     constructor(key: string) {

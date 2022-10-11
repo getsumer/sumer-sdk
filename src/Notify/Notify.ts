@@ -1,3 +1,4 @@
+import { Api } from '../Api'
 import { DappSonar } from '../DappSonar'
 import { ContractError } from '../Errors/ContractError'
 import { ProviderError } from '../Errors/ProviderError'
@@ -12,6 +13,7 @@ export interface Notify {
 export class NotifyBuilder {
     static build(_env?: string): Notify {
         const env = _env ?? process.env.NODE_ENV
+        console.log('env', env)
         if (env === 'test') {
             return NotifyVoid
         }
