@@ -9,15 +9,21 @@ export class DappSonar extends Web3Provider {
   static apikey?: string
   [key: string]: any;
   public actualAddres: string | undefined
+  private static instance: DappSonar;
 
   constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key?: string, network?: Networkish,) {
-    super(_provider, network)
 
+    super(_provider, network)
     super.listAccounts().then((a) => {
       this.actualAddres = a[0]
     })
     this.apikey = key
+    this.instance = this;
   }
+  public static getInstance(): DappSonar {
+    return DappSonar.instance;
+  }
+
 
   public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider) {
     return new Contract(addressOrName, contractInterface, signerOrProvider)

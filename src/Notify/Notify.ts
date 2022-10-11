@@ -13,14 +13,14 @@ export interface Notify {
 export class NotifyBuilder {
     static build(_env?: string): Notify {
         const env = _env ?? process.env.NODE_ENV
-        console.log('env',  DappSonar.apikey)
+        console.log('env',  DappSonar.getInstance().apikey)
         if (env === 'test') {
             return NotifyVoid
         }
-        if (undefined === DappSonar.apikey) {
+        if (undefined === DappSonar.getInstance().apikey) {
             return new NotifyLog()
         }
-        const api = new Api(DappSonar.apikey)
+        const api = new Api( DappSonar.getInstance().apikey)
         return new NotifyApi(api)
     }
 }
