@@ -2,7 +2,7 @@ import axios from "axios";
 export class Api {
     static _instance;
     headers;
-    url = 'http://127.0.0.1:3001';
+    url = 'http://127.0.0.1:3000';
     constructor(key) {
         if (Api._instance) {
             return Api._instance;

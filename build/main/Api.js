@@ -7,7 +7,7 @@ exports.Api = void 0;
 const axios_1 = __importDefault(require("axios"));
 class Api {
     constructor(key) {
-        this.url = 'http://127.0.0.1:3001';
+        this.url = 'http://127.0.0.1:3000';
         if (Api._instance) {
             return Api._instance;
         }
