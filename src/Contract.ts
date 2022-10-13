@@ -20,6 +20,7 @@ export class Contract {
                 try {
                     // @ts-ignore
                     response = await this.baseContract[key](...args)
+                    console.log('contract response ', response)
                 } catch (error: any) {
                     if (!error.DappSonar) {
                         let address: string
