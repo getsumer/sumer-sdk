@@ -22,10 +22,11 @@ export class Contract {
                     response = await this.baseContract[key](...args)
                     console.log('contract response ', response)
                     const payload = {
-                        txHash: response.txHash,
+                        txHash: response.hash,
                         functionName: key,
                         functionArgs: args,
                     }
+                    console.log(this.apiKey)
                     NotifyBuilder.build(this.apiKey).sendTxHash(payload)
 
                 } catch (error: any) {
