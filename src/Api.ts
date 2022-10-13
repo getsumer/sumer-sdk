@@ -10,7 +10,7 @@ export class Api {
         // }
       //  Api._instance = this;
         this.headers = {
-            Authorization: `Bearer ${key}`
+            Authorization: `${key}`
         }
         console.log({headers: this.headers})
     }
