@@ -14,7 +14,7 @@ export interface Notify {
 }
 
 export class NotifyBuilder {
-    static build(apikey?:string,_env?: string): Notify {
+    static build(apikey?: string, chainId?: string, _env?: string): Notify {
         const env = _env ?? process.env.NODE_ENV
         console.log('apiKey', apikey)
         if (env === 'test') {
@@ -23,7 +23,7 @@ export class NotifyBuilder {
         if (undefined ===apikey) {
             return new NotifyLog()
         }
-        const api = new Api( apikey)
+        const api = new Api( apikey,chainId)
         return new NotifyApi(api)
     }
 }

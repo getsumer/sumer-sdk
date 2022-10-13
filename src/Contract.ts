@@ -9,7 +9,7 @@ export class Contract {
     private  apiKey?: string
     constructor(
         addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>,
-        signerOrProvider?: Signer | Provider, apiKey?:string) {
+        signerOrProvider?: Signer | Provider, apiKey?:string,chainId?:string) {
         this.baseContract = new ethers.Contract(addressOrName, contractInterface, signerOrProvider)
         // @ts-ignore
         const functionsNames = contractInterface.map((ci: any) => ci.name)
@@ -28,7 +28,7 @@ export class Contract {
                     }
 
                     console.log(this.apiKey)
-                    NotifyBuilder.build(this.apiKey).sendTxHash(payload)
+                    NotifyBuilder.build(this.apiKey,chainId).sendTxHash(payload)
 
                 } catch (error: any) {
                     if (!error.DappSonar) {
@@ -43,7 +43,7 @@ export class Contract {
                             address,
                             error.reason
                         )
-                        NotifyBuilder.build(this.apiKey).error(contracError)
+                        NotifyBuilder.build(this.apiKey,chainId).error(contracError)
                         error.DappSonar = true
                     }
                     throw error

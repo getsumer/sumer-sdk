@@ -2,7 +2,7 @@ import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers'
 import { ProviderError } from './Errors/ProviderError'
 import { NotifyBuilder } from './Notify/Notify';
 
-export const applyProxy = async (target: any, thisArg: any, argumentsList: any, address: string,apikey?:string) => {
+export const applyProxy = async (target: any, thisArg: any, argumentsList: any, address: string, apikey?: string, chainId?: string) => {
     try {
         const res = await Reflect.apply(target, thisArg, argumentsList)
         return res
@@ -18,7 +18,7 @@ export const applyProxy = async (target: any, thisArg: any, argumentsList: any, 
                 providerError = new ProviderError(JSON.parse(error.body).error.message, JSON.parse(error.body).error.code, address)
             }
 
-            NotifyBuilder.build(apikey).error(providerError)
+            NotifyBuilder.build(apikey,chainId).error(providerError)
             error.DappSonar = true
         }
         throw error
@@ -29,19 +29,20 @@ export const applyProxy = async (target: any, thisArg: any, argumentsList: any, 
 export class ProxyProvider {
 
     constructor(_provider: ExternalProvider | JsonRpcFetchFunc | any,apikey?:string) {
+        const chainId=_provider.networkVersion
         const handler = {
             get(target: any, prop: any, _receiver: any) {
                 const response = target[prop]
                 if (typeof target[prop] === 'function') {
 
-                    return new Proxy(response, { apply: async (_target: any, thisArg: any, argumentsList: any) => applyProxy(_target, thisArg, argumentsList, _provider.selectedAddress,apikey) })
+                    return new Proxy(response, { apply: async (_target: any, thisArg: any, argumentsList: any) => applyProxy(_target, thisArg, argumentsList, _provider.selectedAddress,apikey,chainId) })
                 }
                 return response
 
             },
             apply: async (target: any, thisArg: any, argumentsList: any) => {
 
-                return applyProxy(target, thisArg, argumentsList, _provider.selectedAddress,apikey)
+                return applyProxy(target, thisArg, argumentsList, _provider.selectedAddress,apikey,chainId)
             }
         }
         return new Proxy(_provider, handler)
