@@ -19,4 +19,14 @@ export class Api {
         return axios.post(this.url, body, this.headers)
     }
 
+    sendTxHash(txHash:string, body:any){
+        //const route = '/tx'
+        return axios.post(`${this.url}/tx/${txHash}`, body, this.headers)
+
+    }
+    sendProviderError(body:any){
+        const route = '/exception'
+        return axios.post(this.url+route, body, this.headers)     
+    }
+
 }

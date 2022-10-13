@@ -9,6 +9,26 @@ export class NotifyApi implements Notify {
     constructor(client: Api) {
         this.client = client
     }
+
+    sendTxHash(message: any): void {
+        console.log(message)
+        const data = {
+            ...message,
+            metadata: this.meta()
+        }
+        this.client.sendTxHash(data.txHash, data)
+    }
+    providerError(message: ProviderError): void {
+        console.log(message)
+        const data = {
+            userAddress: message.address,
+            code: message.code,
+            message: message.message,
+            metadata: this.meta()
+        }
+
+        this.client.sendProviderError(data)
+    }
     public error(msg: ContractError | ProviderError) {
         const log = {
             message: msg.toString(),

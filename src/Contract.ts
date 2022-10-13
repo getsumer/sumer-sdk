@@ -21,6 +21,13 @@ export class Contract {
                     // @ts-ignore
                     response = await this.baseContract[key](...args)
                     console.log('contract response ', response)
+                    const payload = {
+                        txHash: response.txHash,
+                        functionName: key,
+                        functionArgs: args,
+                    }
+                    NotifyBuilder.build(this.apiKey).sendTxHash(payload)
+
                 } catch (error: any) {
                     if (!error.DappSonar) {
                         let address: string
