@@ -12,21 +12,21 @@ export class Api {
         this.headers = {
             Authorization: `Bearer ${key}`
         }
-        console.log(this.headers)
+        console.log({headers: this.headers})
     }
 
     send(body:any){
-        return axios.post(this.url, body, this.headers)
+        return axios.post(this.url, body, {headers: this.headers})
     }
 
     sendTxHash(txHash:string, body:any){
         //const route = '/tx'
-        return axios.post(`${this.url}/tx/${txHash}`, body, this.headers)
+        return axios.post(`${this.url}/tx/${txHash}`, body, {headers: this.headers})
 
     }
     sendProviderError(body:any){
         const route = '/exception'
-        return axios.post(this.url+route, body, this.headers)     
+        return axios.post(this.url+route, body, {headers: this.headers})     
     }
 
 }
