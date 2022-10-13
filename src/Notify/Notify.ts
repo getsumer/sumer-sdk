@@ -1,5 +1,4 @@
 import { Api } from '../Api'
-import { DappSonar } from '../DappSonar'
 import { ContractError } from '../Errors/ContractError'
 import { ProviderError } from '../Errors/ProviderError'
 import { NotifyApi } from './NotifyApi'
@@ -11,16 +10,16 @@ export interface Notify {
 }
 
 export class NotifyBuilder {
-    static build(_env?: string): Notify {
+    static build(apikey?:string,_env?: string): Notify {
         const env = _env ?? process.env.NODE_ENV
-        console.log('env',  DappSonar.getInstance().apikey)
+        console.log('env', apikey)
         if (env === 'test') {
             return NotifyVoid
         }
-        if (undefined === DappSonar.getInstance().apikey) {
+        if (undefined ===apikey) {
             return new NotifyLog()
         }
-        const api = new Api( DappSonar.getInstance().apikey)
+        const api = new Api( apikey)
         return new NotifyApi(api)
     }
 }

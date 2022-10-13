@@ -20,13 +20,13 @@ export class DappSonar extends Web3Provider {
     this.apikey = key
     this.instance = this;
   }
-  public static getInstance(): DappSonar {
+  public static getInstance(): DappSonar | undefined {
     return DappSonar.instance;
   }
 
 
-  public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider) {
-    return new Contract(addressOrName, contractInterface, signerOrProvider)
+  public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apikey?: string) {
+    return new Contract(addressOrName, contractInterface, signerOrProvider,apikey)
   }
 
   public async sendTransaction(signedTransaction: string | Promise<string>): Promise<TransactionResponse> {
@@ -44,7 +44,7 @@ export class DappSonar extends Web3Provider {
         }
 
         const providerError = new ProviderError(error.message, error.code, from)
-        NotifyBuilder.build().error(providerError)
+        NotifyBuilder.build(this.apikey).error(providerError,)
         error.DappSonar = true
       }
       throw error

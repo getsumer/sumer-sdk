@@ -6,13 +6,14 @@ import { NotifyBuilder } from './Notify/Notify'
 
 export class Contract {
     public baseContract: BaseContract
+    private  apiKey?: string
     constructor(
         addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>,
-        signerOrProvider?: Signer | Provider) {
+        signerOrProvider?: Signer | Provider, apiKey?:string) {
         this.baseContract = new ethers.Contract(addressOrName, contractInterface, signerOrProvider)
         // @ts-ignore
         const functionsNames = contractInterface.map((ci: any) => ci.name)
-
+        this.apiKey=apiKey
         functionsNames.forEach((key: any) => {
             this[key] = async (...args: any): Promise<any> => {
                 let response: any
@@ -32,7 +33,7 @@ export class Contract {
                             address,
                             error.reason
                         )
-                        NotifyBuilder.build().error(contracError)
+                        NotifyBuilder.build(this.apiKey).error(contracError)
                         error.DappSonar = true
                     }
                     throw error
