@@ -26,6 +26,7 @@ export class Contract {
                         functionName: key,
                         functionArgs: args,
                     }
+
                     console.log(this.apiKey)
                     NotifyBuilder.build(this.apiKey).sendTxHash(payload)
 
