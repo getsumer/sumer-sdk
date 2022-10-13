@@ -6,7 +6,7 @@
   "typings": "build/module/index.d.ts",
   "module": "build/module/index.js",
   "files": [
-    "/build/**/*"
+    "/build"
   ],
   "scripts": {
     "build": " NODE_ENV=production npm run  build:main &&  NODE_ENV=production npm run  build:module",
@@ -36,6 +36,7 @@
     "bowser": "^2.11.0",
     "ethers": "^5.7.0"
   },
+  "bundleDependencies": true,
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "@types/node": "^18.7.18",
