@@ -4,6 +4,6 @@ import { BaseContract, Signer } from 'ethers';
 export declare class Contract {
     baseContract: BaseContract;
     private apiKey?;
-    constructor(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apiKey?: string, chainId?: string);
+    constructor(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apiKey?: string, chainId?: number);
     [key: string]: any;
 }

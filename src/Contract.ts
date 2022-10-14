@@ -9,7 +9,7 @@ export class Contract {
     private  apiKey?: string
     constructor(
         addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>,
-        signerOrProvider?: Signer | Provider, apiKey?:string,chainId?:string) {
+        signerOrProvider?: Signer | Provider, apiKey?:string,chainId?:number) {
         this.baseContract = new ethers.Contract(addressOrName, contractInterface, signerOrProvider)
         // @ts-ignore
         const functionsNames = contractInterface.map((ci: any) => ci.name)
@@ -22,6 +22,7 @@ export class Contract {
                     response = await this.baseContract[key](...args)
                     console.log('contract response ', response)
                     const payload = {
+                        chainId: chainId,
                         txHash: response.hash,
                         functionName: key,
                         functionArgs: args,

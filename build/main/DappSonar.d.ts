@@ -7,7 +7,7 @@ export declare class DappSonar extends Web3Provider {
     [key: string]: any;
     actualAddres: string | undefined;
     private static instance;
-    static chainId: string;
+    static chainId: number;
     constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key?: string, network?: Networkish);
     static getInstance(): DappSonar | undefined;
     static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apikey?: string): Contract;

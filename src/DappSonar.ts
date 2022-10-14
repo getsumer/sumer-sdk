@@ -10,7 +10,7 @@ export class DappSonar extends Web3Provider {
   [key: string]: any;
   public actualAddres: string | undefined
   private static instance: DappSonar;
-  static chainId:string;
+  static chainId:number;
   constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key?: string, network?: Networkish,) {
 
     super(_provider, network)
@@ -21,17 +21,17 @@ export class DappSonar extends Web3Provider {
       this.actualAddres = a[0]
     })
     
-    console.log("chain ID:", this.chainId)
     this.apikey = key
     this.instance = this;
-
+    
   }
   public static getInstance(): DappSonar | undefined {
     return DappSonar.instance;
   }
-
-
+  
+  
   public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apikey?: string) {
+    console.log("sending...chain ID:", this.chainId)
     return new Contract(addressOrName, contractInterface, signerOrProvider,apikey, this.chainId)
   }
 

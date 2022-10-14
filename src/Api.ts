@@ -3,7 +3,7 @@ import axios from "axios";
 export class Api {
     private headers: any;
     private url:string = 'http://127.0.0.1:3000'
-    constructor(key: string, chainId: string) {
+    constructor(key: string, chainId: number) {
         this.headers = {
             Authorization: `${key}`,
             chainId: `${chainId}`,

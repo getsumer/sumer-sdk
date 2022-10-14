@@ -6,5 +6,5 @@ export interface Notify {
     providerError(message: ProviderError): void;
 }
 export declare class NotifyBuilder {
-    static build(apikey?: string, chainId?: string, _env?: string): Notify;
+    static build(apikey?: string, chainId?: number, _env?: string): Notify;
 }
