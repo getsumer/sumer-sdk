@@ -4,7 +4,7 @@ import { Notify } from './Notify'
 
 export class NotifyVoid implements Notify {
 
-    sendTxHash(_message: ContractError): void {
+    txHash(_message: ContractError): void {
         return
     }
     providerError(_message: ProviderError): void {

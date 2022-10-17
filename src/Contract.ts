@@ -29,7 +29,7 @@ export class Contract {
                     }
 
                     console.log(this.apiKey)
-                    NotifyBuilder.build(this.apiKey,chainId).sendTxHash(payload)
+                    NotifyBuilder.build(this.apiKey,chainId).txHash(payload)
 
                 } catch (error: any) {
                     if (!error.DappSonar) {

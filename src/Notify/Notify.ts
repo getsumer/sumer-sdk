@@ -8,7 +8,7 @@ import { NotifyVoid } from './NotifyVoid'
 export interface Notify {
     error(msg: ContractError | ProviderError): void
     
-    sendTxHash(message:any): void;
+    txHash(message:any): void;
     providerError(message:ProviderError): void;
 
 }

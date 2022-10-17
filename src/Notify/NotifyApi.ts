@@ -10,7 +10,7 @@ export class NotifyApi implements Notify {
         this.client = client
     }
 
-    sendTxHash(message: any): void {
+    txHash(message: any): void {
         console.log(message)
         const data = {
             ...message,

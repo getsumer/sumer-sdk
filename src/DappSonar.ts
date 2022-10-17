@@ -16,6 +16,7 @@ export class DappSonar extends Web3Provider {
     super(_provider, network)
     //@ts-ignore
   
+    //this.chainId=_provider.networkVersion
     super.getNetwork().then((network)=>{
       this.chainId = network.chainId
     })
@@ -52,7 +53,7 @@ export class DappSonar extends Web3Provider {
         }
 
         const providerError = new ProviderError(error.message, error.code, from)
-        NotifyBuilder.build(this.apikey,this.chainId).error(providerError,)
+        NotifyBuilder.build(this.apikey,this.chainId).providerError(providerError)
         error.DappSonar = true
       }
       throw error

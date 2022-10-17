@@ -6,7 +6,7 @@ import { Notify } from './Notify'
 
 export class NotifyLog implements Notify {
 
-    sendTxHash(message: ContractError): void {
+    txHash(message: ContractError): void {
         console.log(message)
     }
     providerError(message: ProviderError): void {
