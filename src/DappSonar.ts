@@ -16,8 +16,9 @@ export class DappSonar extends Web3Provider {
     super(_provider, network)
     //@ts-ignore
   
-    //this.chainId=_provider.networkVersion
-    this.chainId = async () => await super.send("eth_chainId", [ ]);
+    super.getNetwork().then((network)=>{
+      this.chainId = network.chainId
+    })
     super.listAccounts().then((a) => {
       this.actualAddres = a[0]
     })
