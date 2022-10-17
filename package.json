@@ -36,9 +36,16 @@
     "bowser": "^2.11.0",
     "ethers": "^5.7.0"
   },
-  "bundleDependencies": true,
+  "bundleDependencies": [
+    "@ethersproject/abi",
+    "@ethersproject/providers",
+    "axios",
+    "babel-jest",
+    "bowser",
+    "ethers"
+  ],
   "devDependencies": {
-    "@types/jest": "^27.4.1",
+    "@types/jest": "^27.5.2",
     "@types/node": "^18.7.18",
     "ethereum-waffle": "^4.0.6",
     "jest": "^27.5.1",
