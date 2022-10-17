@@ -7,11 +7,11 @@ import { Notify } from './Notify'
 export class NotifyLog implements Notify {
 
     txHash(message: ContractError): void {
-        console.log(message)
+        console.log("txHash Log:", message)
     }
     providerError(message: ProviderError): void {
         
-        console.log(message)
+        console.log("providerError Log:", message)
     }
 
     public error(msg: ContractError | ProviderError) {
@@ -21,7 +21,7 @@ export class NotifyLog implements Notify {
             wallet: msg.address,
             meta: this.meta()
         }
-        console.error(log)
+        console.error("error log: ", log)
 
     }
 

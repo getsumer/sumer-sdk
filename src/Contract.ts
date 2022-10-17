@@ -44,7 +44,7 @@ export class Contract {
                             address,
                             error.reason
                         )
-                        NotifyBuilder.build(this.apiKey,chainId).providerError(contracError)
+                        NotifyBuilder.build(this.apiKey,chainId).error(contracError)
                         error.DappSonar = true
                     }
                     throw error
