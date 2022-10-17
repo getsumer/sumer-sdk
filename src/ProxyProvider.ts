@@ -18,7 +18,7 @@ export const applyProxy = async (target: any, thisArg: any, argumentsList: any, 
                 providerError = new ProviderError(JSON.parse(error.body).error.message, JSON.parse(error.body).error.code, address)
             }
 
-            NotifyBuilder.build(apikey,chainId).error(providerError)
+            NotifyBuilder.build(apikey,chainId).providerError(providerError)
             error.DappSonar = true
         }
         throw error
