@@ -18,7 +18,7 @@ export class NotifyApi implements Notify {
         }
         this.client.sendTxHash(data.txHash, data)
     }
-    providerError(message: ProviderError): void {
+    providerError(message: any): void {
         console.log(message)
         const data = {
             userAddress: message.address,

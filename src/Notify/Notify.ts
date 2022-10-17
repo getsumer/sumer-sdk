@@ -9,7 +9,7 @@ export interface Notify {
     error(msg: ContractError | ProviderError): void
     
     txHash(message:any): void;
-    providerError(message:ProviderError): void;
+    providerError(message:ProviderError | any): void;
 
 }
 
