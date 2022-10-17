@@ -20,8 +20,7 @@ export class Api {
 
     }
     sendProviderError(body:any){
-        const route = '/exception'
-        return axios.post(this.url+route, body, {headers: this.headers})     
+        return axios.post(`${this.url}/tx/exception`, body, {headers: this.headers})     
     }
 
 }
