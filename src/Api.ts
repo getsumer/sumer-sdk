@@ -12,7 +12,7 @@ export class Api {
     }
 
     send(body:any){
-        return axios.post(this.url, body, {headers: this.headers})
+        return axios.post(this.url+'/exception', body, {headers: this.headers})
     }
 
     sendTxHash(txHash:string, body:any){
