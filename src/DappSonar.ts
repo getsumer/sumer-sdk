@@ -16,10 +16,8 @@ export class DappSonar extends Web3Provider {
     super(_provider, network)
     //@ts-ignore
   
-    //this.chainId=_provider.networkVersion
-    super.getNetwork().then((network)=>{
-      this.chainId = network.chainId
-    })
+    this.chainId=_provider.networkVersion
+
     super.listAccounts().then((a) => {
       this.actualAddres = a[0]
     })
@@ -34,7 +32,6 @@ export class DappSonar extends Web3Provider {
   
   
   public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apikey?: string) {
-    console.log("sending...chain ID:", this.chainId)
     return new Contract(addressOrName, contractInterface, signerOrProvider,apikey, this.chainId)
   }
 
