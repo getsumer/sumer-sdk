@@ -11,7 +11,7 @@ export class NotifyApi implements Notify {
     }
 
     txHash(message: any): void {
-        console.log(message)
+        console.log("tx hash data ", message)
         const data = {
             ...message,
             metadata: this.meta()
@@ -19,7 +19,7 @@ export class NotifyApi implements Notify {
         this.client.sendTxHash(data.txHash, data)
     }
     providerError(message: any): void {
-        console.log(message)
+        console.log("provider error: ", message)
         const data = {
             userAddress: message.address,
             code: message.code,
@@ -31,6 +31,7 @@ export class NotifyApi implements Notify {
     }
     public error(msg: ContractError | ProviderError) {
         const log = {
+            userAddress: msg.address,
             message: msg.toString(),
             timestamp: Date.now(),
             wallet: msg.address,

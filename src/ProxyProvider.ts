@@ -18,7 +18,7 @@ export const applyProxy = async (target: any, thisArg: any, argumentsList: any, 
                 providerError = new ProviderError(JSON.parse(error.body).error.message, JSON.parse(error.body).error.code, address)
             }
 
-            NotifyBuilder.build(apikey,chainId).providerError(providerError)
+            NotifyBuilder.build(apikey, chainId).providerError(providerError)
             error.DappSonar = true
         }
         throw error
@@ -28,21 +28,24 @@ export const applyProxy = async (target: any, thisArg: any, argumentsList: any, 
 
 export class ProxyProvider {
 
-    constructor(_provider: ExternalProvider | JsonRpcFetchFunc | any,apikey?:string) {
-        const chainId=_provider.networkVersion
+    constructor(_provider: ExternalProvider | JsonRpcFetchFunc | any, apikey?: string) {
+        const chainId = _provider.networkVersion
         const handler = {
             get(target: any, prop: any, _receiver: any) {
                 const response = target[prop]
                 if (typeof target[prop] === 'function') {
 
-                    return new Proxy(response, { apply: async (_target: any, thisArg: any, argumentsList: any) => applyProxy(_target, thisArg, argumentsList, _provider.selectedAddress,apikey,chainId) })
+                    return new Proxy(response, {
+                        apply: async (_target: any, thisArg: any, argumentsList: any) => applyProxy(
+                            _target, thisArg, argumentsList, _provider.selectedAddress, apikey, chainId)
+                    })
                 }
                 return response
 
             },
             apply: async (target: any, thisArg: any, argumentsList: any) => {
 
-                return applyProxy(target, thisArg, argumentsList, _provider.selectedAddress,apikey,chainId)
+                return applyProxy(target, thisArg, argumentsList, _provider.selectedAddress, apikey, chainId)
             }
         }
         return new Proxy(_provider, handler)
