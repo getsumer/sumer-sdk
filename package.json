@@ -34,7 +34,8 @@
     "axios": "^0.27.2",
     "babel-jest": "^27.1.5",
     "bowser": "^2.11.0",
-    "ethers": "^5.7.0"
+    "ethers": "^5.7.0",
+    "yalc": "^1.0.0-pre.53"
   },
   "bundleDependencies": [
     "@ethersproject/abi",
