@@ -12,14 +12,16 @@ export class DappSonar extends Web3Provider {
   private static instance: DappSonar;
   static chainId:number;
   constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key?: string, network?: Networkish,) {
-
+    
     super(_provider, network)
     //@ts-ignore
-   this.chainId = async () => {
-      (await super.getNetwork()).chainId;
-   }
-    //this.chainId=_provider.networkVersion
-
+    this.chainId=_provider.networkVersion
+ 
+    console.log("provider",_provider)
+    console.log("chID", this.chainId)
+    // this.chainId = async () => {
+    //    (await super.getNetwork()).chainId;
+    // }
     super.listAccounts().then((accounts) => {
       this.actualAddres = accounts[0]
     })
