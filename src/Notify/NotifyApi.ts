@@ -18,7 +18,7 @@ export class NotifyApi implements Notify {
         const data = {
             id,
             chainId: message.chainId,
-            txHash: message.response.hash,
+            txHash: message.txHash,
             functionName: message.key,
             functionArgs: message.args,
             metadata: this.meta()
