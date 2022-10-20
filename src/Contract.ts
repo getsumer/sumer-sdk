@@ -7,6 +7,7 @@ import { NotifyBuilder } from './Notify/Notify'
 export class Contract {
     public baseContract: BaseContract
     private apiKey?: string
+    private chainId?: number
     constructor(
         addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>,
         signerOrProvider?: Signer | Provider, apiKey?: string, chainId?: number) {
@@ -14,6 +15,7 @@ export class Contract {
         // @ts-ignore
         const functionsNames = contractInterface.map((ci: any) => ci.name)
         this.apiKey = apiKey
+        this.chainId = chainId
         functionsNames.forEach((key: any) => {
             this[key] = async (...args: any): Promise<any> => {
                 let response: any
@@ -22,14 +24,14 @@ export class Contract {
                     response = await this.baseContract[key](...args)
                     console.log('contract response ', response)
                     const payload = {
-                        chainId: chainId,
+                        chainId: this.chainId,
                         txHash: response.hash,
                         functionName: key,
                         functionArgs: args,
                     }
 
                     console.log(this.apiKey)
-                    NotifyBuilder.build(this.apiKey, chainId).txHash(payload)
+                    NotifyBuilder.build(this.apiKey, this.chainId).txHash(payload)
 
                 } catch (error: any) {
                     if (!error.DappSonar) {
