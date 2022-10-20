@@ -32,7 +32,7 @@ export class DappSonar extends Web3Provider {
   
   
   public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apikey?: string) {
-    return new Contract(addressOrName, contractInterface, signerOrProvider,apikey, this.chainId)
+    return new Contract(addressOrName, contractInterface, signerOrProvider,apikey, this.getInstance().chainId)
   }
 
   public async sendTransaction(signedTransaction: string | Promise<string>): Promise<TransactionResponse> {
