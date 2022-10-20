@@ -15,11 +15,13 @@ export class DappSonar extends Web3Provider {
 
     super(_provider, network)
     //@ts-ignore
-  
-    this.chainId=_provider.networkVersion
+   this.chainId = async () => {
+      (await super.getNetwork()).chainId;
+   }
+    //this.chainId=_provider.networkVersion
 
-    super.listAccounts().then((a) => {
-      this.actualAddres = a[0]
+    super.listAccounts().then((accounts) => {
+      this.actualAddres = accounts[0]
     })
     
     this.apikey = key
@@ -32,7 +34,7 @@ export class DappSonar extends Web3Provider {
   
   
   public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apikey?: string) {
-    return new Contract(addressOrName, contractInterface, signerOrProvider,apikey, this.getInstance().chainId)
+    return new Contract(addressOrName, contractInterface, signerOrProvider,apikey, this.chainId)
   }
 
   public async sendTransaction(signedTransaction: string | Promise<string>): Promise<TransactionResponse> {
