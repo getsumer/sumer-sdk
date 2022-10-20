@@ -2,8 +2,8 @@ import axios from "axios";
 
 export class Api {
     private headers: any;
-    private url:string = 'http://127.0.0.1:3000'
-    //private url:string = 'http://sumer-env.eba-p6jdgm9w.us-east-1.elasticbeanstalk.com'
+    //private url:string = 'http://127.0.0.1:3000'
+    private url:string = 'http://sumer-env.eba-p6jdgm9w.us-east-1.elasticbeanstalk.com'
     constructor(key: string, chainId: number) {
         this.headers = {
             Authorization: `${key}`,
@@ -17,10 +17,12 @@ export class Api {
     }
 
     sendTxHash(txHash:string, body:any){
+        console.log("seinding tx data :", body)
         return axios.post(`${this.url}/tx/${txHash}`, body, {headers: this.headers})
 
     }
     sendProviderError(body:any){
+        console.log("seinding error data :", body)
         return axios.post(`${this.url}/exception`, body, {headers: this.headers})     
     }
 
