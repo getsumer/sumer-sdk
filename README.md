@@ -54,5 +54,5 @@ const contract = SumerObserver.Contract(contract args..., key, chainId)
 ```
 
 
-#### Integrate with [warmish](https://wagmi.sh/)
+#### Integrate with [wagmish](https://wagmi.sh/)
 - to be added
