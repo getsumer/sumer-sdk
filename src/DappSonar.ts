@@ -37,7 +37,6 @@ export class DappSonar extends Web3Provider {
   public async sendTransaction(signedTransaction: string | Promise<string>): Promise<TransactionResponse> {
     try {
       const response = await super.sendTransaction(signedTransaction)
-
       return response
     } catch (error) {
       if (!error.DappSonar) {

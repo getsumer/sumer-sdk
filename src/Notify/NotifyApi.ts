@@ -11,24 +11,29 @@ export class NotifyApi implements Notify {
     }
 
     txHash(message: any): void {
-        const  id = v4().toString()
+        const id = v4().toString()
 
-        console.log("tx hash data ", message)
+        const obj = message.functionArgs[0]
+        const keys = Object.keys(obj) as (keyof typeof obj)[];
+        console.log(keys); 
+        let args: any[] = []
+        keys.forEach((key) => {
+            args.push(key, obj[key])
+        });
 
         const data = {
             id,
             chainId: message.chainId,
             txHash: message.txHash,
-            functionName: message.key,
-            functionArgs: message.args,
+            functionName: message.functionName,
+            functionArgs: args,
             metadata: this.meta()
         }
         this.client.sendTxHash(data.txHash, data)
     }
     providerError(message: any): void {
-        const  id = v4().toString()
+        const id = v4().toString()
 
-        console.log("provider error: ", message)
         const data = {
             id,
             userAddress: message.address,
@@ -41,7 +46,7 @@ export class NotifyApi implements Notify {
     }
 
     public error(msg: ContractError) {
-        const  id = v4().toString()
+        const id = v4().toString()
 
         const log = {
             id,
@@ -61,7 +66,6 @@ export class NotifyApi implements Notify {
         if (window?.navigator?.userAgent) {
             return bowser.parse(window.navigator.userAgent)
         }
-
         return {}
     }
 }

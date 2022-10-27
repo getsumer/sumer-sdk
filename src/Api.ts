@@ -17,12 +17,12 @@ export class Api {
     }
 
     sendTxHash(txHash:string, body:any){
-        console.log("seinding tx data :", body)
+        console.log("seinding TX Data :", body)
         return axios.post(`${this.url}/tx/${txHash}`, body, {headers: this.headers})
 
     }
     sendProviderError(body:any){
-        console.log("seinding error data :", body)
+        console.log("seinding ERROR DATA :", body)
         return axios.post(`${this.url}/exception`, body, {headers: this.headers})     
     }
 

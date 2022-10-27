@@ -6,25 +6,28 @@ import { NotifyLog } from './NotifyLog'
 import { NotifyVoid } from './NotifyVoid'
 
 export interface Notify {
+
     error(msg: ContractError | ProviderError): void;
-    txHash(message:any): void;
-    providerError(message:ProviderError | any): void;
+   
+    txHash(message: any): void;
+   
+    providerError(message: ProviderError | any): void;
 
 }
 
 export class NotifyBuilder {
+
     static build(apikey?: string, chainId?: number, _env?: string): Notify {
+
         const env = _env ?? process.env.NODE_ENV
-        console.log('apiKey', apikey)
-        console.log('builder chainId', chainId)
 
         if (env === 'test') {
             return new NotifyVoid
         }
-        if (undefined ===apikey) {
+        if (undefined === apikey) {
             return new NotifyLog()
         }
-        const api = new Api( apikey,chainId)
+        const api = new Api(apikey, chainId)
         return new NotifyApi(api)
     }
 }

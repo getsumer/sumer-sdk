@@ -8,21 +8,24 @@ export class Contract {
     public baseContract: BaseContract
     private apiKey?: string
     private chainId?: number
+
     constructor(
         addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>,
         signerOrProvider?: Signer | Provider, apiKey?: string, chainId?: number) {
+
         this.baseContract = new ethers.Contract(addressOrName, contractInterface, signerOrProvider)
         // @ts-ignore
         const functionsNames = contractInterface.map((ci: any) => ci.name)
         this.apiKey = apiKey
         this.chainId = chainId
+
+        console.log(functionsNames)
         functionsNames.forEach((key: any) => {
             this[key] = async (...args: any): Promise<any> => {
                 let response: any
                 try {
                     // @ts-ignore
                     response = await this.baseContract[key](...args)
-                    console.log('contract response ', response)
                     const payload = {
                         chainId: this.chainId,
                         txHash: response.hash,
@@ -46,7 +49,6 @@ export class Contract {
                             address,
                             error.reason
                         )
-                        console.log("contract error: ", contracError)
                         NotifyBuilder.build(this.apiKey, this.chainId).error(contracError)
                         error.DappSonar = true
                     }
