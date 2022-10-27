@@ -15,8 +15,8 @@ export class NotifyApi implements Notify {
 
         const obj = message.functionArgs[0]
         const keys = Object.keys(obj) as (keyof typeof obj)[];
-        console.log(keys); 
-        let args: any[] = []
+        const args: any[] = []
+
         keys.forEach((key) => {
             args.push(key, obj[key])
         });
@@ -57,9 +57,8 @@ export class NotifyApi implements Notify {
             message: msg.reason,
             metadata: this.meta()
         }
-        console.log(log)
-        //***prepare endpoint for contract intearctions errors ??
-        //this.client.send(log)
+        // ***prepare endpoint for contract intearctions errors ??
+        // this.client.send(log)
     }
 
     private meta() {

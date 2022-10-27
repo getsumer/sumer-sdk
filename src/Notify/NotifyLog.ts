@@ -7,10 +7,11 @@ import { Notify } from './Notify'
 export class NotifyLog implements Notify {
 
     txHash(message: ContractError): void {
+
         console.log("txHash Log:", message)
     }
     providerError(message: ProviderError): void {
-        
+
         console.log("providerError Log:", message)
     }
 
@@ -29,7 +30,6 @@ export class NotifyLog implements Notify {
         if (window?.navigator?.userAgent) {
             return bowser.parse(window.navigator.userAgent)
         }
-
         return {}
     }
 }

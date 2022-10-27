@@ -12,24 +12,24 @@ export class DappSonar extends Web3Provider {
   private static instance: DappSonar;
   static chainId:number;
   constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key?: string, network?: Networkish,) {
-    
+
     super(_provider, network)
-    //@ts-ignore
+    // @ts-ignore
     this.chainId=_provider.networkVersion
- 
+
     super.listAccounts().then((accounts) => {
       this.actualAddres = accounts[0]
     })
-    
+
     this.apikey = key
     this.instance = this;
-    
+
   }
   public static getInstance(): DappSonar | undefined {
     return DappSonar.instance;
   }
-  
-  
+
+
   public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apikey?: string, chainId?:number) {
     return new Contract(addressOrName, contractInterface, signerOrProvider,apikey, chainId)
   }

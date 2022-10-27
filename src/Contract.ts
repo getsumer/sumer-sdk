@@ -19,7 +19,6 @@ export class Contract {
         this.apiKey = apiKey
         this.chainId = chainId
 
-        console.log(functionsNames)
         functionsNames.forEach((key: any) => {
             this[key] = async (...args: any): Promise<any> => {
                 let response: any
@@ -33,7 +32,6 @@ export class Contract {
                         functionArgs: args,
                     }
 
-                    console.log(this.apiKey)
                     NotifyBuilder.build(this.apiKey, this.chainId).txHash(payload)
 
                 } catch (error: any) {
