@@ -48,7 +48,7 @@ export class NotifyApi implements Notify {
     public error(msg: ContractError) {
         const id = v4().toString()
 
-        const log = {
+        const data = {
             id,
             userAddress: msg.address,
             contractAddress: msg.contractAddress,
@@ -57,8 +57,9 @@ export class NotifyApi implements Notify {
             message: msg.reason,
             metadata: this.meta()
         }
-        // ***prepare endpoint for contract intearctions errors ??
-        // this.client.send(log)
+        console.log(data)
+        // ***prepare endpoint for contract intearctions errors 
+        // this.client.send(data)
     }
 
     private meta() {
