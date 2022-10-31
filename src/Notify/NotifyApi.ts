@@ -58,7 +58,7 @@ export class NotifyApi implements Notify {
             metadata: this.meta()
         }
         console.log(data)
-        // ***prepare endpoint for contract intearctions errors 
+        // ***prepare endpoint for contract intearctions errors
         // this.client.send(data)
     }
 
