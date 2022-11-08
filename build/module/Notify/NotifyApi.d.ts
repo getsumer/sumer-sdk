@@ -6,6 +6,6 @@ export declare class NotifyApi implements Notify {
     constructor(client: Api);
     txHash(message: any): void;
     providerError(message: any): void;
-    error(msg: ContractError): void;
+    contractError(msg: ContractError): void;
     private meta;
 }

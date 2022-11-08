@@ -7,7 +7,7 @@ import { NotifyVoid } from './NotifyVoid'
 
 export interface Notify {
 
-    error(msg: ContractError | ProviderError): void;
+    contractError(msg: ContractError | ProviderError): void;
 
     txHash(message: any): void;
 
@@ -22,12 +22,16 @@ export class NotifyBuilder {
         const env = _env ?? process.env.NODE_ENV
 
         if (env === 'test') {
-            return new NotifyVoid()
+            
+            return new NotifyVoid
         }
         if (undefined === apikey) {
+
             return new NotifyLog()
         }
+
         const api = new Api(apikey, chainId)
+
         return new NotifyApi(api)
     }
 }

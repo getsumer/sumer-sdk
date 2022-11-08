@@ -10,7 +10,7 @@ export class NotifyVoid implements Notify {
     providerError(_message: ProviderError): void {
         return
     }
-    error(_msg: ContractError | ProviderError): void {
+    contractError(_msg: ContractError | ProviderError): void {
         return
     }
 

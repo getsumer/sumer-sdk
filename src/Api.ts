@@ -2,7 +2,7 @@ import axios from "axios";
 
 export class Api {
     private headers: any;
-    // private url:string = 'http://127.0.0.1:3000'
+    //private url:string = 'http://127.0.0.1:3000'
     private url:string = 'https://api.getsumer.com'
     constructor(key: string, chainId: number) {
         this.headers = {
@@ -11,8 +11,8 @@ export class Api {
         }
     }
 
-    send(body:any){
-        return axios.post(this.url+'/TOBEDONE', body, {headers: this.headers})
+    sendContractError(body:any){
+        return axios.post(this.url+'/contract_errors', body, {headers: this.headers})
     }
 
     sendTxHash(txHash:string, body:any){

@@ -4,6 +4,5 @@ import { Notify } from './Notify';
 export declare class NotifyLog implements Notify {
     txHash(message: ContractError): void;
     providerError(message: ProviderError): void;
-    error(msg: ContractError | ProviderError): void;
-    private meta;
+    contractError(msg: ContractError | ProviderError): void;
 }

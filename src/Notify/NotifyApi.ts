@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 
 export class NotifyApi implements Notify {
     private client: Api
+
     constructor(client: Api) {
         this.client = client
     }
@@ -13,24 +14,17 @@ export class NotifyApi implements Notify {
     txHash(message: any): void {
         const id = v4().toString()
 
-        const obj = message.functionArgs[0]
-        const keys = Object.keys(obj) as (keyof typeof obj)[];
-        const args: any[] = []
-
-        keys.forEach((key) => {
-            args.push(key, obj[key])
-        });
-
         const data = {
             id,
             chainId: message.chainId,
             txHash: message.txHash,
             functionName: message.functionName,
-            functionArgs: args,
+            functionArgs: message.args,
             metadata: this.meta()
         }
         this.client.sendTxHash(data.txHash, data)
     }
+
     providerError(message: any): void {
         const id = v4().toString()
 
@@ -45,7 +39,7 @@ export class NotifyApi implements Notify {
         this.client.sendProviderError(data)
     }
 
-    public error(msg: ContractError) {
+    contractError(msg: ContractError) {
         const id = v4().toString()
 
         const data = {
@@ -57,9 +51,7 @@ export class NotifyApi implements Notify {
             message: msg.reason,
             metadata: this.meta()
         }
-        console.log(data)
-        // ***prepare endpoint for contract intearctions errors
-        // this.client.send(data)
+        this.client.sendContractError(data)
     }
 
     private meta() {

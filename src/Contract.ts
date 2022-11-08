@@ -16,14 +16,8 @@ export class Contract {
     readonly estimateGas?: { [ name: string ]: ContractFunction<BigNumber> };
     readonly populateTransaction?: { [ name: string ]: ContractFunction<PopulatedTransaction> };
     readonly filters?: { [ name: string ]: (...args: Array<any>) => EventFilter };
-
-    // This will always be an address. This will only differ from
-    // address if an ENS name was used in the constructor
     readonly resolvedAddress?: Promise<string>;
-
-    // This is only set if the contract was created with a call to deploy
     readonly deployTransaction?: TransactionResponse;
-
 
     constructor(
         addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>,
@@ -33,13 +27,12 @@ export class Contract {
         this.chainId = chainId
         
         this.baseContract = new ethers.Contract(addressOrName, contractInterface, signerOrProvider)
-        // @ts-ignore
+        
         const functionsNames = contractInterface.map((ci: any) => ci.name)
         functionsNames.forEach((key: any) => {
             this[key] = async (...args: any): Promise<any> => {
                 let response: any
                 try {
-                    // @ts-ignore
                     response = await this.baseContract[key](...args)
                     const payload = {
                         chainId: this.chainId,
@@ -63,7 +56,7 @@ export class Contract {
                             address,
                             error.reason
                         )
-                        NotifyBuilder.build(this.apiKey, this.chainId).error(contracError)
+                        NotifyBuilder.build(this.apiKey, this.chainId).contractError(contracError)
                         error.DappSonar = true
                     }
                     throw error
