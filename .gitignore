@@ -6,3 +6,4 @@ coverage
 *.log
 yarn.lock
 .env
+.vscode

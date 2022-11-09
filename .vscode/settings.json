@@ -1,9 +1,0 @@
-{
-    "editor.rulers": [
-        100
-    ],
-    "workbench.colorCustomizations": {
-        "editorRuler.foreground": "#ff4081"
-    },
-    "codetogether.virtualCursorJoin": "sharedVirtualCursor"
-}
