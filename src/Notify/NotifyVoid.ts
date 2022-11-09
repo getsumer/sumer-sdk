@@ -14,7 +14,7 @@ export class NotifyVoid implements Notify {
         return
     }
 
-    static error(_msg: ContractError | ProviderError) {
+    static error(_msg: ContractError | ProviderError | any) {
         return
     }
 }

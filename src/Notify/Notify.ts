@@ -25,6 +25,7 @@ export class NotifyBuilder {
             
             return new NotifyVoid
         }
+        
         if (undefined === apikey) {
 
             return new NotifyLog()

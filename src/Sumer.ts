@@ -5,11 +5,11 @@ import { Contract } from './Contract'
 import { ProviderError } from './Errors/ProviderError'
 import { NotifyBuilder } from './Notify/Notify'
 
-export class DappSonar extends Web3Provider {
+export class Sumer extends Web3Provider {
   static apikey?: string
   [key: string]: any;
   public actualAddres: string | undefined
-  private static instance: DappSonar;
+  private static instance: Sumer;
   static chainId:number;
   constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key?: string, network?: Networkish,) {
 
@@ -25,8 +25,8 @@ export class DappSonar extends Web3Provider {
     this.instance = this;
 
   }
-  public static getInstance(): DappSonar | undefined {
-    return DappSonar.instance;
+  public static getInstance(): Sumer | undefined {
+    return Sumer.instance;
   }
 
 

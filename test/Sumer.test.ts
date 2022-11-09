@@ -1,5 +1,5 @@
 import { ProxyProvider } from '../src/ProxyProvider'
-import { DappSonar } from '../src/DappSonar'
+import { Sumer } from '../src/Sumer'
 import { ProviderError } from '../src/Errors/ProviderError'
 import { ContractError } from '../src/Errors/ContractError'
 import { deployContract, MockProvider } from 'ethereum-waffle'
@@ -13,7 +13,7 @@ const WALLET_PRIVATE_ADDRESS = process.env.PRIVATE_KEY
 const CONTRACT_ADDRESS = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
 
 describe('Test user can use Provider as expected', () => {
-    let provider: DappSonar
+    let provider: Sumer
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -31,7 +31,7 @@ describe('Test user can use Provider as expected', () => {
             }
         }
         const proxy = new ProxyProvider(mockProvider)
-        provider = new DappSonar(proxy, '123', 1)
+        provider = new Sumer(proxy, '123', 1)
 
         jest.resetAllMocks();
     })
@@ -51,7 +51,7 @@ describe('Test user can use Provider as expected', () => {
 })
 
 describe('Test Dappson catch fails from Provider', () => {
-    let provider: DappSonar
+    let provider: Sumer
 
     afterEach(() => {
         jest.clearAllMocks();
@@ -72,24 +72,29 @@ describe('Test Dappson catch fails from Provider', () => {
             selectedAddress: WALLET_PUBLIC_ADDRESS
         }
         const proxy = new ProxyProvider(mockProvider)
-        provider = new DappSonar(proxy, '123', 1)
+        provider = new Sumer(proxy, '123', 1)
+
+        jest.resetAllMocks();
     })
 
     it('DappSonar catch failure sign message, user reject', async () => {
-
-
-        const spy = jest.spyOn(NotifyVoid, 'error')
+        
+        const spy = jest.spyOn(NotifyVoid,'error')
 
         const signer = provider.getSigner()
+
         try {
             await signer.signMessage('message')
-        } catch (e) { }
-        expect(spy).toHaveBeenCalledTimes(1);
+        } catch (e) { console.log({e})}
+
+        expect(spy).toBeCalled();
+
         const error = new ProviderError(`This is a raw message`, 4001, WALLET_PUBLIC_ADDRESS)
 
         expect(spy).toHaveBeenCalledWith(
             expect.objectContaining(error)
         );
+        
         spy.mockClear()
 
     })
@@ -126,7 +131,7 @@ describe('Test Dappson catch fails from Provider', () => {
             }
         ]
         const signer = provider.getSigner()
-        const USDTContract = DappSonar.Contract(CONTRACT_ADDRESS, abi, signer)
+        const USDTContract = Sumer.Contract(CONTRACT_ADDRESS, abi, signer)
         try {
             await USDTContract.approve(walletAddress, false);
         } catch (_e) { }
@@ -151,7 +156,7 @@ describe('Test Dappson catch fails from Provider', () => {
         const spy = jest.spyOn(NotifyVoid, 'error')
 
         const web3Provider = new MockProvider();
-        const provider = new DappSonar(new ProxyProvider(web3Provider.provider), '123')
+        const provider = new Sumer(new ProxyProvider(web3Provider.provider), '123')
         provider.getWallets = () => web3Provider.getWallets()
 
         const wallets = provider.getWallets();
@@ -185,7 +190,7 @@ describe('Test Dappson catch fails from Provider', () => {
     it(`Contract revert on call no exist function`, async () => {
         const spy = jest.spyOn(NotifyVoid, 'error')
         const web3Provider = new MockProvider();
-        const provider = new DappSonar(new ProxyProvider(web3Provider.provider), '123')
+        const provider = new Sumer(new ProxyProvider(web3Provider.provider), '123')
         provider.getWallets = () => web3Provider.getWallets()
         const [wallet] = provider.getWallets();
         const token = await deployContract(wallet, ERC20, [wallet.address, 1000]);
@@ -204,7 +209,7 @@ describe('Test Dappson catch fails from Provider', () => {
             stateMutability: "view",
             type: "function"
         }]
-        const TokenContract = DappSonar.Contract(contractAddres, [
+        const TokenContract = Sumer.Contract(contractAddres, [
             ...ERC20.abi, ...noExistAbiFragment
         ], signer)
         try {
@@ -303,7 +308,7 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
             stateMutability: "view",
             type: "function"
         }]
-        const TokenContract = DappSonar.Contract(CONTRACT_ADDRESS, [
+        const TokenContract = Sumer.Contract(CONTRACT_ADDRESS, [
             ...ERC20.abi, ...noExistAbiFragment
         ], wallet)
         try {
@@ -328,7 +333,7 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
 
             let wallet = new ethers.Wallet(WALLET_PRIVATE_ADDRESS as BytesLike, web3Provider);
 
-            const USDTContract = DappSonar.Contract(CONTRACT_ADDRESS, [
+            const USDTContract = Sumer.Contract(CONTRACT_ADDRESS, [
                 ...ERC20.abi
             ], wallet)
 

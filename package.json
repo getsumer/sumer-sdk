@@ -19,15 +19,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Wagmi-VS/dappsonar.git"
+    "url": "https://github.com/Wagmi-VS/sumer-sdk.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Wagmi-VS/dappsonar/issues"
+    "url": "https://github.com/Wagmi-VS/sumer-sdk/issues"
   },
-  "homepage": "https://github.com/Wagmi-VS/dappsonar#readme",
+  "homepage": "https://github.com/Wagmi-VS/sumer-sdk#readme",
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
