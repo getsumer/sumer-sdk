@@ -4,13 +4,13 @@ import { ProviderError } from '../src/Errors/ProviderError'
 import { ContractError } from '../src/Errors/ContractError'
 import { deployContract, MockProvider } from 'ethereum-waffle'
 import ERC20 from "./fixtures/build/ERC20.json";
-import { ethers, Wallet } from 'ethers'
+import { ethers, Wallet, BytesLike } from 'ethers';
 import { NotifyVoid } from '../src/Notify/NotifyVoid'
+require('dotenv').config()
 
 const WALLET_PUBLIC_ADDRESS = '0x14791697260E4c9A71f18484C9f997B308e59325'
-const WALLET_PRIVATE_ADDRESS = '0x0123456789012345678901234567890123456789012345678901234567890123'
+const WALLET_PRIVATE_ADDRESS = process.env.PRIVATE_KEY
 const CONTRACT_ADDRESS = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
-
 
 describe('Test user can use Provider as expected', () => {
     let provider: DappSonar
@@ -226,8 +226,10 @@ describe('Test Dappson catch fails from Provider', () => {
 // run  "ganache-cli" on console
 describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
     let provider
+    const provUrl = `https://mainnet.infura.io/v3JK/${process.env.INFURA_MAINNET}`
+    console.log(provUrl)
     beforeEach(() => {
-        const web3Provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/29eaeb3e15234a2c93e9045c949192e6')
+        const web3Provider = new ethers.providers.JsonRpcProvider(provUrl)
 
         provider = new ProxyProvider(web3Provider)
         provider.selectedAddress = WALLET_PUBLIC_ADDRESS
@@ -287,7 +289,7 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
     it(`Contract Revert on no exist function`, async () => {
         const spy = jest.spyOn(NotifyVoid, 'error')
 
-        let wallet = new ethers.Wallet(WALLET_PRIVATE_ADDRESS, provider);
+        let wallet = new ethers.Wallet(WALLET_PRIVATE_ADDRESS as BytesLike, provider);
         const noExistAbiFragment = [{
             inputs: [],
             name: "thisFunctionNoExist",
@@ -322,9 +324,9 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
     it(`Contract Revert on send transaction`, async () => {
         const spy = jest.spyOn(NotifyVoid, 'error')
         try {
-            const web3Provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/29eaeb3e15234a2c93e9045c949192e6')
+            const web3Provider = new ethers.providers.JsonRpcProvider(`https://mainnet.infura.io/v3JK/${process.env.INFURA_MAINNET}`)
 
-            let wallet = new ethers.Wallet(WALLET_PRIVATE_ADDRESS, web3Provider);
+            let wallet = new ethers.Wallet(WALLET_PRIVATE_ADDRESS as BytesLike, web3Provider);
 
             const USDTContract = DappSonar.Contract(CONTRACT_ADDRESS, [
                 ...ERC20.abi
