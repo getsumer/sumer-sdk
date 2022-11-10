@@ -8,6 +8,8 @@
   Sumer SDK Quickstart
 </h2>
 
+[![npm version](https://badge.fury.io/js/sumer-sdk.svg)](https://badge.fury.io/js/sumer-sdk)
+
 #### Sumer is the easiest way to track your dapp activity, install and integrate the sumer-sdk within few lines of code  :rocket:
 
 
