@@ -232,7 +232,7 @@ describe('Test Dappson catch fails from Provider', () => {
 describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
     let provider
     const provUrl = `https://mainnet.infura.io/v3JK/${process.env.INFURA_MAINNET}`
-    console.log(provUrl)
+
     beforeEach(() => {
         const web3Provider = new ethers.providers.JsonRpcProvider(provUrl)
 

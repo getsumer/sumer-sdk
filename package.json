@@ -1,7 +1,7 @@
 {
   "name": "sumer-sdk",
   "version": "1.0.0",
-  "description": "",
+  "description": "A package that allows devs to track the errors that may occur in EVM-based Dapps",
   "main": "build/module/index.js",
   "typings": "build/module/index.d.ts",
   "module": "build/module/index.js",
@@ -22,8 +22,10 @@
     "url": "https://github.com/Wagmi-VS/sumer-sdk.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name": "Wagmi Venture Studio"
+  },
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Wagmi-VS/sumer-sdk/issues"
   },
@@ -36,8 +38,7 @@
     "babel-jest": "^27.1.5",
     "bowser": "^2.11.0",
     "dotenv": "^16.0.3",
-    "ethers": "^5.7.0",
-    "yalc": "^1.0.0-pre.53"
+    "ethers": "^5.7.0"
   },
   "bundleDependencies": [
     "@ethersproject/abi",
