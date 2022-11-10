@@ -22,9 +22,33 @@
 npm i sumer-sdk
 ```
 
-#### After getting your Dapp Key in our :parrot:sumer analytics app:parrot:, you can start using sumer:
+#### After installing the sumer-sdk and getting your Dapp Key in our :parrot:sumer analytics app:parrot:, you can start using sumer:
 
-#### Integrate with [web3-react](https://github.com/Uniswap/web3-react)
+* General usage:<br>
+```JS
+...
+import { SumerObserver, Client } from "sumer-sdk";
+const key = 'YOUR_DAPP_KEY'
+
+const sumerClient = new Client(window.ethereum, key)
+const provider = new SumerObserver(sumerClient, key)
+
+```
+
+  * Listen to your contracts:
+  
+```JS
+...
+import { SumerObserver} from "sumer-sdk";
+const key = 'YOUR_DAPP_KEY'
+
+const contract = SumerObserver.Contract(contract args..., key, chainId)
+...
+```
+
+
+* Integrate with [web3-react](https://github.com/Uniswap/web3-react):
+
 ```JS
 ...
 import { Web3ReactProvider } from "@web3-react/core";
@@ -44,17 +68,7 @@ const getLibrary = (provider) => {
   </Web3ReactProvider>,
 ```
 
-##### Listen to your contracts
-```JS
-...
-import { SumerObserver} from "sumer-sdk";
-const key = 'YOUR_DAPP_KEY'
-
-const contract = SumerObserver.Contract(contract args..., key, chainId)
-...
-
-```
 
 
-#### Integrate with [wagmish](https://wagmi.sh/)
-- to be added
+* Integrate with [wagmish](https://wagmi.sh/):
+to be added
