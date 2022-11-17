@@ -23,7 +23,7 @@ export class NotifyBuilder {
 
         if (env === 'test') {
             
-            return new NotifyVoid
+            return new NotifyVoid()
         }
         
         if (undefined === apikey) {

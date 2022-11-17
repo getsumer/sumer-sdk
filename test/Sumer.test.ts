@@ -79,13 +79,13 @@ describe('Test Dappson catch fails from Provider', () => {
 
     it('DappSonar catch failure sign message, user reject', async () => {
         
-        const spy = jest.spyOn(NotifyVoid,'error')
+        const spy = jest.spyOn(NotifyVoid.prototype,'providerError')
 
         const signer = provider.getSigner()
 
         try {
             await signer.signMessage('message')
-        } catch (e) { console.log({e})}
+        } catch (e) { }
 
         expect(spy).toBeCalled();
 
@@ -101,7 +101,7 @@ describe('Test Dappson catch fails from Provider', () => {
 
     it('DappSonar catch failure on contract build method', async () => {
 
-        const spy = jest.spyOn(NotifyVoid, 'error')
+        const spy = jest.spyOn(NotifyVoid.prototype, 'contractError')
 
         const walletAddress = provider.actualAddres
 
@@ -153,7 +153,7 @@ describe('Test Dappson catch fails from Provider', () => {
     })
 
     it(`Revert on call send transaction`, async () => {
-        const spy = jest.spyOn(NotifyVoid, 'error')
+        const spy = jest.spyOn(NotifyVoid.prototype, 'providerError')
 
         const web3Provider = new MockProvider();
         const provider = new Sumer(new ProxyProvider(web3Provider.provider), '123')
@@ -188,7 +188,9 @@ describe('Test Dappson catch fails from Provider', () => {
     })
 
     it(`Contract revert on call no exist function`, async () => {
-        const spy = jest.spyOn(NotifyVoid, 'error')
+
+        const spyProvider = jest.spyOn(NotifyVoid.prototype, 'providerError')
+        const spyContract = jest.spyOn(NotifyVoid.prototype, 'contractError')
         const web3Provider = new MockProvider();
         const provider = new Sumer(new ProxyProvider(web3Provider.provider), '123')
         provider.getWallets = () => web3Provider.getWallets()
@@ -217,13 +219,15 @@ describe('Test Dappson catch fails from Provider', () => {
             await TokenContract.thisFunctionNoExist()
         } catch (e) {
         }
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spyProvider).toHaveBeenCalledTimes(1);
+        expect(spyContract).toHaveBeenCalledTimes(1);
         const p_error = new ProviderError('VM Exception while processing transaction: revert', -32000, '0x17ec8597ff92c3f44523bdc65bf0f1be632917ff')
         const c_error = new ContractError(contractAddres, 'thisFunctionNoExist', [], wallet.address, 'missing revert data in call exception; Transaction reverted without a reason string')
 
-        expect(spy).toHaveBeenNthCalledWith(1, expect.objectContaining(p_error));
-        expect(spy).toHaveBeenNthCalledWith(2, expect.objectContaining(c_error));
-        spy.mockClear()
+        expect(spyProvider).toHaveBeenNthCalledWith(1, expect.objectContaining(p_error));
+        expect(spyContract).toHaveBeenNthCalledWith(1, expect.objectContaining(c_error));
+        spyProvider.mockClear()
+        spyContract.mockClear()
     });
 });
 
@@ -243,7 +247,7 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
         jest.clearAllMocks();
     });
     it('-32600', async () => {
-        const spy = jest.spyOn(NotifyVoid, 'error')
+        const spy = jest.spyOn(NotifyVoid.prototype, 'providerError')
         try {
             await provider.getGasPrice()
         } catch (e) {
@@ -259,7 +263,7 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
         spy.mockClear()
     })
     it(`-32601`, async () => {
-        const spy = jest.spyOn(NotifyVoid, 'error')
+        const spy = jest.spyOn(NotifyVoid.prototype, 'providerError')
         try {
             await provider.send('noExistMethod',)
         } catch (e) {
@@ -275,7 +279,7 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
         spy.mockClear()
     })
     it(`-32602`, async () => {
-        const spy = jest.spyOn(NotifyVoid, 'error')
+        const spy = jest.spyOn(NotifyVoid.prototype, 'providerError')
         try {
             await provider.send('eth_call', [])
         } catch (e) {
@@ -292,7 +296,7 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
     })
 
     it(`Contract Revert on no exist function`, async () => {
-        const spy = jest.spyOn(NotifyVoid, 'error')
+        const spy = jest.spyOn(NotifyVoid.prototype, 'contractError')
 
         let wallet = new ethers.Wallet(WALLET_PRIVATE_ADDRESS as BytesLike, provider);
         const noExistAbiFragment = [{
@@ -327,7 +331,7 @@ describe(`Test Dappsonar catch fails from RPC Mainnet`, () => {
     });
 
     it(`Contract Revert on send transaction`, async () => {
-        const spy = jest.spyOn(NotifyVoid, 'error')
+        const spy = jest.spyOn(NotifyVoid.prototype, 'contractError')
         try {
             const web3Provider = new ethers.providers.JsonRpcProvider(`https://mainnet.infura.io/v3JK/${process.env.INFURA_MAINNET}`)
 
