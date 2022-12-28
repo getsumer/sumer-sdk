@@ -20,7 +20,7 @@ export declare class Contract {
         [name: string]: ContractFunction<PopulatedTransaction>;
     };
     readonly filters?: {
-        [name: string]: (...args: Array<any>) => EventFilter;
+        [name: string]: (...args: any[]) => EventFilter;
     };
     readonly resolvedAddress?: Promise<string>;
     readonly deployTransaction?: TransactionResponse;

@@ -11,11 +11,18 @@ export class Sumer extends Web3Provider {
   public actualAddres: string | undefined
   private static instance: Sumer;
   static chainId:number;
+  private isProvider = false;
+
   constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key?: string, network?: Networkish,) {
 
     super(_provider, network)
     // @ts-ignore
     this.chainId=_provider.networkVersion
+
+    if(!this.isProvider){
+      this.isProvider = !!_provider
+      NotifyBuilder.build(key, this.chainId).setStatus()
+    }
 
     super.listAccounts().then((accounts) => {
       this.actualAddres = accounts[0]
@@ -28,7 +35,6 @@ export class Sumer extends Web3Provider {
   public static getInstance(): Sumer | undefined {
     return Sumer.instance;
   }
-
 
   public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apikey?: string, chainId?:number) {
     return new Contract(addressOrName, contractInterface, signerOrProvider,apikey, chainId)

@@ -1,9 +1,12 @@
-import axios from "axios";
+import { AxiosRequestHeaders } from "axios";
+import axios from 'axios';
 
 export class Api {
-    private headers: any;
+
+    private headers: AxiosRequestHeaders;
     //private url:string = 'http://127.0.0.1:3000'
-    private url:string = 'https://api.getsumer.com'
+    private url: string = 'https://api.getsumer.com'
+
     constructor(key: string, chainId: number) {
         this.headers = {
             Authorization: `${key}`,
@@ -11,17 +14,20 @@ export class Api {
         }
     }
 
-    sendContractError(body:any){
-        return axios.post(this.url+'/contract_errors', body, {headers: this.headers})
+    sendContractError(body: any) {
+        return axios.post(this.url + '/contract_errors', body, { headers: this.headers })
     }
 
-    sendTxHash(txHash:string, body:any){
+    sendTxHash(txHash: string, body: any) {
 
-        return axios.post(`${this.url}/tx/${txHash}`, body, {headers: this.headers})
+        return axios.post(`${this.url}/tx/${txHash}`, body, { headers: this.headers })
     }
-    sendProviderError(body:any){
+    sendProviderError(body: any) {
 
-        return axios.post(`${this.url}/exception`, body, {headers: this.headers})
+        return axios.post(`${this.url}/exception`, body, { headers: this.headers })
+    }
+    sendSetStatus() {
+        return axios.post(`${this.url}/set_status`, { status: 'provider detected' }, { headers: this.headers })
     }
 
 }

@@ -27,6 +27,7 @@ export const applyProxy = async (target: any, thisArg: any, argumentsList: any, 
 export class ProxyProvider {
 
     constructor(_provider: ExternalProvider | JsonRpcFetchFunc | any, apikey?: string) {
+
         const chainId = _provider.networkVersion
         const handler = {
             get(target: any, prop: any, _receiver: any) {
@@ -49,5 +50,4 @@ export class ProxyProvider {
         return new Proxy(_provider, handler)
     }
     [key: string]: any;
-
 }

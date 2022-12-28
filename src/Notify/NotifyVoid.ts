@@ -13,4 +13,7 @@ export class NotifyVoid implements Notify {
     contractError(_msg: ContractError | ProviderError): void {
         return
     }
+    setStatus(): void {
+        return
+    }
 }

@@ -15,19 +15,19 @@ export class Contract {
     readonly callStatic?: { [ name: string ]: ContractFunction };
     readonly estimateGas?: { [ name: string ]: ContractFunction<BigNumber> };
     readonly populateTransaction?: { [ name: string ]: ContractFunction<PopulatedTransaction> };
-    readonly filters?: { [ name: string ]: (...args: Array<any>) => EventFilter };
+    readonly filters?: { [ name: string ]: (...args: any[]) => EventFilter };
     readonly resolvedAddress?: Promise<string>;
     readonly deployTransaction?: TransactionResponse;
 
     constructor(
         addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>,
         signerOrProvider?: Signer | Provider, apiKey?: string, chainId?: number) {
-            
+
         this.apiKey = apiKey
         this.chainId = chainId
-        
+
         this.baseContract = new ethers.Contract(addressOrName, contractInterface, signerOrProvider)
-        
+
         const functionsNames = contractInterface.map((ci: any) => ci.name)
         functionsNames.forEach((key: any) => {
             this[key] = async (...args: any): Promise<any> => {

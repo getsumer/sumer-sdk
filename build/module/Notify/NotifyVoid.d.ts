@@ -5,5 +5,5 @@ export declare class NotifyVoid implements Notify {
     txHash(_message: ContractError): void;
     providerError(_message: ProviderError): void;
     contractError(_msg: ContractError | ProviderError): void;
-    static error(_msg: ContractError | ProviderError | any): void;
+    setStatus(): void;
 }

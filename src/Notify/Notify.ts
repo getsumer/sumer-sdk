@@ -13,19 +13,22 @@ export interface Notify {
 
     providerError(message: ProviderError | any): void;
 
+    setStatus(): void;
+
 }
 
 export class NotifyBuilder {
+
 
     static build(apikey?: string, chainId?: number, _env?: string): Notify {
 
         const env = _env ?? process.env.NODE_ENV
 
         if (env === 'test') {
-            
+
             return new NotifyVoid()
         }
-        
+
         if (undefined === apikey) {
 
             return new NotifyLog()

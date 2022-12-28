@@ -5,4 +5,5 @@ export declare class Api {
     sendContractError(body: any): Promise<import("axios").AxiosResponse<any, any>>;
     sendTxHash(txHash: string, body: any): Promise<import("axios").AxiosResponse<any, any>>;
     sendProviderError(body: any): Promise<import("axios").AxiosResponse<any, any>>;
+    sendSetStatus(): Promise<import("axios").AxiosResponse<any, any>>;
 }

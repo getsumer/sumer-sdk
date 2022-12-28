@@ -5,6 +5,7 @@ import { Notify } from './Notify'
 import { v4 } from 'uuid';
 
 export class NotifyApi implements Notify {
+    
     private client: Api
 
     constructor(client: Api) {
@@ -52,6 +53,10 @@ export class NotifyApi implements Notify {
             metadata: this.meta()
         }
         this.client.sendContractError(data)
+    }
+
+    setStatus(): void {
+        this.client.sendSetStatus()
     }
 
     private meta() {
