@@ -1,4 +1,5 @@
 export class ContractError {
+
     public contractAddress: string
     public name: string
     public address: string
@@ -11,9 +12,5 @@ export class ContractError {
         this.address = address
         this.contractAddress = addressOrName
         this.reason = reason
-    }
-
-    public toString () {
-        return `Error on Contract ${this.contractAddress} function "${this.name}" with args "${this.args.toString()}. Reason: ${this.reason} "`
     }
 }

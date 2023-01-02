@@ -33,12 +33,12 @@
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
-    "@openzeppelin/contracts": "^4.7.3",
     "axios": "^0.27.2",
     "babel-jest": "^27.1.5",
     "bowser": "^2.11.0",
     "dotenv": "^16.0.3",
-    "ethers": "^5.7.0"
+    "ethers": "^5.7.0",
+    "uuid": "^9.0.0"
   },
   "bundleDependencies": [
     "@ethersproject/abi",
@@ -49,9 +49,10 @@
     "ethers"
   ],
   "devDependencies": {
+    "@openzeppelin/contracts": "^4.8.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^18.7.18",
-    "ethereum-waffle": "^4.0.6",
+    "ethereum-waffle": "^4.0.7",
     "jest": "^27.5.1",
     "jest-ts-auto-mock": "^2.1.0",
     "ts-auto-mock": "^3.6.2",

@@ -4,18 +4,30 @@ import { BigNumber, ContractFunction, ethers, EventFilter, PopulatedTransaction,
 import { ContractError } from './Errors/ContractError'
 import { NotifyBuilder } from './Notify/Notify'
 
+export type txData = {
+    chainId: number | undefined
+    txHash: string | undefined
+    functionName: string | undefined
+    functionArgs: any[] | undefined
+}
+
+/**
+ * The Contract class is a wrapper of the ethersjs Contract class. It sends
+ * notifications (errors or tx data to the sumer api), when a contract function is called. 
+ */
 export class Contract {
     public baseContract: ethers.BaseContract
     private apiKey?: string
     private chainId?: number
 
+    //inherited from the baseContract instance
     readonly address: string;
     readonly interface?: Interface;
-    readonly functions?: { [ name: string ]: ContractFunction };
-    readonly callStatic?: { [ name: string ]: ContractFunction };
-    readonly estimateGas?: { [ name: string ]: ContractFunction<BigNumber> };
-    readonly populateTransaction?: { [ name: string ]: ContractFunction<PopulatedTransaction> };
-    readonly filters?: { [ name: string ]: (...args: any[]) => EventFilter };
+    readonly functions?: { [name: string]: ContractFunction };
+    readonly callStatic?: { [name: string]: ContractFunction };
+    readonly estimateGas?: { [name: string]: ContractFunction<BigNumber> };
+    readonly populateTransaction?: { [name: string]: ContractFunction<PopulatedTransaction> };
+    readonly filters?: { [name: string]: (...args: any[]) => EventFilter };
     readonly resolvedAddress?: Promise<string>;
     readonly deployTransaction?: TransactionResponse;
 
@@ -26,26 +38,34 @@ export class Contract {
         this.apiKey = apiKey
         this.chainId = chainId
 
+        // create the base contract
         this.baseContract = new ethers.Contract(addressOrName, contractInterface, signerOrProvider)
 
+        // get the functions names from the provided contract interface
         const functionsNames = contractInterface.map((ci: any) => ci.name)
+
+        // for each function name, create a new function that will call (wraps) the base contract function
         functionsNames.forEach((key: any) => {
             this[key] = async (...args: any): Promise<any> => {
-                let response: any
+                let response
                 try {
+                    // call the base contract function
                     response = await this.baseContract[key](...args)
-                    const payload = {
+
+                    const payload: txData = {
                         chainId: this.chainId,
-                        txHash: response.hash,
-                        functionName: key,
+                        txHash: response.hash as string,
+                        functionName: key as string,
                         functionArgs: args,
                     }
-
+                    // send payload with tx info
                     NotifyBuilder.build(this.apiKey, this.chainId).txHash(payload)
 
                 } catch (error: any) {
+
                     if (!error.DappSonar) {
                         let address: string
+
                         if (Signer.isSigner(signerOrProvider)) {
                             address = await signerOrProvider.getAddress()
                         }
@@ -56,6 +76,8 @@ export class Contract {
                             address,
                             error.reason
                         )
+
+                        // send error info
                         NotifyBuilder.build(this.apiKey, this.chainId).contractError(contracError)
                         error.DappSonar = true
                     }
@@ -64,6 +86,8 @@ export class Contract {
                 return response
             }
         })
+
+        // set the inherited properties
         this.address = this.baseContract.address
         this.interface = this.baseContract.interface
         this.functions = this.baseContract.functions

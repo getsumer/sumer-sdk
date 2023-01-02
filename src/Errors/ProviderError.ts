@@ -1,19 +1,16 @@
-import { BaseError } from './BaseError'
 import { EipError, findEipError } from './eip'
 
-export class ProviderError extends BaseError {
+export class ProviderError {
+
+    public message: string
+    public code: number
     public address: string
     public eip: EipError
-    constructor (message: string, code: any, address?: string) {
-        super(message, code)
+
+    constructor (message: string, code: any, address: string) {
+        this.message = message
+        this.code = code
         this.address = address
         this.eip = findEipError(code)
-
-    }
-    public toString () {
-        if (this.eip) {
-            return `[${this.code}] ${this.eip.description}`
-        }
-        return `[${this.code}] ${this.message}`
     }
 }

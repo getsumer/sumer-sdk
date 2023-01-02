@@ -1,12 +1,15 @@
-import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers'
+import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers';
 import { ProviderError } from './Errors/ProviderError'
 import { NotifyBuilder } from './Notify/Notify';
 
 export const applyProxy = async (target: any, thisArg: any, argumentsList: any, address: string, apikey?: string, chainId?: number) => {
     try {
+
         const res = await Reflect.apply(target, thisArg, argumentsList)
         return res
+
     } catch (error: any) {
+
         if (!error.DappSonar) {
 
             if (address === undefined && argumentsList[0]?.params[0]?.from) {

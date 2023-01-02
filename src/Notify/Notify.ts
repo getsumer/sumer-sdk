@@ -4,14 +4,15 @@ import { ProviderError } from '../Errors/ProviderError'
 import { NotifyApi } from './NotifyApi'
 import { NotifyLog } from './NotifyLog'
 import { NotifyVoid } from './NotifyVoid'
+import { txData } from '../Contract';
 
 export interface Notify {
 
-    contractError(msg: ContractError | ProviderError): void;
+    contractError(msg: ContractError): void;
 
-    txHash(message: any): void;
+    txHash(msg: txData): void;
 
-    providerError(message: ProviderError | any): void;
+    providerError(msg: ProviderError): void;
 
     setStatus(): void;
 

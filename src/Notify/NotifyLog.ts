@@ -2,10 +2,11 @@
 import { ContractError } from '../Errors/ContractError'
 import { ProviderError } from '../Errors/ProviderError'
 import { Notify } from './Notify'
+import { txData } from '../Contract';
 
 export class NotifyLog implements Notify {
 
-    txHash(message: ContractError): void {
+    txHash(message: txData): void {
         console.error("txHash Log:", message)
     }
 

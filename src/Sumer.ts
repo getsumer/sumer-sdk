@@ -5,21 +5,27 @@ import { Contract } from './Contract'
 import { ProviderError } from './Errors/ProviderError'
 import { NotifyBuilder } from './Notify/Notify'
 
+
+/**
+ * Sumer is a Provider that extends ethers Web3Provider. Sumer can track the errors 
+ * that may occur during the interaction with a contract or the provider.
+ */
 export class Sumer extends Web3Provider {
+
   static apikey?: string
-  [key: string]: any;
   public actualAddres: string | undefined
   private static instance: Sumer;
-  static chainId:number;
+  static chainId: number;
   private isProvider = false;
+  [key: string]: any;
 
-  constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key?: string, network?: Networkish,) {
+  constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key?: string, network?: Networkish) {
 
     super(_provider, network)
     // @ts-ignore
-    this.chainId=_provider.networkVersion
+    this.chainId = _provider.networkVersion
 
-    if(!this.isProvider){
+    if (!this.isProvider) {
       this.isProvider = !!_provider
       NotifyBuilder.build(key, this.chainId).setStatus()
     }
@@ -36,13 +42,16 @@ export class Sumer extends Web3Provider {
     return Sumer.instance;
   }
 
-  public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apikey?: string, chainId?:number) {
-    return new Contract(addressOrName, contractInterface, signerOrProvider,apikey, chainId)
+  // use the sumer contract to catch the errors
+  public static Contract(addressOrName: string, contractInterface: ReadonlyArray<Fragment | JsonFragment>, signerOrProvider?: Signer | Provider, apikey?: string, chainId?: number) {
+    return new Contract(addressOrName, contractInterface, signerOrProvider, apikey, chainId)
   }
 
+  // wrap sendTransaction to catch errors
   public async sendTransaction(signedTransaction: string | Promise<string>): Promise<TransactionResponse> {
     try {
       const response = await super.sendTransaction(signedTransaction)
+      // maybe send tx data also here 
       return response
     } catch (error) {
       if (!error.DappSonar) {
@@ -53,8 +62,9 @@ export class Sumer extends Web3Provider {
           from = this.actualAddres
         }
 
+        // notify the error to the sumer server
         const providerError = new ProviderError(error.message, error.code, from)
-        NotifyBuilder.build(this.apikey,this.chainId).providerError(providerError)
+        NotifyBuilder.build(this.apikey, this.chainId).providerError(providerError)
         error.DappSonar = true
       }
       throw error

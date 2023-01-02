@@ -1,16 +1,17 @@
 import { ContractError } from '../Errors/ContractError'
 import { ProviderError } from '../Errors/ProviderError'
 import { Notify } from './Notify'
+import { txData } from '../Contract';
 
 export class NotifyVoid implements Notify {
 
-    txHash(_message: ContractError): void {
+    txHash(_message: txData): void {
         return
     }
     providerError(_message: ProviderError): void {
         return
     }
-    contractError(_msg: ContractError | ProviderError): void {
+    contractError(_message: ContractError): void {
         return
     }
     setStatus(): void {
