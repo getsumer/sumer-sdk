@@ -3,13 +3,7 @@ import { Provider, TransactionResponse } from '@ethersproject/providers'
 import { BigNumber, ContractFunction, ethers, EventFilter, PopulatedTransaction, Signer } from 'ethers'
 import { ContractError } from './Errors/ContractError'
 import { NotifyBuilder } from './Notify/Notify'
-
-export type txData = {
-    chainId: number | undefined
-    txHash: string | undefined
-    functionName: string | undefined
-    functionArgs: any[] | undefined
-}
+import { txData } from './Types/TxData';
 
 /**
  * The Contract class is a wrapper of the ethersjs Contract class. It sends
@@ -56,7 +50,7 @@ export class Contract {
                         chainId: this.chainId,
                         txHash: response.hash as string,
                         functionName: key as string,
-                        functionArgs: args,
+                        args: args,
                     }
                     // send payload with tx info
                     NotifyBuilder.build(this.apiKey, this.chainId).txHash(payload)

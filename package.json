@@ -49,10 +49,8 @@
     "ethers"
   ],
   "devDependencies": {
-    "@openzeppelin/contracts": "^4.8.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^18.7.18",
-    "ethereum-waffle": "^4.0.7",
     "jest": "^27.5.1",
     "jest-ts-auto-mock": "^2.1.0",
     "ts-auto-mock": "^3.6.2",

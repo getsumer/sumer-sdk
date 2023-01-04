@@ -1,6 +1,10 @@
 import { Fragment, Interface, JsonFragment } from '@ethersproject/abi';
 import { Provider, TransactionResponse } from '@ethersproject/providers';
 import { BigNumber, ContractFunction, ethers, EventFilter, PopulatedTransaction, Signer } from 'ethers';
+/**
+ * The Contract class is a wrapper of the ethersjs Contract class. It sends
+ * notifications (errors or tx data to the sumer api), when a contract function is called.
+ */
 export declare class Contract {
     baseContract: ethers.BaseContract;
     private apiKey?;

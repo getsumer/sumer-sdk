@@ -1,8 +1,8 @@
 
 import { ContractError } from '../Errors/ContractError'
 import { ProviderError } from '../Errors/ProviderError'
+import { txData } from '../Types/TxData'
 import { Notify } from './Notify'
-import { txData } from '../Contract';
 
 export class NotifyLog implements Notify {
 
@@ -14,7 +14,7 @@ export class NotifyLog implements Notify {
         console.error("providerError Log:", message)
     }
 
-    contractError(msg: ContractError | ProviderError) {
+    contractError(msg: ContractError) {
         console.error("error log: ", msg)
     }
 

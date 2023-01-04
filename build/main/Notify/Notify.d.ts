@@ -1,9 +1,10 @@
 import { ContractError } from '../Errors/ContractError';
 import { ProviderError } from '../Errors/ProviderError';
+import { txData } from '../Types/TxData';
 export interface Notify {
-    contractError(msg: ContractError | ProviderError): void;
-    txHash(message: any): void;
-    providerError(message: ProviderError | any): void;
+    contractError(msg: ContractError): void;
+    txHash(msg: txData): void;
+    providerError(msg: ProviderError): void;
     setStatus(): void;
 }
 export declare class NotifyBuilder {

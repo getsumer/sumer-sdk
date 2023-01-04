@@ -1,10 +1,10 @@
 import { Api } from '../Api'
 import { ContractError } from '../Errors/ContractError'
 import { ProviderError } from '../Errors/ProviderError'
+import { txData } from '../Types/TxData'
 import { NotifyApi } from './NotifyApi'
 import { NotifyLog } from './NotifyLog'
 import { NotifyVoid } from './NotifyVoid'
-import { txData } from '../Contract';
 
 export interface Notify {
 

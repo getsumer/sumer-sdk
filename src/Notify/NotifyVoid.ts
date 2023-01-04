@@ -1,7 +1,7 @@
 import { ContractError } from '../Errors/ContractError'
 import { ProviderError } from '../Errors/ProviderError'
+import { txData } from '../Types/TxData'
 import { Notify } from './Notify'
-import { txData } from '../Contract';
 
 export class NotifyVoid implements Notify {
 

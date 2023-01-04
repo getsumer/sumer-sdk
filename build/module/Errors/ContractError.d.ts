@@ -5,5 +5,4 @@ export declare class ContractError {
     args: any[];
     reason: string;
     constructor(addressOrName: string, name: string, args: any[], address: string, reason: string);
-    toString(): string;
 }

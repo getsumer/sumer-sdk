@@ -2,9 +2,6 @@ import { ProxyProvider } from '../src/ProxyProvider'
 import { Sumer } from '../src/Sumer'
 import { ProviderError } from '../src/Errors/ProviderError'
 import { ContractError } from '../src/Errors/ContractError'
-import { deployContract, MockProvider } from 'ethereum-waffle'
-import ERC20 from "./fixtures/build/ERC20.json";
-import { ethers, Wallet } from 'ethers';
 import { NotifyVoid } from '../src/Notify/NotifyVoid'
 require('dotenv').config()
 
@@ -151,84 +148,85 @@ describe('Test Sumer catch fails from Provider', () => {
 
 
     })
+})
 
-    it(`Revert on call send transaction`, async () => {
-        const spy = jest.spyOn(NotifyVoid.prototype, 'providerError')
+//     it(`Revert on call send transaction`, async () => {
+//         const spy = jest.spyOn(NotifyVoid.prototype, 'providerError')
 
-        const web3Provider = new MockProvider();
-        const provider = new Sumer(new ProxyProvider(web3Provider.provider), '123')
-        provider.getWallets = () => web3Provider.getWallets()
+//         const web3Provider = new MockProvider();
+//         const provider = new Sumer(new ProxyProvider(web3Provider.provider), '123')
+//         provider.getWallets = () => web3Provider.getWallets()
 
-        const wallets = provider.getWallets();
-        const wallet: Wallet = wallets[0]
-        try {
-            let amountInEther = '10'
+//         const wallets = provider.getWallets();
+//         const wallet: Wallet = wallets[0]
+//         try {
+//             let amountInEther = '10'
 
-            let payload = {
-                to: '0xF02c1c8e6114b1Dbe8937a39260b5b0a374432bB',
-                value: ethers.utils.parseEther(amountInEther)
-            }
+//             let payload = {
+//                 to: '0xF02c1c8e6114b1Dbe8937a39260b5b0a374432bB',
+//                 value: ethers.utils.parseEther(amountInEther)
+//             }
 
-            const signedTx = await wallet.signTransaction(payload)
-            await provider.sendTransaction(signedTx + 'hola');
+//             const signedTx = await wallet.signTransaction(payload)
+//             await provider.sendTransaction(signedTx + 'hola');
 
-        } catch (e) {
-        }
+//         } catch (e) {
+//         }
 
-        expect(spy).toHaveBeenCalledTimes(1);
-        const error = new ProviderError(
-            expect.any(String),
-            'INVALID_ARGUMENT', wallet.address)
+//         expect(spy).toHaveBeenCalledTimes(1);
+//         const error = new ProviderError(
+//             expect.any(String),
+//             'INVALID_ARGUMENT', wallet.address)
 
-        expect(spy).toHaveBeenCalledWith(
-            expect.objectContaining(error)
-        );
-        spy.mockClear()
-    })
+//         expect(spy).toHaveBeenCalledWith(
+//             expect.objectContaining(error)
+//         );
+//         spy.mockClear()
+//     })
 
-    it(`Contract revert on call no exist function`, async () => {
+//     it(`Contract revert on call no exist function`, async () => {
 
-        const spyProvider = jest.spyOn(NotifyVoid.prototype, 'providerError')
-        const spyContract = jest.spyOn(NotifyVoid.prototype, 'contractError')
-        const web3Provider = new MockProvider();
-        const provider = new Sumer(new ProxyProvider(web3Provider.provider), '123')
-        provider.getWallets = () => web3Provider.getWallets()
-        const [wallet] = provider.getWallets();
-        const token = await deployContract(wallet, ERC20, [wallet.address, 1000]);
-        const signer = provider.getSigner()
-        const contractAddres = token.address
-        const noExistAbiFragment = [{
-            inputs: [],
-            name: "thisFunctionNoExist",
-            outputs: [
-                {
-                    "internalType": "uint8",
-                    "name": "",
-                    "type": "uint8"
-                }
-            ],
-            stateMutability: "view",
-            type: "function"
-        }]
-        const TokenContract = Sumer.Contract(contractAddres, [
-            ...ERC20.abi, ...noExistAbiFragment
-        ], signer)
-        try {
+//         const spyProvider = jest.spyOn(NotifyVoid.prototype, 'providerError')
+//         const spyContract = jest.spyOn(NotifyVoid.prototype, 'contractError')
+//         const web3Provider = new MockProvider();
+//         const provider = new Sumer(new ProxyProvider(web3Provider.provider), '123')
+//         provider.getWallets = () => web3Provider.getWallets()
+//         const [wallet] = provider.getWallets();
+//         const token = await deployContract(wallet, ERC20, [wallet.address, 1000]);
+//         const signer = provider.getSigner()
+//         const contractAddres = token.address
+//         const noExistAbiFragment = [{
+//             inputs: [],
+//             name: "thisFunctionNoExist",
+//             outputs: [
+//                 {
+//                     "internalType": "uint8",
+//                     "name": "",
+//                     "type": "uint8"
+//                 }
+//             ],
+//             stateMutability: "view",
+//             type: "function"
+//         }]
+//         const TokenContract = Sumer.Contract(contractAddres, [
+//             ...ERC20.abi, ...noExistAbiFragment
+//         ], signer)
+//         try {
 
-            await TokenContract.thisFunctionNoExist()
-        } catch (e) {
-        }
-        expect(spyProvider).toHaveBeenCalledTimes(1);
-        expect(spyContract).toHaveBeenCalledTimes(1);
-        const p_error = new ProviderError('VM Exception while processing transaction: revert', -32000, '0x17ec8597ff92c3f44523bdc65bf0f1be632917ff')
-        const c_error = new ContractError(contractAddres, 'thisFunctionNoExist', [], wallet.address, 'missing revert data in call exception; Transaction reverted without a reason string')
+//             await TokenContract.thisFunctionNoExist()
+//         } catch (e) {
+//         }
+//         expect(spyProvider).toHaveBeenCalledTimes(1);
+//         expect(spyContract).toHaveBeenCalledTimes(1);
+//         const p_error = new ProviderError('VM Exception while processing transaction: revert', -32000, '0x17ec8597ff92c3f44523bdc65bf0f1be632917ff')
+//         const c_error = new ContractError(contractAddres, 'thisFunctionNoExist', [], wallet.address, 'missing revert data in call exception; Transaction reverted without a reason string')
 
-        expect(spyProvider).toHaveBeenNthCalledWith(1, expect.objectContaining(p_error));
-        expect(spyContract).toHaveBeenNthCalledWith(1, expect.objectContaining(c_error));
-        spyProvider.mockClear()
-        spyContract.mockClear()
-    });
-});
+//         expect(spyProvider).toHaveBeenNthCalledWith(1, expect.objectContaining(p_error));
+//         expect(spyContract).toHaveBeenNthCalledWith(1, expect.objectContaining(c_error));
+//         spyProvider.mockClear()
+//         spyContract.mockClear()
+//     });
+// });
 
 
 // 

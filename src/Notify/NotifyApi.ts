@@ -3,34 +3,35 @@ import bowser from 'bowser'
 import { ContractError } from '../Errors/ContractError'
 import { Notify } from './Notify'
 import { v4 } from 'uuid';
+import { ProviderError } from '../Errors/ProviderError';
+import { txData } from '../Types/TxData';
 
 export class NotifyApi implements Notify {
-    
+
     private client: Api
 
     constructor(client: Api) {
         this.client = client
     }
 
-    txHash(message: any): void {
-        const id = v4().toString()
+    txHash(message: txData): void {
 
         const data = {
-            id,
+            id: v4(),
             chainId: message.chainId,
             txHash: message.txHash,
             functionName: message.functionName,
             functionArgs: message.args,
             metadata: this.meta()
         }
+
         this.client.sendTxHash(data.txHash, data)
     }
 
-    providerError(message: any): void {
-        const id = v4().toString()
+    providerError(message: ProviderError): void {
 
         const data = {
-            id,
+            id: v4(),
             userAddress: message.address,
             code: message.code,
             message: message.message,
@@ -41,10 +42,9 @@ export class NotifyApi implements Notify {
     }
 
     contractError(msg: ContractError) {
-        const id = v4().toString()
 
         const data = {
-            id,
+            id: v4(),
             userAddress: msg.address,
             contractAddress: msg.contractAddress,
             functionName: msg.name,

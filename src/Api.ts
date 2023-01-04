@@ -4,7 +4,7 @@ import axios from 'axios';
 export class Api {
 
     private headers: AxiosRequestHeaders;
-    //private url:string = 'http://127.0.0.1:3000'
+    // private url: string = 'http://127.0.0.1:3000'
     private url: string = 'https://api.getsumer.com'
 
     constructor(key: string, chainId: number) {

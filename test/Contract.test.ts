@@ -1,16 +1,16 @@
 import { Contract } from '../src/Contract';
 import { abi } from './fixtures/build/IERC20.json';
-import { MockProvider } from './fixtures/MockProvider';
 import { ethers } from 'ethers';
+import { MockProvider } from './__mocks__/MockProvider';
 
 describe('Contract', () => {
+
+    let provider = new MockProvider(5)
 
     it('should create a valid instance', async () => {
         const address = '0xBaF6dC2E647aeb6F510f9e318856A1BCd66C5e19';
         let apiKey = '7be660b0-7c34-4910-adeb-7775f433f4d0'
-        let prov= new MockProvider(1)
-        console.log(prov)
-        let contract = new Contract(address, abi, prov, apiKey, 2);
+        let contract = new Contract(address, abi, provider , apiKey, 5);
 
         expect(contract.baseContract).toBeInstanceOf(ethers.BaseContract);
         expect(contract.baseContract.address).toBe(address);
