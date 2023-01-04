@@ -41,14 +41,14 @@ export class Contract {
         // for each function name, create a new function that will call (wraps) the base contract function
         functionsNames.forEach((key: any) => {
             this[key] = async (...args: any): Promise<any> => {
-                let response
+                let response: TransactionResponse
                 try {
                     // call the base contract function
                     response = await this.baseContract[key](...args)
 
                     const payload: txData = {
                         chainId: this.chainId,
-                        txHash: response.hash as string,
+                        txHash: response.hash,
                         functionName: key as string,
                         args: args,
                     }

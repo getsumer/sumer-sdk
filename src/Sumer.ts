@@ -4,7 +4,7 @@ import { BytesLike, ethers, Signer } from 'ethers'
 import { Contract } from './Contract'
 import { ProviderError } from './Errors/ProviderError'
 import { NotifyBuilder } from './Notify/Notify'
-
+import { txData } from './Types/TxData'
 
 /**
  * Sumer is a Provider that extends ethers Web3Provider. Sumer can track the errors 
@@ -49,11 +49,20 @@ export class Sumer extends Web3Provider {
 
   // wrap sendTransaction to catch errors
   public async sendTransaction(signedTransaction: string | Promise<string>): Promise<TransactionResponse> {
+
     try {
       const response = await super.sendTransaction(signedTransaction)
-      // maybe send tx data also here 
+      // send tx data 
+      const payload: txData = {
+        chainId: this.chainId,
+        txHash: response.hash,
+      }
+      NotifyBuilder.build(this.apikey, this.chainId).txHash(payload)
+
       return response
+
     } catch (error) {
+
       if (!error.DappSonar) {
         let from = this.actualAddres
         try {
@@ -70,5 +79,4 @@ export class Sumer extends Web3Provider {
       throw error
     }
   }
-
 }
