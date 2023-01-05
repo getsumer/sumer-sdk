@@ -13,9 +13,6 @@
 #### Sumer is the easiest way to track your dapp activity, install and integrate the sumer-sdk within few lines of code  :rocket:
 
 
-### Supported chains:
-- Ethereum: Mainnet, Goerli
-- all compatible EVM networks will be added :building_construction:
 
 ### Install
 ```
