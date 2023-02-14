@@ -1,2 +1,2 @@
-export { DappSonar as Web3Provider } from './DappSonar'
-export { ProxyProvider as Provider } from './ProxyProvider'
+export { Sumer as SumerObserver } from './Sumer'
+export { ProxyProvider as Client } from './ProxyProvider'

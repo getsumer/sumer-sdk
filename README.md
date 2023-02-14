@@ -8,21 +8,41 @@
   Sumer SDK Quickstart
 </h2>
 
+[![npm version](https://badge.fury.io/js/sumer-sdk.svg)](https://badge.fury.io/js/sumer-sdk)
+
 #### Sumer is the easiest way to track your dapp activity, install and integrate the sumer-sdk within few lines of code  :rocket:
-
-
-### Supported chains:
-- Ethereum: Mainnet, Goerli
-- all compatible EVM networks will be added :building_construction:
 
 ### Install
 ```
 npm i sumer-sdk
 ```
 
-#### After getting your Dapp Key in our :parrot:sumer analytics app:parrot:, you can start using sumer:
+#### After installing the sumer-sdk and getting your Dapp Key in our :parrot:sumer analytics app:parrot:, you can start using sumer:
 
-#### Integrate with [web3-react](https://github.com/Uniswap/web3-react)
+* General usage:<br>
+```JS
+...
+import { SumerObserver, Client } from "sumer-sdk";
+const key = 'YOUR_DAPP_KEY'
+
+const sumerClient = new Client(window.ethereum, key)
+const provider = new SumerObserver(sumerClient, key)
+
+```
+
+  * Listen to your contracts:
+  
+```JS
+...
+import { SumerObserver} from "sumer-sdk";
+const key = 'YOUR_DAPP_KEY'
+
+const contract = SumerObserver.Contract(contract args..., key, chainId)
+...
+```
+
+* Integrate with [web3-react](https://github.com/Uniswap/web3-react):
+
 ```JS
 ...
 import { Web3ReactProvider } from "@web3-react/core";
@@ -42,17 +62,5 @@ const getLibrary = (provider) => {
   </Web3ReactProvider>,
 ```
 
-##### Listen to your contracts
-```JS
-...
-import { SumerObserver} from "sumer-sdk";
-const key = 'YOUR_DAPP_KEY'
-
-const contract = SumerObserver.Contract(contract args..., key, chainId)
-...
-
-```
-
-
-#### Integrate with [wagmish](https://wagmi.sh/)
-- to be added
+* Integrate with [wagmish](https://wagmi.sh/):
+to be added

@@ -1,46 +1,62 @@
 {
-  "name": "dappsonar",
-  "version": "1.0.0",
-  "description": "",
-  "main": "build/main/index.js",
-  "typings": "build/main/index.d.ts",
+  "name": "sumer-sdk",
+  "version": "4.2.1",
+  "description": "A package that allows devs to track the errors that may occur in EVM-based Dapps",
+  "main": "build/module/index.js",
+  "typings": "build/module/index.d.ts",
   "module": "build/module/index.js",
   "files": [
-    "/dist"
+    "./build/"
   ],
   "scripts": {
-    "build": "npm run  build:main && npm run  build:module",
+    "build": " NODE_ENV=production npm run  build:main &&  NODE_ENV=production npm run  build:module",
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
     "dev": "tsc -p tsconfig.module.json -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --colors",
+    "lint": "tslint --fix -c tslint.json 'src/**/*.ts'",
+    "preversion": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Wagmi-VS/dappsonar.git"
+    "url": "https://github.com/Wagmi-VS/sumer-sdk.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Wagmi-VS/dappsonar/issues"
+  "author": {
+    "name": "Wagmi Venture Studio"
   },
-  "homepage": "https://github.com/Wagmi-VS/dappsonar#readme",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Wagmi-VS/sumer-sdk/issues"
+  },
+  "homepage": "https://github.com/Wagmi-VS/sumer-sdk#readme",
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
-    "@types/browserify": "^12.0.37",
-    "browserify": "^17.0.0",
-    "ethers": "^5.7.0"
+    "axios": "^0.27.2",
+    "babel-jest": "^27.1.5",
+    "bowser": "^2.11.0",
+    "dotenv": "^16.0.3",
+    "ethers": "^5.7.0",
+    "uuid": "^9.0.0"
   },
+  "bundleDependencies": [
+    "@ethersproject/abi",
+    "@ethersproject/providers",
+    "axios",
+    "babel-jest",
+    "bowser",
+    "ethers"
+  ],
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^22.0.2",
-    "@rollup/plugin-node-resolve": "^14.0.0",
-    "@rollup/plugin-typescript": "^8.5.0",
-    "eslint": "^8.23.0",
-    "rollup": "^2.79.0",
-    "ts-node": "^10.9.1",
-    "tslib": "^2.4.0",
-    "typescript": "^4.8.2"
+    "@types/jest": "^27.5.2",
+    "@types/node": "^18.7.18",
+    "jest": "^27.5.1",
+    "jest-ts-auto-mock": "^2.1.0",
+    "ts-auto-mock": "^3.6.2",
+    "ts-jest": "^27.1.3",
+    "tslint": "^6.1.3",
+    "ttypescript": "^1.5.13",
+    "typescript": "^4.8.3"
   }
 }

@@ -1,7 +1,11 @@
 .idea/*
 .nyc_output
 node_modules
+build
 src/**.js
 coverage
 *.log
 yarn.lock
+.env
+.vscode
+.tmp
