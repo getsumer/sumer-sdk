@@ -12,8 +12,6 @@
 
 #### Sumer is the easiest way to track your dapp activity, install and integrate the sumer-sdk within few lines of code  :rocket:
 
-
-
 ### Install
 ```
 npm i sumer-sdk
@@ -43,7 +41,6 @@ const contract = SumerObserver.Contract(contract args..., key, chainId)
 ...
 ```
 
-
 * Integrate with [web3-react](https://github.com/Uniswap/web3-react):
 
 ```JS
@@ -64,8 +61,6 @@ const getLibrary = (provider) => {
     <YourDappComponents />
   </Web3ReactProvider>,
 ```
-
-
 
 * Integrate with [wagmish](https://wagmi.sh/):
 to be added
