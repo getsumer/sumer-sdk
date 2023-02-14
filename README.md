@@ -49,7 +49,7 @@ import { Web3ReactProvider } from "@web3-react/core";
 import { SumerObserver, Client } from "sumer-sdk";
 const key = 'YOUR_DAPP_KEY'
 
-//Configuration for web3-react
+// Configuration for web3-react
 const getLibrary = (provider) => {
   const client = new Client(provider, key)
   const library = new SumerObserver(client, key);
@@ -62,5 +62,4 @@ const getLibrary = (provider) => {
   </Web3ReactProvider>,
 ```
 
-* Integrate with [wagmish](https://wagmi.sh/):
-to be added
+* [TO BE ADDED] Integration with [wagmish](https://wagmi.sh/)

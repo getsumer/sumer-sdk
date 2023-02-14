@@ -1,14 +1,14 @@
 {
-    "defaultSeverity": "error",
-    "extends": [
-        "tslint:recommended"
-    ],
-    "jsRules": {},
-    "rules": {
-        "no-console": [
-            true,
-            "log"
-        ]
-    },
-    "rulesDirectory": []
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-console": [
+      true,
+      "log"
+    ]
+  },
+  "rulesDirectory": []
 }
