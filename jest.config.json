@@ -4,5 +4,8 @@
   "cacheDirectory": ".tmp/jestCache",
   "roots": [
     "<rootDir>/tests"
-  ]
+  ],
+  "moduleNameMapper": {
+    "axios": "axios/dist/node/axios.cjs"
+  }
 }
