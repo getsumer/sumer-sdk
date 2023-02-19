@@ -1,6 +1,6 @@
 import { ContractError } from '../Errors/ContractError'
 import { ProviderError } from '../Errors/ProviderError'
-import { TransactionData } from '../Types/transactionData'
+import { TransactionData } from '../Types/TransactionData'
 import { NotifyService } from './NotifyService'
 
 export class NotifyServiceLog implements NotifyService {
