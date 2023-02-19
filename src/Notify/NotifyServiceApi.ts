@@ -7,7 +7,7 @@ import { TransactionData } from '../Types/TransactionData'
 
 export class NotifyServiceApi implements NotifyService {
   private headers: RawAxiosRequestHeaders
-  private url: string = process.env.API_URL || 'http://localhost:3000'
+  private url: string = process.env.SUMER_URL || 'http://localhost:3000'
 
   constructor(apikey: string, chainId: number) {
     this.headers = {
