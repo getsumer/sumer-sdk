@@ -1,5 +1,4 @@
-import { ContractError } from '../Errors/ContractError'
-import { ProviderError } from '../Errors/ProviderError'
+import { ContractError, ProviderError } from '../Errors'
 import { TransactionData } from '../Types/TransactionData'
 
 export interface NotifyService {

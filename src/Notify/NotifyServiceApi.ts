@@ -1,9 +1,8 @@
 import axios, { RawAxiosRequestHeaders } from 'axios'
-import bowser from 'bowser'
-import { ContractError } from '../Errors/ContractError'
-import { NotifyService } from './NotifyService'
 import { v4 } from 'uuid'
-import { ProviderError } from '../Errors/ProviderError'
+import bowser from 'bowser'
+import { NotifyService } from './NotifyService'
+import { ProviderError, ContractError } from '../Errors'
 import { TransactionData } from '../Types/TransactionData'
 
 export class NotifyServiceApi implements NotifyService {
