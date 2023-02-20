@@ -54,6 +54,7 @@ export class Sumer {
       notifyService: this.notifyService,
     })
     this.sumerProviderInstance.listAccounts().then(accounts => (this._currentAddress = accounts[0]))
+    this.notifyService.checkConnection()
 
     return this.sumerProviderInstance
   }
