@@ -22,7 +22,7 @@ npm i sumer-sdk
 * General usage for injected providers:<br>
 ```JS
 ...
-import { Sumer } from "sumer-sdk";
+import { Sumer } from "sumer-sdk"
 const dappKey = 'YOUR_DAPP_KEY'
 
 const web3provider = new ethers.providers.Web3Provider(window.ethereum, dappKey)
@@ -38,7 +38,7 @@ await provider.send("eth_requestAccounts", [])
   
 ```JS
 ...
-import { Sumer } from "sumer-sdk";
+import { Sumer } from "sumer-sdk"
 const dappKey = 'YOUR_DAPP_KEY'
 
 const contract = Sumer.createWrappedContract(contract args..., dappKey)
@@ -52,7 +52,7 @@ const tx = contract.myFunction(...)
 
 ```JS
 ...
-import { Sumer } from "sumer-sdk";
+import { Sumer } from "sumer-sdk"
 const dappKey = 'YOUR_DAPP_KEY'
 
 // Configuration for web3-react
