@@ -17,27 +17,34 @@
 npm i sumer-sdk
 ```
 
-#### After installing the sumer-sdk and getting your Dapp Key in our :parrot:sumer analytics app:parrot:, you can start using sumer:
+#### After installing the sumer-sdk and getting your Dapp Key in our [sumer analytics app:parrot:](https://app.getsumer.com/), you can start using sumer:
 
-* General usage:<br>
+* General usage for injected providers:<br>
 ```JS
 ...
-import { SumerObserver, Client } from "sumer-sdk";
-const key = 'YOUR_DAPP_KEY'
+import { Sumer } from "sumer-sdk";
+const dappKey = 'YOUR_DAPP_KEY'
 
-const sumerClient = new Client(window.ethereum, key)
-const provider = new SumerObserver(sumerClient, key)
+const web3provider = new ethers.providers.Web3Provider(window.ethereum, dappKey)
 
+const provider = Sumer.init({ provider: web3provider, dappKey: dappKey })
+
+// Use the provider as usual
+await provider.send("eth_requestAccounts", [])
+...
 ```
 
   * Listen to your contracts:
   
 ```JS
 ...
-import { SumerObserver} from "sumer-sdk";
-const key = 'YOUR_DAPP_KEY'
+import { Sumer } from "sumer-sdk";
+const dappKey = 'YOUR_DAPP_KEY'
 
-const contract = SumerObserver.Contract(contract args..., key, chainId)
+const contract = Sumer.createWrappedContract(contract args..., dappKey)
+
+// Use the contract instance as usual
+const tx = contract.myFunction(...) 
 ...
 ```
 
@@ -45,21 +52,21 @@ const contract = SumerObserver.Contract(contract args..., key, chainId)
 
 ```JS
 ...
-import { Web3ReactProvider } from "@web3-react/core";
-import { SumerObserver, Client } from "sumer-sdk";
-const key = 'YOUR_DAPP_KEY'
+import { Sumer } from "sumer-sdk";
+const dappKey = 'YOUR_DAPP_KEY'
 
 // Configuration for web3-react
 const getLibrary = (provider) => {
-  const client = new Client(provider, key)
-  const library = new SumerObserver(client, key);
-  return library;
-};
+
+  const library = Sumer.init({ provider: provider, dappKey: dappKey })
+  
+  return library
+}
 
 // Use the Web3ReactProvider as usual
   <Web3ReactProvider getLibrary={getLibrary}>
     <YourDappComponents />
-  </Web3ReactProvider>,
+  </Web3ReactProvider>
 ```
 
-* [TO BE ADDED] Integration with [wagmish](https://wagmi.sh/)
+* If you want to use other web3 react hooks libraries, and you may have any trouble implementing it, please get in touch with us to provide you [support](https://discord.com/channels/1044217387119022080/1044252595616751676).
