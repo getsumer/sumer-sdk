@@ -17,6 +17,7 @@ interface SumerInitArguments {
   provider: ExternalProvider | JsonRpcFetchFunc
   dappKey: string
   network?: Networkish
+  dns?: string
 }
 
 /**
@@ -40,14 +41,14 @@ export class Sumer {
     return this.sumerProviderInstance
   }
 
-  static init({ provider, dappKey, network }: SumerInitArguments): Web3Provider {
+  static init({ provider, dappKey, network, dns }: SumerInitArguments): Web3Provider {
     if (this.sumerProviderInstance) {
       return this.sumerProviderInstance
     }
     // @ts-ignore
     this.chainId = provider.networkVersion
     this.dappKey = dappKey
-    this.notifyService = NotifyFactory.create(this.dappKey, this.chainId)
+    this.notifyService = NotifyFactory.create(this.dappKey, this.chainId, dns)
     this.sumerProviderInstance = new SumerProvider({
       provider,
       network,

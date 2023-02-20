@@ -3,14 +3,10 @@ import { NotifyServiceLog } from './NotifyServiceLog'
 import { NotifyService } from './NotifyService'
 
 export class NotifyFactory {
-  static create(
-    apikey?: string,
-    chainId?: number,
-    env: string = process.env.NODE_ENV,
-  ): NotifyService {
-    if (env === 'test' || !apikey) {
+  static create(apikey?: string, chainId?: number, dns?: string): NotifyService {
+    if (process.env.NODE_ENV === 'test' || !apikey) {
       return new NotifyServiceLog()
     }
-    return new NotifyServiceApi(apikey, chainId)
+    return new NotifyServiceApi(apikey, chainId, dns)
   }
 }

@@ -7,13 +7,14 @@ import { TransactionData } from '../Types/TransactionData'
 
 export class NotifyServiceApi implements NotifyService {
   private headers: RawAxiosRequestHeaders
-  private url: string = process.env.SUMER_URL || 'http://localhost:3000'
+  private url: string
 
-  constructor(apikey: string, chainId: number) {
+  constructor(apikey: string, chainId?: number, dns?: string) {
     this.headers = {
       Authorization: `${apikey}`,
       chainId: `${chainId}`,
     }
+    this.url = dns ?? 'https://api.getsumer.com'
   }
 
   public async trackTransaction({
