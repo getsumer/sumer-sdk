@@ -1,3 +1,4 @@
+import { Contract, BytesLike, ethers, Signer } from 'ethers'
 import { Fragment, JsonFragment } from '@ethersproject/abi'
 import {
   ExternalProvider,
@@ -7,84 +8,105 @@ import {
   TransactionResponse,
   Web3Provider,
 } from '@ethersproject/providers'
-import { BytesLike, ethers, Signer } from 'ethers'
-import { Contract } from './Contract'
-import { ProviderError } from './Errors/ProviderError'
-import { NotifyBuilder } from './Notify/Notify'
-import { txData } from './Types/TxData'
+import { NotifyService, NotifyFactory } from './Notify'
+import { SumerContract } from './SumerContract'
+import { SumerProvider } from './SumerProvider'
+import { ProviderError } from './Errors'
+
+interface SumerInitArguments {
+  provider: ExternalProvider | JsonRpcFetchFunc
+  dappKey: string
+  network?: Networkish
+  dns?: string
+}
 
 /**
- * Sumer is a Provider that extends ethers Web3Provider. Sumer can track the errors
- * that may occur during the interaction with a contract or the provider.
+ * Sumer provides a tracking mechanism for errors that may occur during
+ * the interaction with a contract or the provider itself
  */
-export class Sumer extends Web3Provider {
-  static apikey?: string
-  static chainId: number
-  public actualAddres: string | undefined
-  private static instance: Sumer
-  private isProvider = false
+export class Sumer {
+  private static notifyService: NotifyService
+  private static dappKey: string
+  private static chainId: number
+  private static sumerProviderInstance: SumerProvider
+  private static _currentAddress: string
 
-  constructor(_provider: ExternalProvider | JsonRpcFetchFunc, key?: string, network?: Networkish) {
-    super(_provider, network)
-    // @ts-ignore
-    this.chainId = _provider.networkVersion
+  private constructor() {}
 
-    if (!this.isProvider) {
-      this.isProvider = !!_provider
-      NotifyBuilder.build(key, Sumer.chainId).setStatus()
+  static get currentAddress() {
+    return this._currentAddress
+  }
+
+  static get provider() {
+    return this.sumerProviderInstance
+  }
+
+  static init({ provider, dappKey, network, dns }: SumerInitArguments): Web3Provider {
+    if (this.sumerProviderInstance) {
+      return this.sumerProviderInstance
     }
-
-    super.listAccounts().then(accounts => {
-      this.actualAddres = accounts[0]
+    // @ts-ignore
+    this.chainId = provider.networkVersion
+    this.dappKey = dappKey
+    this.notifyService = NotifyFactory.create(this.dappKey, this.chainId, dns)
+    this.sumerProviderInstance = new SumerProvider({
+      provider,
+      network,
+      notifyService: this.notifyService,
     })
+    this.sumerProviderInstance.listAccounts().then(accounts => (this._currentAddress = accounts[0]))
+    this.notifyService.checkConnection()
 
-    Sumer.apikey = key
-    Sumer.instance = this
-  }
-  public static getInstance(): Sumer | undefined {
-    return Sumer.instance
+    return this.sumerProviderInstance
   }
 
-  // use the sumer contract to catch the errors
-  public static Contract(
+  public static createWrappedContract(
     addressOrName: string,
     contractInterface: ReadonlyArray<Fragment | JsonFragment>,
     signerOrProvider?: Signer | Provider,
-    apikey?: string,
-    chainId?: number,
-  ) {
-    return new Contract(addressOrName, contractInterface, signerOrProvider, apikey, chainId)
+  ): Contract {
+    return new SumerContract({
+      addressOrName,
+      contractInterface,
+      signerOrProvider,
+      chainId: this.chainId,
+      notifyService: this.notifyService,
+    }) as Contract
   }
 
-  // wrap sendTransaction to catch errors
-  public async sendTransaction(
+  // Wrap sendTransaction to catch errors
+  public static async sendTransaction(
     signedTransaction: string | Promise<string>,
   ): Promise<TransactionResponse> {
     try {
-      const response = await super.sendTransaction(signedTransaction)
-      // send tx data
-      const payload: txData = {
-        chainId: Sumer.chainId,
+      const response = await this.sumerProviderInstance.sendTransaction(signedTransaction)
+      await this.notifyService.trackTransaction({
+        chainId: this.chainId,
         txHash: response.hash,
-      }
-      NotifyBuilder.build(Sumer.apikey, Sumer.chainId).txHash(payload)
+      })
 
       return response
     } catch (error) {
-      if (!error.DappSonar) {
-        let from = this.actualAddres
+      if (!error.Sumer) {
+        let from = this.currentAddress
         try {
           from = ethers.utils.parseTransaction(signedTransaction as BytesLike).from
         } catch (error) {
-          from = this.actualAddres
+          from = this.currentAddress
         }
-
-        // notify the error to the sumer server
-        const providerError = new ProviderError(error.message, error.code, from)
-        NotifyBuilder.build(Sumer.apikey, Sumer.chainId).providerError(providerError)
-        error.DappSonar = true
+        const providerError = new ProviderError({
+          message: error.message,
+          code: error.code,
+          address: from,
+        })
+        this.notifyService.trackError(providerError)
+        error.Sumer = true
       }
       throw error
     }
+  }
+
+  public static destroy() {
+    delete this.sumerProviderInstance
   }
 }

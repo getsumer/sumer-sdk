@@ -5,15 +5,13 @@
     "incremental": true,
     "target": "es2017",
     "outDir": "build/main",
-    "rootDir": "src",
+    "rootDir": "./",
     "moduleResolution": "node",
     "module": "commonjs",
     "declaration": true,
     "inlineSourceMap": true,
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
     "resolveJsonModule": true /* Include modules imported with .json extension. */,
-    // "strict": true /* Enable all strict type-checking options. */,
-    // "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
     "noUnusedLocals": true /* Report errors on unused locals. */,
     "noUnusedParameters": true /* Report errors on unused parameters. */,
     "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
@@ -42,7 +40,8 @@
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "tests/**/*.ts"
   ],
   "compileOnSave": true,
   "$schema": "https://json.schemastore.org/tsconfig",
