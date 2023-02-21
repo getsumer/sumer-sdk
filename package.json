@@ -1,6 +1,6 @@
 {
   "name": "sumer-sdk",
-  "version": "4.2.2",
+  "version": "4.2.3",
   "description": "A package that allows devs to track the errors that may occur in EVM-based Dapps",
   "main": "build/module/index.js",
   "typings": "build/module/index.d.ts",
