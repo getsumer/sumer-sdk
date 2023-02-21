@@ -17,9 +17,9 @@
 npm i sumer-sdk
 ```
 
-#### After installing the sumer-sdk and getting your Dapp Key in our [sumer analytics app:parrot:](https://app.getsumer.com/), you can start using sumer:
+#### After installing the Sumer SDK in your project and getting your dApp key from the signup process at [Sumer App](https://app.getsumer.com/), you can start using sumer as follows:
 
-* General usage for injected providers:<br>
+* Initialize the Sumer client by wrapping the provider:<br>
 ```JS
 ...
 import { Sumer } from "sumer-sdk"
@@ -27,14 +27,14 @@ const dappKey = 'YOUR_DAPP_KEY'
 
 const web3provider = new ethers.providers.Web3Provider(window.ethereum, dappKey)
 
-const provider = Sumer.init({ provider: web3provider, dappKey: dappKey })
+const provider = Sumer.init({ provider: web3provider, dappKey })
 
 // Use the provider as usual
 await provider.send("eth_requestAccounts", [])
 ...
 ```
 
-  * Listen to your contracts:
+  * Then wrap your contracts to automatically listen for events and errors:
   
 ```JS
 ...
@@ -58,7 +58,7 @@ const dappKey = 'YOUR_DAPP_KEY'
 // Configuration for web3-react
 const getLibrary = (provider) => {
 
-  const library = Sumer.init({ provider: provider, dappKey: dappKey })
+  const library = Sumer.init({ provider, dappKey })
   
   return library
 }
