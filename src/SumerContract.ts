@@ -60,6 +60,7 @@ export class SumerContract {
             })
 
             notifyService.trackError(contracError)
+            throw err
           }
         }
       },
