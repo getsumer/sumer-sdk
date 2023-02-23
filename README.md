@@ -17,7 +17,7 @@
 npm i sumer-sdk
 ```
 
-#### After installing the Sumer SDK in your project and getting your dApp key from the signup process at [Sumer App](https://app.getsumer.com/), you can start using sumer as follows:
+#### After installing the Sumer SDK in your project and getting your dApp key from the signup process at [Sumer App](https://app.getsumer.com/), you can start using Sumer as follows:
 
 * Initialize the Sumer client by wrapping the provider:<br>
 ```JS
@@ -39,9 +39,8 @@ await provider.send("eth_requestAccounts", [])
 ```JS
 ...
 import { Sumer } from "sumer-sdk"
-const dappKey = 'YOUR_DAPP_KEY'
 
-const contract = Sumer.createWrappedContract(contract args..., dappKey)
+const contract = Sumer.createWrappedContract(address, abi, signerOrProvider)
 
 // Use the contract instance as usual
 const tx = contract.myFunction(...) 

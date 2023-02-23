@@ -45,6 +45,7 @@ export class SumerProvider extends Web3Provider {
             })
             // Send payload with provider error
             notifyService.trackError(providerError)
+            throw err
           }
         }
       },
