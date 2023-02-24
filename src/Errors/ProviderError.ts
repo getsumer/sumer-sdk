@@ -7,10 +7,10 @@ interface ProviderErrorArguments {
 }
 
 export class ProviderError {
-  public message: string
-  public code: number
-  public address: string
-  public eip: EipError
+  public readonly message: string
+  public readonly code: number
+  public readonly address: string
+  public readonly eip: EipError
 
   constructor({ message, code, address }: ProviderErrorArguments) {
     this.message = message

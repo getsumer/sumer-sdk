@@ -1,10 +1,30 @@
 import bowser, { Parser } from 'bowser'
 import { NotifyService } from './NotifyService'
 import { ProviderError, ContractError } from '../Errors'
-import { TransactionData } from '../Types/TransactionData'
+import { Transaction } from '../Types/Transaction'
 
-interface FetchBody {
-  [key: string]: string | number | FetchBody | any
+interface TransactionBody {
+  chainId: number
+  txHash: string
+  functionName: string
+  functionArgs: any
+  metadata: Parser.ParsedResult | Record<string, string>
+}
+
+interface ErrorBody {
+  userAddress: string
+  message: string
+  metadata: Parser.ParsedResult | Record<string, string>
+}
+
+interface ContractErrorBody extends ErrorBody {
+  contractAddress: string
+  functionName: string
+  args: any
+}
+
+interface ProviderErrorBody extends ErrorBody {
+  code: number
 }
 
 export class NotifyServiceApi implements NotifyService {
@@ -24,7 +44,7 @@ export class NotifyServiceApi implements NotifyService {
     txHash,
     functionName,
     args,
-  }: TransactionData): Promise<void> {
+  }: Transaction): Promise<void> {
     this.fetchPost('transactions', {
       chainId,
       txHash,
@@ -35,7 +55,7 @@ export class NotifyServiceApi implements NotifyService {
   }
 
   public async trackError(error: ContractError | ProviderError): Promise<void> {
-    let body: FetchBody
+    let body: ContractErrorBody | ProviderErrorBody
     if (error instanceof ContractError) {
       body = {
         userAddress: error.signerOrProviderAddress,
@@ -57,10 +77,16 @@ export class NotifyServiceApi implements NotifyService {
   }
 
   public async checkConnection(): Promise<void> {
-    this.fetchPost('activate')
+    fetch(`${this.url}/check`, {
+      method: 'GET',
+      headers: this.headers,
+    })
   }
 
-  private fetchPost(uriPath: string, body?: FetchBody) {
+  private fetchPost(
+    uriPath: string,
+    body?: TransactionBody | ContractErrorBody | ProviderErrorBody,
+  ) {
     fetch(`${this.url}/${uriPath}`, {
       method: 'POST',
       headers: this.headers,
