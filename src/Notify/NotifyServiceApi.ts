@@ -73,7 +73,7 @@ export class NotifyServiceApi implements NotifyService {
         metadata: this.meta(),
       }
     }
-    this.fetchPost('w3errors', body)
+    this.fetchPost('errors', body)
   }
 
   public async checkConnection(): Promise<void> {
