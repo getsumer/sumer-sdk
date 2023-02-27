@@ -12,6 +12,7 @@ export class ContractError {
   public readonly name: string
   public readonly args: any[]
   public readonly reason: string
+  public readonly type = 'CONTRACT'
 
   constructor({
     contractAddress,

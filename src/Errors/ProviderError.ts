@@ -11,6 +11,7 @@ export class ProviderError {
   public readonly code: number
   public readonly address: string
   public readonly eip: EipError
+  public readonly type = 'WALLET'
 
   constructor({ message, code, address }: ProviderErrorArguments) {
     this.message = message
