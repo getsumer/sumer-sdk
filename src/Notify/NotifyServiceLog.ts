@@ -1,6 +1,6 @@
 import { NotifyService } from './NotifyService'
 import { ContractError, ProviderError } from '../Errors'
-import { TransactionData } from '../Types/TransactionData'
+import { Transaction } from '../Types/Transaction'
 
 export class NotifyServiceLog implements NotifyService {
   private _chainId: number
@@ -9,8 +9,8 @@ export class NotifyServiceLog implements NotifyService {
     return this._chainId
   }
 
-  public async trackTransaction(transactionData: TransactionData): Promise<void> {
-    console.info('trackTransaction Log:', transactionData)
+  public async trackTransaction(transaction: Transaction): Promise<void> {
+    console.info('trackTransaction Log:', transaction)
   }
 
   public async trackError(msg: ContractError | ProviderError): Promise<void> {

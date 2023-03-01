@@ -7,11 +7,12 @@ interface ContractErrorArguments {
 }
 
 export class ContractError {
-  public contractAddress: string
-  public signerOrProviderAddress: string
-  public name: string
-  public args: any[]
-  public reason: string
+  public readonly contractAddress: string
+  public readonly signerOrProviderAddress: string
+  public readonly name: string
+  public readonly args: any[]
+  public readonly reason: string
+  public readonly type = 'CONTRACT'
 
   constructor({
     contractAddress,
