@@ -36,6 +36,7 @@ export class NotifyServiceApi implements NotifyService {
     this.headers = {
       authorization: `${apikey}`,
       chainid: `${chainId}`,
+      'Content-Type': 'application/json',
     }
     this.url = dns ?? 'https://api.getsumer.com'
   }
