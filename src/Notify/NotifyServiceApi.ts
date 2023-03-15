@@ -1,7 +1,11 @@
 import bowser, { Parser } from 'bowser'
 import { NotifyService } from './NotifyService'
 import { ProviderError, ContractError } from '../Errors'
-import { Transaction } from '../Types/Transaction'
+import {
+  ProcessedTransactionData,
+  ProcessedTransactionResult,
+  Transaction,
+} from '../Types/Transaction'
 
 interface TransactionBody {
   chainId: number
@@ -41,6 +45,12 @@ export class NotifyServiceApi implements NotifyService {
     this.url = dns ?? 'https://api.getsumer.com'
   }
 
+  public async trackProcessedTransaction(data: ProcessedTransactionResult): Promise<void> {
+    this.fetchPost('transactions', {
+      ...data,
+    })
+  }
+
   public async trackTransaction({
     chainId,
     txHash,
@@ -71,6 +81,7 @@ export class NotifyServiceApi implements NotifyService {
     } else {
       body = {
         userAddress: error.address,
+        contractAddress: error.toAddress,
         code: error.code,
         message: error.message,
         errorType: error.type,
@@ -89,7 +100,7 @@ export class NotifyServiceApi implements NotifyService {
 
   private fetchPost(
     uriPath: string,
-    body?: TransactionBody | ContractErrorBody | ProviderErrorBody,
+    body?: TransactionBody | ContractErrorBody | ProviderErrorBody | ProcessedTransactionData,
   ) {
     fetch(`${this.url}/${uriPath}`, {
       method: 'POST',
