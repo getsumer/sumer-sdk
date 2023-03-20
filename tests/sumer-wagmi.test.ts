@@ -18,6 +18,10 @@ describe('sumerProvider', () => {
     providerFn = jest.fn().mockReturnValue(mockProvider)
     wrappedProviderFn = sumerProvider(providerFn)
     provider = wrappedProviderFn({ chainId: 1 })
+    jest.spyOn(console, 'info').mockImplementation(() => {})
+  })
+  afterAll(() => {
+    jest.clearAllMocks()
   })
 
   it('should properly call _waitForTransaction', async () => {
@@ -50,6 +54,9 @@ describe('getUserRejectedRequest', () => {
   let trackErrorSpy
 
   beforeEach(() => {
+    jest.spyOn(console, 'info').mockImplementation(() => {})
+    jest.spyOn(console, 'error').mockImplementation(() => {})
+    jest.spyOn(console, 'warn').mockImplementation(() => {})
     originalWindow = global.window
     const dom = new JSDOM()
     global.window = dom.window
@@ -59,6 +66,7 @@ describe('getUserRejectedRequest', () => {
   afterEach(() => {
     global.window = originalWindow
     trackErrorSpy.mockRestore()
+    jest.clearAllMocks()
   })
 
   it('should track user reject  error', async () => {
@@ -70,8 +78,6 @@ describe('getUserRejectedRequest', () => {
     let error = new Error('User rejected the request')
     error.name = 'UserRejectedRequestError'
 
-    console.error = jest.fn().mockImplementation(() => {})
-    console.warn = jest.fn().mockImplementation(() => {})
     window.console.error(error)
 
     expect(trackErrorSpy).toHaveBeenCalledTimes(1)
