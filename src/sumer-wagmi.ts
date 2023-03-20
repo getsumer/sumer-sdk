@@ -64,7 +64,7 @@ export function sumerProvider<TProvider extends Provider = Provider>(
   return wrappedProviderFn
 }
 
-function getUserRejectedRequest({ dappKey, chainId }: UserRejectedRequestParams) {
+export function getUserRejectedRequest({ dappKey, chainId }: UserRejectedRequestParams) {
   if (typeof window !== 'undefined' && !window.userRejectedRequestInitialized) {
     const originalConsoleError = window.console.error
 

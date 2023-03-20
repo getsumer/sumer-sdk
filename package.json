@@ -57,6 +57,7 @@
     "jest": "^27.5.1",
     "jest-transform-stub": "^2.0.0",
     "jest-ts-auto-mock": "^2.1.0",
+    "jsdom": "^21.1.1",
     "lint-staged": "^13.1.2",
     "prettier": "^2.8.4",
     "ts-auto-mock": "^3.6.2",

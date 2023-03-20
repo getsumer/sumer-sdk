@@ -1,19 +1,10 @@
-import { providers } from 'ethers'
 import { NotifyServiceLog } from '../src/Notify'
 import { sumerProvider } from '../src/sumer-wagmi'
 import { ProcessedTransactionResult } from '../src/Types/Transaction'
-import { receipt, transaction, replaceable } from './__mocks__/Transaction'
-
-class CustomJsonRpcProvider extends providers.JsonRpcProvider {
-  async _waitForTransaction(
-    _transactionHash: string,
-    _confirmations: number,
-    _timeout: number,
-    _replaceable: object,
-  ) {
-    return receipt
-  }
-}
+import { transaction, replaceable } from './__mocks__/Transaction'
+import { getUserRejectedRequest } from '../src/sumer-wagmi'
+import { CustomJsonRpcProvider } from './__mocks__/CustomJsonRpcProvider'
+import { JSDOM } from 'jsdom'
 
 describe('sumerProvider', () => {
   let providerFn: jest.Mock
@@ -51,5 +42,38 @@ describe('sumerProvider', () => {
     expect(applySpy).toHaveBeenCalledWith(mockProvider, [transaction.hash, 1, 1, replaceable])
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toHaveBeenCalledWith(txData)
+  })
+})
+
+describe('getUserRejectedRequest', () => {
+  let originalWindow
+  let trackErrorSpy
+
+  beforeEach(() => {
+    originalWindow = global.window
+    const dom = new JSDOM()
+    global.window = dom.window
+    trackErrorSpy = jest.spyOn(NotifyServiceLog.prototype, 'trackError')
+  })
+
+  afterEach(() => {
+    global.window = originalWindow
+    trackErrorSpy.mockRestore()
+  })
+
+  it('should track user reject  error', async () => {
+    const dappKey = 'dappKey'
+    const chainId = 1
+
+    getUserRejectedRequest({ dappKey, chainId })
+
+    let error = new Error('User rejected the request')
+    error.name = 'UserRejectedRequestError'
+
+    console.error = jest.fn().mockImplementation(() => {})
+    console.warn = jest.fn().mockImplementation(() => {})
+    window.console.error(error)
+
+    expect(trackErrorSpy).toHaveBeenCalledTimes(1)
   })
 })
