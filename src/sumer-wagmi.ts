@@ -1,7 +1,7 @@
 import { Chain, createClient, ProviderWithFallbackConfig } from '@wagmi/core'
 import { providers } from 'ethers'
 import { NotifyFactory } from './Notify'
-import { ProcessedTransactionResult } from './Types/Transaction'
+import { TxReceipt } from './Transactions/TxReceipt'
 import { TransactionReceipt } from '@ethersproject/providers'
 import { ProviderError } from './Errors'
 
@@ -46,13 +46,13 @@ export function sumerProvider<TProvider extends Provider = Provider>(
             if (method.name === '_waitForTransaction') {
               const transactionReceipt = await method.apply(target, args)
 
-              const txData = new ProcessedTransactionResult({
+              const txData = new TxReceipt({
                 wallet: createClient({ provider }).storage.getItem('wallet'),
                 chainId: provider._network.chainId,
-                data: transactionReceipt as TransactionReceipt,
+                txReceipt: transactionReceipt as TransactionReceipt,
               })
 
-              await NotifyFactory.create(dappKey).trackProcessedTransaction(txData)
+              await NotifyFactory.create(dappKey).trackTxReceipt(txData)
               return transactionReceipt
             }
           }
@@ -78,10 +78,11 @@ export function getUserRejectedRequest({ dappKey, chainId }: UserRejectedRequest
               address: error.cause?.transaction?.from,
               toAddress: error.cause?.transaction?.to,
               code: error.code,
+              chainId,
             })
 
             const sendError = async (error: ProviderError) => {
-              await NotifyFactory.create(dappKey, chainId).trackError(error)
+              await NotifyFactory.create(dappKey).trackError(error)
             }
 
             sendError(rejectError)

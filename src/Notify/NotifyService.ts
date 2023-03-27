@@ -1,9 +1,8 @@
 import { ContractError, ProviderError } from '../Errors'
-import { ProcessedTransactionResult, Transaction } from '../Types/Transaction'
-
+import { TxReceipt, TxResponse } from '../Transactions'
 export interface NotifyService {
   trackError(error: ContractError | ProviderError): Promise<void>
-  trackTransaction(transaction: Transaction): Promise<void>
+  trackTxResponse(txResponse: TxResponse): Promise<void>
   checkConnection(): Promise<void>
-  trackProcessedTransaction(processedTransactionResult: ProcessedTransactionResult): Promise<void>
+  trackTxReceipt(txReceipt: TxReceipt): Promise<void>
 }

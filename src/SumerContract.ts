@@ -3,7 +3,7 @@ import { Fragment, JsonFragment } from '@ethersproject/abi'
 import { Provider } from '@ethersproject/providers'
 import { NotifyService } from './Notify'
 import { ContractError } from './Errors'
-import { Transaction } from './Types/Transaction'
+import { TxResponse } from './Transactions/TxResponse'
 
 interface SumerContractArguments {
   addressOrName: string
@@ -39,13 +39,13 @@ export class SumerContract {
         return async (...args: any) => {
           try {
             const result = await method.apply(this, args)
-            const transaction = new Transaction({
+            const transaction = new TxResponse({
               chainId,
-              txHash: result.hash,
               functionName: prop,
               args: args,
+              txResponse: result,
             })
-            notifyService.trackTransaction(transaction)
+            await notifyService.trackTxResponse(transaction)
             return result
           } catch (err) {
             let signerOrProviderAddress: string
@@ -58,9 +58,10 @@ export class SumerContract {
               name: prop,
               args,
               reason: err.reason,
+              chainId,
             })
 
-            notifyService.trackError(contracError)
+            await notifyService.trackError(contracError)
             throw err
           }
         }

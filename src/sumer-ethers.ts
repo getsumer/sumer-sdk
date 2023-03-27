@@ -33,6 +33,7 @@ class LogProvider<T extends JsonRpcProvider> {
           message: error.message,
           code: error.code,
           address: from[0],
+          chainId: provider._network.chainId,
         })
         await NotifyFactory.create(dappKey).trackError(providerError)
         throw error

@@ -1,19 +1,7 @@
 import bowser, { Parser } from 'bowser'
 import { NotifyService } from './NotifyService'
 import { ProviderError, ContractError } from '../Errors'
-import {
-  ProcessedTransactionData,
-  ProcessedTransactionResult,
-  Transaction,
-} from '../Types/Transaction'
-
-interface TransactionBody {
-  chainId: number
-  txHash: string
-  functionName: string
-  functionArgs: any
-  metadata: Parser.ParsedResult | Record<string, string>
-}
+import { TxReceipt, TxResponse } from '../Transactions'
 
 interface ErrorBody {
   userAddress: string
@@ -36,33 +24,23 @@ export class NotifyServiceApi implements NotifyService {
   private headers: HeadersInit
   private url: string
 
-  constructor(apikey: string, chainId?: number, dns?: string) {
+  constructor(apikey: string, dns?: string) {
     this.headers = {
       authorization: `${apikey}`,
-      chainid: `${chainId}`,
       'Content-Type': 'application/json',
     }
     this.url = dns ?? 'https://api.getsumer.com'
   }
 
-  public async trackProcessedTransaction(data: ProcessedTransactionResult): Promise<void> {
+  public async trackTxReceipt(data: TxReceipt): Promise<void> {
     this.fetchPost('transactions', {
       ...data,
     })
   }
 
-  public async trackTransaction({
-    chainId,
-    txHash,
-    functionName,
-    args,
-  }: Transaction): Promise<void> {
+  public async trackTxResponse(data: TxResponse): Promise<void> {
     this.fetchPost('transactions', {
-      chainId,
-      txHash,
-      functionName,
-      functionArgs: args,
-      metadata: this.meta(),
+      ...data,
     })
   }
 
@@ -100,7 +78,7 @@ export class NotifyServiceApi implements NotifyService {
 
   private fetchPost(
     uriPath: string,
-    body?: TransactionBody | ContractErrorBody | ProviderErrorBody | ProcessedTransactionData,
+    body?: TxResponse | ContractErrorBody | ProviderErrorBody | TxReceipt,
   ) {
     fetch(`${this.url}/${uriPath}`, {
       method: 'POST',

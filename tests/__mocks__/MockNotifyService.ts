@@ -1,8 +1,8 @@
 import { NotifyService } from './../../src/Notify/NotifyService'
 
 export class MockNotifyService implements NotifyService {
-  trackProcessedTransaction = jest.fn()
+  trackTxReceipt = jest.fn()
   trackError = jest.fn()
-  trackTransaction = jest.fn()
+  trackTxResponse = jest.fn()
   checkConnection = jest.fn()
 }

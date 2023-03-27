@@ -25,9 +25,8 @@ npm i sumer-sdk
 import { Sumer } from "sumer-sdk"
 const dappKey = 'YOUR_DAPP_KEY'
 
-const web3provider = new ethers.providers.Web3Provider(window.ethereum, dappKey)
-
-const provider = Sumer.init({ provider: web3provider, dappKey })
+// create a Web3Provider instance
+const provider = Sumer.init({ provider: window.ethereum, dappKey })
 
 // Use the provider as usual
 await provider.send("eth_requestAccounts", [])
@@ -40,6 +39,7 @@ await provider.send("eth_requestAccounts", [])
 ...
 import { Sumer } from "sumer-sdk"
 
+//create a ethers.Contract instance
 const contract = Sumer.createWrappedContract(address, abi, signerOrProvider)
 
 // Use the contract instance as usual
