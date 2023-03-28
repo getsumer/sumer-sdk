@@ -1,6 +1,6 @@
 import { TransactionReceipt } from '@ethersproject/providers'
 
-interface Log {
+interface TransactionLog {
   blockNumber: number
   blockHash: string
   transactionIndex: number
@@ -11,55 +11,14 @@ interface Log {
   transactionHash: string
   logIndex: number
 }
-interface TransactionArguments {
-  chainId: number
-  txHash: string
-  functionName?: string
-  args?: any[]
-}
 
-export interface ProcessedTransactionData {
+interface TxReceiptArgs {
   wallet?: unknown | string
   chainId?: number
-  to: string
-  from: string
-  contractAddress?: string
-  transactionIndex: number
-  root?: string
-  gasUsed: string
-  logsBloom: string
-  blockHash: string
-  transactionHash: string
-  logs: Log[]
-  blockNumber: number
-  confirmations: number
-  cumulativeGasUsed: string
-  effectiveGasPrice: string
-  byzantium: boolean
-  type: number
-  status?: number
+  txReceipt: TransactionReceipt
 }
 
-export class Transaction {
-  public readonly chainId: number
-  public readonly txHash: string
-  public readonly functionName?: string
-  public readonly args?: any[]
-
-  constructor({ chainId, txHash, functionName, args }: TransactionArguments) {
-    this.chainId = chainId
-    this.txHash = txHash
-    this.functionName = functionName
-    this.args = args
-  }
-}
-
-interface ProcessedTransactionResultArguments {
-  wallet: unknown | string
-  chainId: number
-  data: TransactionReceipt
-}
-export class ProcessedTransactionResult implements ProcessedTransactionData {
+export class TxReceipt {
   readonly wallet?: unknown | string
   readonly chainId?: number
   // tx recepit
@@ -72,16 +31,16 @@ export class ProcessedTransactionResult implements ProcessedTransactionData {
   readonly logsBloom: string
   readonly blockHash: string
   readonly transactionHash: string
-  readonly logs: Log[]
+  readonly logs: TransactionLog[]
   readonly blockNumber: number
   readonly confirmations: number
   readonly cumulativeGasUsed: string
   readonly effectiveGasPrice: string
-  readonly byzantium: boolean
-  readonly type: number
+  readonly byzantium?: boolean
+  readonly type?: number
   readonly status?: number
 
-  constructor({ wallet, chainId, data }: ProcessedTransactionResultArguments) {
+  constructor({ wallet, chainId, txReceipt: data }: TxReceiptArgs) {
     this.wallet = wallet
     this.chainId = chainId
     this.to = data.to

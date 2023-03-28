@@ -1,22 +1,14 @@
 import { NotifyService } from './NotifyService'
 import { ContractError, ProviderError } from '../Errors'
-import { ProcessedTransactionResult, Transaction } from '../Types/Transaction'
+import { TxReceipt, TxResponse } from '../Transactions'
 
 export class NotifyServiceLog implements NotifyService {
-  private _chainId: number
-
-  get chainId() {
-    return this._chainId
+  public async trackTxReceipt(TxReceipt: TxReceipt): Promise<void> {
+    console.info('trackProcessedTransaction Log:', TxReceipt)
   }
 
-  public async trackProcessedTransaction(
-    processedTransactionResult: ProcessedTransactionResult,
-  ): Promise<void> {
-    console.info('trackProcessedTransaction Log:', processedTransactionResult)
-  }
-
-  public async trackTransaction(transaction: Transaction): Promise<void> {
-    console.info('trackTransaction Log:', transaction)
+  public async trackTxResponse(txResponse: TxResponse): Promise<void> {
+    console.info('trackTransaction Log:', txResponse)
   }
 
   public async trackError(msg: ContractError | ProviderError): Promise<void> {

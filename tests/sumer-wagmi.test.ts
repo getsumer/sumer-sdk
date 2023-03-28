@@ -1,6 +1,6 @@
 import { NotifyServiceLog } from '../src/Notify'
 import { sumerProvider } from '../src/sumer-wagmi'
-import { ProcessedTransactionResult } from '../src/Types/Transaction'
+import { TxReceipt } from '../src/Transactions/TxReceipt'
 import { transaction, replaceable } from './__mocks__/Transaction'
 import { getUserRejectedRequest } from '../src/sumer-wagmi'
 import { CustomJsonRpcProvider } from './__mocks__/CustomJsonRpcProvider'
@@ -34,13 +34,13 @@ describe('sumerProvider', () => {
   })
 
   it('should track processed transaction', async () => {
-    const spy = jest.spyOn(NotifyServiceLog.prototype, 'trackProcessedTransaction')
+    const spy = jest.spyOn(NotifyServiceLog.prototype, 'trackTxReceipt')
     const applySpy = jest.spyOn(mockProvider._waitForTransaction.constructor.prototype, 'apply')
     const txReceipt = await provider._waitForTransaction(transaction.hash, 1, 1, replaceable)
-    const txData = new ProcessedTransactionResult({
+    const txData = new TxReceipt({
       wallet: null, // no wallet in test: no client created and no wallet name set
       chainId: 1,
-      data: txReceipt,
+      txReceipt: txReceipt,
     })
 
     expect(applySpy).toHaveBeenCalledWith(mockProvider, [transaction.hash, 1, 1, replaceable])

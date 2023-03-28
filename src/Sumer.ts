@@ -1,17 +1,15 @@
-import { Contract, BytesLike, ethers, Signer } from 'ethers'
+import { Contract, Signer } from 'ethers'
 import { Fragment, JsonFragment } from '@ethersproject/abi'
 import {
   ExternalProvider,
   JsonRpcFetchFunc,
   Networkish,
   Provider,
-  TransactionResponse,
   Web3Provider,
 } from '@ethersproject/providers'
 import { NotifyService, NotifyFactory } from './Notify'
 import { SumerContract } from './SumerContract'
 import { SumerProvider } from './SumerProvider'
-import { ProviderError } from './Errors'
 
 interface SumerInitArguments {
   provider: ExternalProvider | JsonRpcFetchFunc
@@ -48,7 +46,7 @@ export class Sumer {
     // @ts-ignore
     this.chainId = provider.networkVersion
     this.dappKey = dappKey
-    this.notifyService = NotifyFactory.create(this.dappKey, this.chainId, dns)
+    this.notifyService = NotifyFactory.create(this.dappKey, dns)
     this.sumerProviderInstance = new SumerProvider({
       provider,
       network,
@@ -72,38 +70,6 @@ export class Sumer {
       chainId: this.chainId,
       notifyService: this.notifyService,
     }) as Contract
-  }
-
-  // Wrap sendTransaction to catch errors
-  public static async sendTransaction(
-    signedTransaction: string | Promise<string>,
-  ): Promise<TransactionResponse> {
-    try {
-      const response = await this.sumerProviderInstance.sendTransaction(signedTransaction)
-      await this.notifyService.trackTransaction({
-        chainId: this.chainId,
-        txHash: response.hash,
-      })
-
-      return response
-    } catch (error) {
-      if (!error.Sumer) {
-        let from = this.currentAddress
-        try {
-          from = ethers.utils.parseTransaction(signedTransaction as BytesLike).from
-        } catch (error) {
-          from = this.currentAddress
-        }
-        const providerError = new ProviderError({
-          message: error.message,
-          code: error.code,
-          address: from,
-        })
-        this.notifyService.trackError(providerError)
-        error.Sumer = true
-      }
-      throw error
-    }
   }
 
   public static destroy() {
