@@ -34,14 +34,13 @@ export function sumerProvider<TProvider extends Provider = Provider>(
 }) => ProviderWithFallbackConfig<TProvider> | providers.FallbackProvider {
   const wrappedProviderFn = ({ chainId }: { chainId?: number }) => {
     const provider = providerFn({ chainId })
+    getUserRejectedRequest({ dappKey, chainId: provider._network.chainId })
 
     return new Proxy(provider, {
       get(target, prop, _receiver) {
-        const method = target[prop]
+        const method = target[prop as keyof typeof target]
 
         if (typeof method === 'function') {
-          getUserRejectedRequest({ dappKey, chainId: provider._network.chainId })
-
           return async (...args: any) => {
             if (method.name === '_waitForTransaction') {
               const transactionReceipt = await method.apply(target, args)
@@ -81,11 +80,7 @@ export function getUserRejectedRequest({ dappKey, chainId }: UserRejectedRequest
               chainId,
             })
 
-            const sendError = async (error: ProviderError) => {
-              await NotifyFactory.create(dappKey).trackError(error)
-            }
-
-            sendError(rejectError)
+            NotifyFactory.create(dappKey).trackError(rejectError)
             console.warn(arg)
           }
         })

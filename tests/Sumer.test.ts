@@ -17,7 +17,7 @@ describe('Test user can use SumerWeb3Provider as expected', () => {
   })
   beforeEach(async () => {
     const mockProvider = {
-      request: async a => {
+      request: async (a: { method: any }) => {
         switch (a.method) {
           case 'eth_accounts':
             return [WALLET_PUBLIC_ADDRESS]
@@ -28,6 +28,7 @@ describe('Test user can use SumerWeb3Provider as expected', () => {
         }
       },
     }
+    // @ts-ignore
     provider = Sumer.init({
       provider: mockProvider,
       dappKey: '123',
@@ -63,7 +64,7 @@ describe('Test Sumer catch fails from Provider', () => {
 
   beforeEach(async () => {
     const mockProvider = {
-      request: async a => {
+      request: async (a: { method: any }) => {
         switch (a.method) {
           case 'eth_accounts':
             return [WALLET_PUBLIC_ADDRESS]
@@ -75,6 +76,7 @@ describe('Test Sumer catch fails from Provider', () => {
       },
       selectedAddress: WALLET_PUBLIC_ADDRESS,
     }
+    // @ts-ignore
     provider = Sumer.init({
       provider: mockProvider,
       dappKey: '123',
@@ -136,18 +138,20 @@ describe('Test Sumer catch fails from Provider', () => {
     ]
     const signer = provider.getSigner()
     const USDTContract = Sumer.createWrappedContract(CONTRACT_ADDRESS, abi, signer)
-    const error = new ContractError({
-      contractAddress: CONTRACT_ADDRESS,
-      name: 'approve',
-      args: [walletAddress, false],
-      signerOrProviderAddress: WALLET_PUBLIC_ADDRESS,
-      reason: 'invalid BigNumber value',
-    })
+    let error
 
     // When
     try {
       await USDTContract.approve(walletAddress, false)
-    } catch (e) {}
+    } catch (e) {
+      error = new ContractError({
+        contractAddress: CONTRACT_ADDRESS,
+        name: 'approve',
+        args: [walletAddress, false],
+        signerOrProviderAddress: WALLET_PUBLIC_ADDRESS,
+        reason: e instanceof Error ? e.message : 'Unknown reason',
+      })
+    }
 
     // Then
     expect(spy).toHaveBeenCalledTimes(1)

@@ -7,7 +7,7 @@ export class CustomJsonRpcProvider extends providers.JsonRpcProvider {
     _confirmations: number,
     _timeout: number,
     _replaceable: object,
-  ) {
+  ): Promise<providers.TransactionReceipt> {
     return receipt
   }
 }

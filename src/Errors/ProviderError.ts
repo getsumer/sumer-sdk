@@ -14,7 +14,7 @@ export class ProviderError {
   public readonly address: string
   public readonly toAddress?: string
   public readonly chainId?: number
-  public readonly eip: EipError
+  public readonly eip?: EipError
   public readonly type = 'WALLET'
 
   constructor({ message, code, address, toAddress, chainId }: ProviderErrorArguments) {
