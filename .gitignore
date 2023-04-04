@@ -3,7 +3,7 @@ dist
 data
 .tmp
 .DS_Store
-build
+*.tsbuildinfo
 
 ### Node ###
 # Logs

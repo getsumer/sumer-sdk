@@ -25,6 +25,7 @@ describe('SumerContract', () => {
 
     // Then
     Object.keys(contract).forEach(key => {
+      // @ts-ignore
       expect(JSON.stringify(sumerContract[key])).toStrictEqual(JSON.stringify(contract[key]))
     })
   })

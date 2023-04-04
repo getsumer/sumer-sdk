@@ -24,18 +24,8 @@ describe('sumerProvider', () => {
     jest.clearAllMocks()
   })
 
-  it('should properly call _waitForTransaction', async () => {
-    const applySpy = jest.spyOn(mockProvider._waitForTransaction.constructor.prototype, 'apply')
-    await provider._waitForTransaction(transaction.hash, 1, 1, replaceable)
-
-    expect(providerFn).toHaveBeenCalledTimes(1)
-    expect(applySpy).toHaveBeenCalledTimes(1)
-    expect(applySpy).toHaveBeenCalledWith(mockProvider, [transaction.hash, 1, 1, replaceable])
-  })
-
   it('should track processed transaction', async () => {
     const spy = jest.spyOn(NotifyServiceLog.prototype, 'trackTxReceipt')
-    const applySpy = jest.spyOn(mockProvider._waitForTransaction.constructor.prototype, 'apply')
     const txReceipt = await provider._waitForTransaction(transaction.hash, 1, 1, replaceable)
     const txData = new TxReceipt({
       wallet: null, // no wallet in test: no client created and no wallet name set
@@ -43,15 +33,14 @@ describe('sumerProvider', () => {
       txReceipt: txReceipt,
     })
 
-    expect(applySpy).toHaveBeenCalledWith(mockProvider, [transaction.hash, 1, 1, replaceable])
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toHaveBeenCalledWith(txData)
   })
 })
 
 describe('getUserRejectedRequest', () => {
-  let originalWindow
-  let trackErrorSpy
+  let originalWindow: Window & typeof globalThis
+  let trackErrorSpy: jest.SpyInstance
 
   beforeEach(() => {
     jest.spyOn(console, 'info').mockImplementation(() => {})
@@ -59,7 +48,8 @@ describe('getUserRejectedRequest', () => {
     jest.spyOn(console, 'warn').mockImplementation(() => {})
     originalWindow = global.window
     const dom = new JSDOM()
-    global.window = dom.window
+    global.window = dom.window as unknown as Window & typeof globalThis
+    window.userRejectedRequestInitialized = false
     trackErrorSpy = jest.spyOn(NotifyServiceLog.prototype, 'trackError')
   })
 

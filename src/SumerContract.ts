@@ -8,7 +8,7 @@ import { TxResponse } from './Transactions/TxResponse'
 interface SumerContractArguments {
   addressOrName: string
   contractInterface: ReadonlyArray<Fragment | JsonFragment>
-  signerOrProvider?: Signer | Provider
+  signerOrProvider?: Provider | Signer
   notifyService: NotifyService
   chainId: number
 }
@@ -18,6 +18,8 @@ interface SumerContractArguments {
  * notifications (errors or tx data to the sumer api), when a contract function is called.
  */
 export class SumerContract {
+  [key: string]: any
+
   constructor({
     addressOrName,
     contractInterface,
@@ -29,7 +31,11 @@ export class SumerContract {
 
     // Absorb baseContract definitions
     Object.assign(this, contract)
-    contractInterface.forEach(ci => (this[ci.name] = contract.functions[ci.name]))
+    contractInterface.forEach(ci => {
+      if (ci.name) {
+        this[ci.name] = contract.functions[ci.name]
+      }
+    })
     const handler = {
       get(target: any, prop: any, _receiver: any) {
         const method = target[prop]
@@ -48,7 +54,7 @@ export class SumerContract {
             await notifyService.trackTxResponse(transaction)
             return result
           } catch (err) {
-            let signerOrProviderAddress: string
+            let signerOrProviderAddress = '0x0000000000000000000000000000000000000000'
             if (Signer.isSigner(signerOrProvider)) {
               signerOrProviderAddress = await signerOrProvider.getAddress()
             }
@@ -57,7 +63,7 @@ export class SumerContract {
               signerOrProviderAddress,
               name: prop,
               args,
-              reason: err.reason,
+              reason: err instanceof Error ? err.message : 'Unknown reason',
               chainId,
             })
 

@@ -2,21 +2,12 @@
   "name": "sumer-sdk",
   "version": "4.3.1",
   "description": "A package that allows devs to track the errors that may occur in EVM-based Dapps",
-  "main": "build/module/index.js",
-  "typings": "build/module/index.d.ts",
-  "module": "build/module/index.js",
-  "files": [
-    "./build/"
-  ],
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
     "prepare": "husky install",
-    "build": "NODE_ENV=production npm run build:main && NODE_ENV=production npm run build:module",
-    "build:main": "tsc -p tsconfig.json",
-    "build:module": "tsc -p tsconfig.module.json",
-    "build:watch": "tsc --build -w",
-    "dev": "tsc -p tsconfig.module.json -w",
+    "build": "tsup src/index.ts --format esm --dts",
     "test": "jest --colors",
-    "lint": "tslint --fix -c tslint.json 'src/**/*.ts'",
     "preversion": "npm run build"
   },
   "repository": {
@@ -33,28 +24,25 @@
   },
   "homepage": "https://github.com/getsumer/sumer-sdk#readme",
   "dependencies": {
-    "@ethersproject/abi": "^5.7.0",
-    "@ethersproject/providers": "^5.7.0",
-    "@wagmi/core": "^0.10.1",
+    "@wagmi/core": "0.10.1",
     "bowser": "^2.11.0",
-    "ethers": "^5.7.2"
+    "ethers": "^5.5.1"
   },
-  "bundleDependencies": [
-    "@ethersproject/abi",
-    "@ethersproject/providers",
-    "bowser",
-    "ethers"
-  ],
   "devDependencies": {
     "@babel/preset-env": "^7.20.2",
     "@commitlint/cli": "^17.4.3",
     "@commitlint/config-conventional": "^17.4.3",
+    "@ethersproject/abi": "^5.0.7",
+    "@ethersproject/providers": "^5.5.3",
+    "@swc/core": "^1.3.44",
     "@types/jest": "^27.5.2",
+    "@types/jsdom": "^21.1.1",
     "@types/node": "^18.7.18",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "eslint": "^8.34.0",
     "husky": "^8.0.3",
     "jest": "^27.5.1",
+    "jest-localstorage-mock": "^2.4.26",
     "jest-transform-stub": "^2.0.0",
     "jest-ts-auto-mock": "^2.1.0",
     "jsdom": "^21.1.1",
@@ -62,7 +50,8 @@
     "prettier": "^2.8.4",
     "ts-auto-mock": "^3.6.2",
     "ts-jest": "^27.1.3",
+    "tsup": "^6.5.0",
     "ttypescript": "^1.5.13",
-    "typescript": "^4.8.3"
+    "typescript": "^4.9.4"
   }
 }

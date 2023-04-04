@@ -1,12 +1,7 @@
 import { Contract, Signer } from 'ethers'
 import { Fragment, JsonFragment } from '@ethersproject/abi'
-import {
-  ExternalProvider,
-  JsonRpcFetchFunc,
-  Networkish,
-  Provider,
-  Web3Provider,
-} from '@ethersproject/providers'
+import { ExternalProvider, JsonRpcFetchFunc, Networkish, Provider } from '@ethersproject/providers'
+import { providers } from 'ethers'
 import { NotifyService, NotifyFactory } from './Notify'
 import { SumerContract } from './SumerContract'
 import { SumerProvider } from './SumerProvider'
@@ -26,7 +21,7 @@ export class Sumer {
   private static notifyService: NotifyService
   private static dappKey: string
   private static chainId: number
-  private static sumerProviderInstance: SumerProvider
+  private static sumerProviderInstance?: SumerProvider
   private static _currentAddress: string
 
   private constructor() {}
@@ -39,7 +34,7 @@ export class Sumer {
     return this.sumerProviderInstance
   }
 
-  static init({ provider, dappKey, network, dns }: SumerInitArguments): Web3Provider {
+  static init({ provider, dappKey, network, dns }: SumerInitArguments): providers.Web3Provider {
     if (this.sumerProviderInstance) {
       return this.sumerProviderInstance
     }
@@ -52,6 +47,7 @@ export class Sumer {
       network,
       notifyService: this.notifyService,
     })
+    // @ts-ignore
     this.sumerProviderInstance.listAccounts().then(accounts => (this._currentAddress = accounts[0]))
     this.notifyService.checkConnection()
 
