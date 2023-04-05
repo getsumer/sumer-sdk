@@ -1,15 +1,6 @@
 import bowser, { Parser } from 'bowser'
 import { NotifyService } from './NotifyService'
-import { ProviderError, ContractError } from '../Errors'
-import { Transaction } from '../Types/Transaction'
-
-interface TransactionBody {
-  chainId: number
-  txHash: string
-  functionName: string
-  functionArgs: any
-  metadata: Parser.ParsedResult | Record<string, string>
-}
+import { ProviderError, ContractError, Transaction } from '../models'
 
 interface ErrorBody {
   userAddress: string
@@ -32,26 +23,18 @@ export class NotifyServiceApi implements NotifyService {
   private headers: HeadersInit
   private url: string
 
-  constructor(apikey: string, chainId?: number, dns?: string) {
+  constructor(apikey: string, dns?: string) {
     this.headers = {
       authorization: `${apikey}`,
-      chainid: `${chainId}`,
       'Content-Type': 'application/json',
     }
     this.url = dns ?? 'https://api.getsumer.com'
+    this.checkConnection()
   }
 
-  public async trackTransaction({
-    chainId,
-    txHash,
-    functionName,
-    args,
-  }: Transaction): Promise<void> {
+  public async trackTransaction(transaction: Transaction): Promise<void> {
     this.fetchPost('transactions', {
-      chainId,
-      txHash,
-      functionName,
-      functionArgs: args,
+      ...transaction,
       metadata: this.meta(),
     })
   }
@@ -80,22 +63,27 @@ export class NotifyServiceApi implements NotifyService {
     this.fetchPost('errors', body)
   }
 
-  public async checkConnection(): Promise<void> {
-    fetch(`${this.url}/check`, {
-      method: 'GET',
-      headers: this.headers,
-    })
+  private async checkConnection(): Promise<void> {
+    try {
+      fetch(`${this.url}/check`, {
+        method: 'GET',
+        headers: this.headers,
+      })
+    } catch (e) {
+      console.warn(`[Sumer:NotifyService][fetch]`, e)
+    }
   }
 
-  private fetchPost(
-    uriPath: string,
-    body?: TransactionBody | ContractErrorBody | ProviderErrorBody,
-  ) {
-    fetch(`${this.url}/${uriPath}`, {
-      method: 'POST',
-      headers: this.headers,
-      body: body ? JSON.stringify(body) : undefined,
-    })
+  private fetchPost(uriPath: string, body?: Transaction | ContractErrorBody | ProviderErrorBody) {
+    try {
+      fetch(`${this.url}/${uriPath}`, {
+        method: 'POST',
+        headers: this.headers,
+        body: body ? JSON.stringify(body) : undefined,
+      })
+    } catch (e) {
+      console.warn(`[Sumer:NotifyService][fetch]`, e)
+    }
   }
 
   private meta(): Parser.ParsedResult | Record<string, string> {

@@ -1,9 +1,8 @@
 import { Contract, Signer } from 'ethers'
 import { Fragment, JsonFragment } from '@ethersproject/abi'
 import { Provider } from '@ethersproject/providers'
-import { NotifyService } from './Notify'
-import { ContractError } from './Errors'
-import { Transaction } from './Types/Transaction'
+import { NotifyService } from './services'
+import { ContractError } from './models'
 
 interface SumerContractArguments {
   addressOrName: string
@@ -38,14 +37,14 @@ export class SumerContract {
         }
         return async (...args: any) => {
           try {
-            const result = await method.apply(this, args)
-            const transaction = new Transaction({
+            const bindedMethod = method.bind(target)
+            const result = await bindedMethod(...args)
+            notifyService.trackTransaction({
               chainId,
-              txHash: result.hash,
+              hash: result.hash,
               functionName: prop,
-              args: args,
+              args,
             })
-            notifyService.trackTransaction(transaction)
             return result
           } catch (err) {
             let signerOrProviderAddress: string
