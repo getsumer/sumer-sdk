@@ -1,15 +1,32 @@
-import { TransactionReceipt } from '@ethersproject/providers'
-
 interface TransactionLog {
-  blockNumber: number
+  blockNumber: number | string
   blockHash: string
-  transactionIndex: number
+  transactionIndex: number | string
   removed: boolean
   address: string
   data: string
   topics: string[]
   transactionHash: string
-  logIndex: number
+  logIndex: number | string
+}
+type GasHexValue = string | { _hex: string }
+interface TransactionReceipt {
+  blockHash: string
+  blockNumber: number | string
+  contractAddress?: string
+  cumulativeGasUsed: GasHexValue
+  effectiveGasPrice: GasHexValue
+  confirmations?: number | string
+  from: string
+  gasUsed: GasHexValue
+  logs: TransactionLog[]
+  logsBloom: string
+  status?: number | string
+  to: string
+  transactionHash: string
+  transactionIndex: number | string
+  type?: number | string
+  root?: string
 }
 
 interface TxReceiptArgs {
@@ -25,20 +42,20 @@ export class TxReceipt {
   readonly to: string
   readonly from: string
   readonly contractAddress?: string
-  readonly transactionIndex: number
+  readonly transactionIndex: number | string
   readonly root?: string
-  readonly gasUsed: string
+  readonly gasUsed: GasHexValue
   readonly logsBloom: string
   readonly blockHash: string
   readonly transactionHash: string
   readonly logs: TransactionLog[]
-  readonly blockNumber: number
-  readonly confirmations: number
+  readonly blockNumber: number | string
+  readonly confirmations?: number | string
   readonly cumulativeGasUsed: string
   readonly effectiveGasPrice: string
   readonly byzantium?: boolean
-  readonly type?: number
-  readonly status?: number
+  readonly type?: number | string
+  readonly status?: number | string
 
   constructor({ wallet, chainId, txReceipt: data }: TxReceiptArgs) {
     this.wallet = wallet
@@ -46,19 +63,18 @@ export class TxReceipt {
     this.to = data.to
     this.from = data.from
     this.contractAddress = data.contractAddress
-    this.transactionIndex = data.transactionIndex
+    this.transactionIndex = data.transactionIndex.toString()
     this.root = data.root
-    this.gasUsed = data.gasUsed._hex
+    this.gasUsed = data.gasUsed instanceof Object ? data.gasUsed._hex : data.gasUsed
     this.logsBloom = data.logsBloom
     this.blockHash = data.blockHash
     this.transactionHash = data.transactionHash
     this.logs = data.logs
-    this.blockNumber = data.blockNumber
-    this.confirmations = data.confirmations
-    this.cumulativeGasUsed = data.cumulativeGasUsed._hex
-    this.effectiveGasPrice = data.effectiveGasPrice._hex
-    this.byzantium = data.byzantium
-    this.type = data.type
-    this.status = data.status
+    this.blockNumber = data.blockNumber.toString()
+    this.confirmations = data.confirmations?.toString()
+    this.cumulativeGasUsed = data.gasUsed instanceof Object ? data.gasUsed._hex : data.gasUsed
+    this.effectiveGasPrice = data.gasUsed instanceof Object ? data.gasUsed._hex : data.gasUsed
+    this.type = data.type?.toString()
+    this.status = data.status?.toString()
   }
 }
