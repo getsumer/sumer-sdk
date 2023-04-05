@@ -3,18 +3,15 @@
   "version": "4.3.0",
   "description": "A package that allows devs to track the errors that may occur in EVM-based Dapps",
   "main": "build/module/index.js",
-  "typings": "build/module/index.d.ts",
   "module": "build/module/index.js",
-  "files": [
-    "./build/"
-  ],
+  "types": "build/types/index.d.ts",
   "scripts": {
     "prepare": "husky install",
-    "build": "NODE_ENV=production npm run build:main && NODE_ENV=production npm run build:module",
-    "build:main": "tsc -p tsconfig.json",
+    "clean": "rm -rf ./build",
+    "build": "NODE_ENV=production npm run build:module && npm run build:types",
     "build:module": "tsc -p tsconfig.module.json",
+    "build:types": "tsc -p tsconfig.types.json",
     "build:watch": "tsc --build -w",
-    "dev": "tsc -p tsconfig.module.json -w",
     "test": "jest --colors",
     "lint": "tslint --fix -c tslint.json 'src/**/*.ts'",
     "preversion": "npm run build"

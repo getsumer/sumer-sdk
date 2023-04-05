@@ -7,7 +7,7 @@ on:
   release:
     types: [published]
 
-jobs: 
+jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
