@@ -1,4 +1,4 @@
-import { NotifyService } from './../../src/Notify/NotifyService'
+import { NotifyService } from './../../src/services'
 
 export class MockNotifyService implements NotifyService {
   trackError = jest.fn()

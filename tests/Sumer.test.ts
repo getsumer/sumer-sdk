@@ -1,18 +1,15 @@
-import { SumerProvider } from './../src/SumerProvider'
 import { Sumer } from '../src/Sumer'
-import { ProviderError } from '../src/Errors/ProviderError'
-import { ContractError } from '../src/Errors/ContractError'
-import { NotifyServiceLog } from '../src/Notify/NotifyServiceLog'
+import { ProviderError, ContractError } from '../src/models'
+import { NotifyServiceLog } from '../src/services'
+import { Web3Provider } from '@ethersproject/providers'
 
 const WALLET_PUBLIC_ADDRESS = '0x14791697260E4c9A71f18484C9f997B308e59325'
-//const WALLET_PRIVATE_ADDRESS = process.env.PRIVATE_KEY
 const CONTRACT_ADDRESS = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
 
 describe('Test user can use SumerWeb3Provider as expected', () => {
   jest.spyOn(console, 'info').mockImplementation(() => {})
-  let provider: SumerProvider
+  let web3Provider: Web3Provider
   afterEach(() => {
-    Sumer.destroy()
     jest.clearAllMocks()
   })
   beforeEach(async () => {
@@ -28,18 +25,15 @@ describe('Test user can use SumerWeb3Provider as expected', () => {
         }
       },
     }
-    provider = Sumer.init({
-      provider: mockProvider,
-      dappKey: '123',
-      network: 1,
-    })
+    Sumer.init({ dappKey: '123' })
+    web3Provider = new Web3Provider(Sumer.observe(mockProvider))
 
     jest.resetAllMocks()
   })
 
   it('Sumer can sign messsage', async () => {
     // Given
-    const signer = provider.getSigner()
+    const signer = web3Provider.getSigner()
 
     // When
     const msgSigned = await signer.signMessage('message')
@@ -47,17 +41,12 @@ describe('Test user can use SumerWeb3Provider as expected', () => {
     // Then
     expect(msgSigned).toEqual('this is a signed message')
   })
-
-  it('Sumer can retrieve actual account', async () => {
-    expect(Sumer.currentAddress).toEqual(WALLET_PUBLIC_ADDRESS)
-  })
 })
 
 describe('Test Sumer catch fails from Provider', () => {
-  let provider: SumerProvider
+  let web3Provider: Web3Provider
 
   afterEach(() => {
-    Sumer.destroy()
     jest.clearAllMocks()
   })
 
@@ -75,11 +64,8 @@ describe('Test Sumer catch fails from Provider', () => {
       },
       selectedAddress: WALLET_PUBLIC_ADDRESS,
     }
-    provider = Sumer.init({
-      provider: mockProvider,
-      dappKey: '123',
-      network: 1,
-    })
+    Sumer.init({ dappKey: '123' })
+    web3Provider = new Web3Provider(Sumer.observe(mockProvider))
 
     jest.resetAllMocks()
   })
@@ -87,7 +73,7 @@ describe('Test Sumer catch fails from Provider', () => {
   it('Sumer catch failure sign message, user reject', async () => {
     // Given
     const spy = jest.spyOn(NotifyServiceLog.prototype, 'trackError')
-    const signer = provider.getSigner()
+    const signer = web3Provider.getSigner()
     const error = new ProviderError({
       message: `This is a raw message`,
       code: 4001,
@@ -108,7 +94,7 @@ describe('Test Sumer catch fails from Provider', () => {
   it('Sumer catch failure on contract build method', async () => {
     // Given
     const spy = jest.spyOn(NotifyServiceLog.prototype, 'trackError')
-    const walletAddress = Sumer.currentAddress
+    const walletAddress = WALLET_PUBLIC_ADDRESS
     const abi = [
       {
         constant: false,
@@ -134,8 +120,8 @@ describe('Test Sumer catch fails from Provider', () => {
         type: 'function',
       },
     ]
-    const signer = provider.getSigner()
-    const USDTContract = Sumer.createWrappedContract(CONTRACT_ADDRESS, abi, signer)
+    const signer = web3Provider.getSigner()
+    const USDTContract = Sumer.contract(CONTRACT_ADDRESS, abi, 5, signer)
     const error = new ContractError({
       contractAddress: CONTRACT_ADDRESS,
       name: 'approve',
