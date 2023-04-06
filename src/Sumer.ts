@@ -84,7 +84,9 @@ export class Sumer {
             )
           }
         })
-        consoleError.apply(window.console, args)
+        if (process.env.NODE_ENV !== 'test') {
+          consoleError.apply(window.console, args)
+        }
       }
     }
   }

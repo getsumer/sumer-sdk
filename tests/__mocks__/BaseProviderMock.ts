@@ -1,7 +1,7 @@
 import { BaseProvider } from '@ethersproject/providers'
 
-export class MockProvider extends BaseProvider {
-  async perform(method, params) {
+export class BaseProviderMock extends BaseProvider {
+  async perform(method: string, params: any) {
     if (method === 'getBlockNumber') {
       return 1337
     }

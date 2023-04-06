@@ -21,8 +21,8 @@ export class ErrorObserver extends SumerObserver {
 
   private isError(result: Record<string, string>): boolean {
     return result
-      ? Object.getOwnPropertyNames(result).every(propertyName =>
-          ['code', 'message', 'target', 'methodName', 'args'].includes(propertyName),
+      ? Object.getOwnPropertyNames(result).some(propertyName =>
+          ['code', 'message'].includes(propertyName),
         )
       : false
   }

@@ -8,12 +8,14 @@ export interface EipError {
 }
 
 interface ProviderErrorArguments {
+  chainId?: number
   message: string
   code: any
   address: string
 }
 
 export class ProviderError {
+  public readonly chainId?: number
   public readonly message: string
   public readonly code: number
   public readonly address: string
@@ -21,7 +23,8 @@ export class ProviderError {
   public readonly type = 'WALLET'
   public readonly eipErrors = [...ProviderErrorsEip1193, ...RPCErrorsEip1474]
 
-  constructor({ message, code, address }: ProviderErrorArguments) {
+  constructor({ chainId, message, code, address }: ProviderErrorArguments) {
+    this.chainId = chainId
     this.message = message
     this.code = code
     this.address = address
