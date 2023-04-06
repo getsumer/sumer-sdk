@@ -73,19 +73,23 @@ export class Sumer {
       const WAGMI_ERROR_NAMES = ['UserRejectedRequestError']
       const consoleError = window.console.error
       window.console.error = async (...args) => {
-        args.forEach(async arg => {
-          if (WAGMI_ERROR_NAMES.includes(arg.name)) {
-            this.notifyService.trackError(
-              new ProviderError({
-                message: arg.cause?.reason,
-                address: arg.cause?.transaction?.from,
-                code: arg.code,
-              }),
-            )
+        try {
+          args.forEach(async arg => {
+            if (WAGMI_ERROR_NAMES.includes(arg.name)) {
+              this.notifyService.trackError(
+                new ProviderError({
+                  message: arg.cause?.reason,
+                  address: arg.cause?.transaction?.from,
+                  code: arg.code,
+                }),
+              )
+            }
+          })
+        } finally {
+          // Prevent Next.js from logging the hydration warning
+          if (!window['_nextSetupHydrationWarning'] && process.env.NODE_ENV !== 'test') {
+            consoleError.apply(window.console, args)
           }
-        })
-        if (process.env.NODE_ENV !== 'test') {
-          consoleError.apply(window.console, args)
         }
       }
     }
