@@ -1,71 +1,93 @@
 <p align="center">
-  <a href="http://getsumer.com">
-    <img src="https://uploads-ssl.webflow.com/633ab0cd3a69e79d248f3b25/633abf29186753321feb30c4_sumer-logo-v1.svg" loading="lazy" width="192px" height="192px"/>
+  <a href="https://getsumer.com">
+    <img src="https://sumer-public.s3.eu-west-1.amazonaws.com/sumer-logo-v1.svg" loading="lazy" width="192px" height="192px"/>
   </a>
 </p>
 
 <h2 align="center">
-  Sumer SDK Quickstart
+  Sumer SDK
 </h2>
 
 [![npm version](https://badge.fury.io/js/sumer-sdk.svg)](https://badge.fury.io/js/sumer-sdk)
 
-#### Sumer is the easiest way to track your dapp activity, install and integrate the sumer-sdk within few lines of code  :rocket:
+#### Sumer is the easiest way to track your Dapp activity. Integrate _sumer-sdk_ within few lines of code.
 
-### Install
+### Introduction
+
+This is an Observer Pattern-based SDK that allows users to observe Web3 Providers execution.
+
+### Quickstart
+
+#### Go to [Sumer App](https://app.getsumer.com/)
+Complete the sign-up process and create your Dapp to receive its _key_; copy it to use later.
+
+#### Install
+Add the _sumer-sdk_ package to your project:
 ```
 npm i sumer-sdk
+yarn add sumer-sdk
 ```
 
-#### After installing the Sumer SDK in your project and getting your dApp key from the signup process at [Sumer App](https://app.getsumer.com/), you can start using Sumer as follows:
+#### Initialize
 
-* Initialize the Sumer client by wrapping the provider:<br>
 ```JS
-...
-import { Sumer } from "sumer-sdk"
-const dappKey = 'YOUR_DAPP_KEY'
+import { Sumer } from 'sumer-sdk'
 
-const web3provider = new ethers.providers.Web3Provider(window.ethereum, dappKey)
-
-const provider = Sumer.init({ provider: web3provider, dappKey })
-
-// Use the provider as usual
-await provider.send("eth_requestAccounts", [])
-...
+Sumer.init({
+  dappKey: 'YOUR_DAPP_KEY',
+})
 ```
 
-  * Then wrap your contracts to automatically listen for events and errors:
-  
-```JS
-...
-import { Sumer } from "sumer-sdk"
+#### Use
 
-const contract = Sumer.createWrappedContract(address, abi, signerOrProvider)
-
-// Use the contract instance as usual
-const tx = contract.myFunction(...) 
-...
-```
-
-* Integrate with [web3-react](https://github.com/Uniswap/web3-react):
+* _web3-react_ example:
 
 ```JS
-...
-import { Sumer } from "sumer-sdk"
-const dappKey = 'YOUR_DAPP_KEY'
+import { Sumer } from 'sumer-sdk'
 
-// Configuration for web3-react
-const getLibrary = (provider) => {
-
-  const library = Sumer.init({ provider, dappKey })
-  
+function getWeb3Library(provider: any): providers.Web3Provider {
+  const library = new ethers.providers.Web3Provider(Sumer.observe(provider))
+  library.pollingInterval = 12000
   return library
 }
 
-// Use the Web3ReactProvider as usual
-  <Web3ReactProvider getLibrary={getLibrary}>
-    <YourDappComponents />
-  </Web3ReactProvider>
+<Web3ReactProvider getLibrary={getWeb3Library}>
+  <YourDappComponents />
+</Web3ReactProvider>
 ```
 
-* If you want to use other web3 react hooks libraries, and you may have any trouble implementing it, please get in touch with us to provide you [support](https://discord.com/channels/1044217387119022080/1044252595616751676).
+* _wagmi.sh_ example:
+
+```JS
+import { Sumer } from 'sumer-sdk'
+
+const { chains, provider, webSocketProvider } = configureChains(
+  [mainnet],
+  [publicProvider()],
+)
+const client = createClient({
+  autoConnect: true,
+  connectors: [
+    new MetaMaskConnector({ chains }),
+  ],
+  provider: Sumer.observe(provider),
+  webSocketProvider: Sumer.observe(webSocketProvider),
+})
+
+<WagmiConfig client={client}>
+  <YourDappComponents />
+</WagmiConfig>
+```
+
+* _ethers_ contract example:
+
+```JS
+import { Sumer } from 'sumer-sdk'
+
+const contract = Sumer.contract(address, abi, chainId, signerOrProvider)
+
+// Use the contract instance as usual
+const tx = contract.myFunction(...)
+```
+
+**If you have any trouble integrating with other web3 libraries, please get in touch with us to provide you [support](https://discord.com/channels/1044217387119022080/1044252595616751676).**
