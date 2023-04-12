@@ -1,3 +1,5 @@
+import { Observer } from './Observer'
+
 export type ExecutionPayload =
   | number
   | string
@@ -14,4 +16,6 @@ export interface TargetExecution {
 
 export interface Target {
   readonly execution: TargetExecution
+  readonly observers: Observer[]
+  proxy<T>(target: T): T
 }

@@ -18,6 +18,8 @@ describe('TransactionObserver', () => {
         target: {},
         result: { hash: transaction.hash },
       },
+      observers: [],
+      proxy: jest.fn(),
     }
 
     // When
@@ -37,6 +39,8 @@ describe('TransactionObserver', () => {
         methodName: 'method',
         target: {},
       },
+      observers: [],
+      proxy: jest.fn(),
     }
 
     // When

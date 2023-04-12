@@ -3,15 +3,19 @@ import { Target, TargetExecution, Observer } from './observers'
 export type TargetFunction = (...args: any) => object
 
 export class SumerTarget implements Target {
-  private observers: Observer[]
+  private _observers: Observer[]
   private _execution: TargetExecution
+
+  get observers() {
+    return this._observers
+  }
 
   get execution() {
     return this._execution
   }
 
   constructor(observers: Observer[]) {
-    this.observers = observers
+    this._observers = observers
   }
 
   public proxy<T>(target: T): T {

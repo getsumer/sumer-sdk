@@ -22,6 +22,8 @@ describe('ErrorObserver', () => {
         },
         error: { code: error.code, message: error.message },
       },
+      observers: [],
+      proxy: jest.fn(),
     }
 
     // When
@@ -44,6 +46,8 @@ describe('ErrorObserver', () => {
           selectedAddress: signerOrProviderAddress,
         },
       },
+      observers: [],
+      proxy: jest.fn(),
     }
 
     // When
