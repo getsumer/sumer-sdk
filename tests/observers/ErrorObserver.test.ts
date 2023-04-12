@@ -14,13 +14,13 @@ describe('ErrorObserver', () => {
       message: 'error message',
     })
     const target: Target = {
-      result: {
+      execution: {
         args: [],
         methodName: 'method',
         target: {
           selectedAddress: signerOrProviderAddress,
         },
-        error: Buffer.from(JSON.stringify({ code: error.code, message: error.message })),
+        error: { code: error.code, message: error.message },
       },
     }
 
@@ -37,7 +37,7 @@ describe('ErrorObserver', () => {
     const notifyService = new NotifyServiceMock()
     const errorObserver = new ErrorObserver(notifyService)
     const target: Target = {
-      result: {
+      execution: {
         args: [],
         methodName: 'method',
         target: {

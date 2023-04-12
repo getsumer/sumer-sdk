@@ -1,49 +1,68 @@
-import { Target } from './Target'
+import { Target, ExecutionPayload } from './Target'
 import { SumerObserver } from './SumerObserver'
 
 export class TransactionObserver extends SumerObserver {
-  public async inspect({ result }: Target): Promise<void> {
-    if (!result.data) {
+  public async inspect({ execution }: Target): Promise<void> {
+    if (!execution.result) {
       return
     }
-    const transactionData = this.getData(result.data)
-    if (this.isTransaction(transactionData)) {
+    if (this.isTransaction(execution.result)) {
+      const { result } = execution
       this.notifyService.trackTransaction({
-        hash: transactionData.hash || transactionData.transactionHash,
-        from: transactionData.from,
-        to: transactionData.to,
+        hash: result['hash'] || result['transactionHash'],
+        from: result['from'],
+        to: result['to'],
 
         // Transaction Response
-        chainId: transactionData.chainId,
-        nonce: transactionData.nonce,
-        gasLimit: transactionData.gasLimit?.hex,
-        maxFeePerGas: transactionData.maxFeePerGas?.hex,
-        maxPriorityFeePerGas: transactionData.maxPriorityFeePerGas?.hex,
-        data: transactionData.data,
-        value: transactionData.value?.hex,
+        chainId: this.parseNumber(result['chainId']),
+        nonce: this.parseNumber(result['nonce']),
+        gasLimit: this.parseBigNumber(result['gasLimit']),
+        maxFeePerGas: this.parseBigNumber(result['maxFeePerGas']),
+        maxPriorityFeePerGas: this.parseBigNumber(result['maxPriorityFeePerGas']),
+        data: result['data'],
+        value: this.parseBigNumber(result['value']),
 
         // Transaction Receipt
-        blockHash: transactionData.blockHash,
-        blockNumber: transactionData.blockNumber,
-        confirmations: transactionData.confirmations,
-        transactionIndex: transactionData.transactionIndex,
-        contractAddress: transactionData.contractAddress,
-        gasUsed: transactionData.gasUsed?.hex,
-        effectiveGasPrice: transactionData.effectiveGasPrice?.hex,
-        cumulativeGasUsed: transactionData.cumulativeGasUsed?.hex,
-        status: transactionData.status,
+        blockHash: result['blockHash'],
+        blockNumber: this.parseNumber(result['blockNumber']),
+        confirmations: result['confirmations'],
+        transactionIndex: this.parseNumber(result['transactionIndex']),
+        contractAddress: result['contractAddress'],
+        gasUsed: this.parseBigNumber(result['gasUsed']),
+        effectiveGasPrice: this.parseBigNumber(result['effectiveGasPrice']),
+        cumulativeGasUsed: this.parseBigNumber(result['cumulativeGasUsed']),
+        status: this.parseNumber(result['status']),
 
-        args: result.args,
-        functionName: result.methodName,
+        args: execution.args,
+        functionName: execution.methodName,
       })
     }
   }
 
-  private isTransaction(result: Record<string, string>): boolean {
+  private isTransaction(result: ExecutionPayload): boolean {
     return result
       ? Object.getOwnPropertyNames(result).some(propertyName =>
           ['hash', 'transactionHash'].includes(propertyName),
         )
       : false
+  }
+
+  private parseNumber(value?: string | number): number | undefined {
+    switch (typeof value) {
+      case 'string':
+        return parseInt(value)
+      default:
+        return value
+    }
+  }
+
+  private parseBigNumber(value?: ExecutionPayload): string | undefined {
+    switch (typeof value) {
+      case 'string':
+      case 'undefined':
+        return value
+      default:
+        return value['hex'] || value['_hex']
+    }
   }
 }

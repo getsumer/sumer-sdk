@@ -1,14 +1,13 @@
-import { Buffer } from 'buffer'
-import { Target, TargetResult, Observer } from './observers'
+import { Target, TargetExecution, Observer } from './observers'
 
 export type TargetFunction = (...args: any) => object
 
 export class SumerTarget implements Target {
   private observers: Observer[]
-  private _result: TargetResult
+  private _execution: TargetExecution
 
-  get result() {
-    return this._result
+  get execution() {
+    return this._execution
   }
 
   constructor(observers: Observer[]) {
@@ -59,39 +58,24 @@ export class SumerTarget implements Target {
       try {
         const bindedMethod = method.bind(target)
         const result = await bindedMethod(...args)
-        this._result = {
-          data: this.transformToBuffer(result),
+        this._execution = {
+          result,
           target,
           methodName: prop.toString(),
           args,
         }
         this.observers.map(o => o.inspect(this))
         return result
-      } catch (err) {
-        this._result = {
-          error: this.transformToBuffer(err),
+      } catch (error) {
+        this._execution = {
+          error,
           target,
           methodName: prop.toString(),
           args,
         }
         this.observers.map(o => o.inspect(this))
-        throw err
+        throw error
       }
     }
-  }
-
-  private transformToBuffer(data: any): Buffer {
-    const cache = []
-    const dataString = JSON.stringify(data, (_key, value) => {
-      if (typeof value === 'object' && value !== null) {
-        // Discard possible Circular Reference case
-        if (cache.includes(value)) {
-          return
-        }
-        cache.push(value)
-      }
-      return value
-    })
-    return Buffer.from(dataString)
   }
 }

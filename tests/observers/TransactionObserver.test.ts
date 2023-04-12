@@ -12,11 +12,11 @@ describe('TransactionObserver', () => {
       hash,
     }
     const target: Target = {
-      result: {
+      execution: {
         args: [],
         methodName: 'method',
         target: {},
-        data: Buffer.from(JSON.stringify({ hash: transaction.hash })),
+        result: { hash: transaction.hash },
       },
     }
 
@@ -32,7 +32,7 @@ describe('TransactionObserver', () => {
     const notifyService = new NotifyServiceMock()
     const observer = new TransactionObserver(notifyService)
     const target: Target = {
-      result: {
+      execution: {
         args: [],
         methodName: 'method',
         target: {},

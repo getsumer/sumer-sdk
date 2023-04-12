@@ -1,13 +1,17 @@
-import { Buffer } from 'buffer'
+export type ExecutionPayload =
+  | number
+  | string
+  | { [key: number]: ExecutionPayload }
+  | { [key: string]: ExecutionPayload }
 
-export interface TargetResult {
+export interface TargetExecution {
   target: Record<string, string>
   methodName: string
   args: string[]
-  error?: Buffer
-  data?: Buffer
+  error?: ExecutionPayload
+  result?: ExecutionPayload
 }
 
 export interface Target {
-  result: TargetResult
+  readonly execution: TargetExecution
 }

@@ -1,7 +1,7 @@
 {
   "name": "sumer-sdk",
-  "version": "4.3.0",
-  "description": "A package that allows devs to track the errors that may occur in EVM-based Dapps",
+  "version": "5.0.0",
+  "description": "A package that allows devs to observe provider execution on EVM-based Dapps",
   "main": "build/module/index.js",
   "module": "build/module/index.js",
   "types": "build/types/index.d.ts",
@@ -20,7 +20,12 @@
     "type": "git",
     "url": "https://github.com/getsumer/sumer-sdk.git"
   },
-  "keywords": [],
+  "keywords": [
+    "dapps",
+    "evm",
+    "dev-tool",
+    "web3"
+  ],
   "author": {
     "name": "Wagmi Venture Studio"
   },
@@ -35,12 +40,6 @@
     "bowser": "^2.11.0",
     "ethers": "^5.7.2"
   },
-  "bundleDependencies": [
-    "@ethersproject/abi",
-    "@ethersproject/providers",
-    "bowser",
-    "ethers"
-  ],
   "devDependencies": {
     "@commitlint/cli": "^17.4.3",
     "@commitlint/config-conventional": "^17.4.3",
@@ -55,7 +54,11 @@
     "prettier": "^2.8.4",
     "ts-auto-mock": "^3.6.2",
     "ts-jest": "^27.1.3",
-    "ttypescript": "^1.5.13",
     "typescript": "^4.8.3"
-  }
+  },
+  "files": [
+    "build",
+    "LICENSE",
+    "README.md"
+  ]
 }
