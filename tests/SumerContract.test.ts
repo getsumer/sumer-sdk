@@ -1,13 +1,12 @@
 import { SumerContract } from '../src/SumerContract'
 import { abi } from './fixtures/build/IERC20.json'
 import { Contract } from 'ethers'
-import { MockProvider } from './__mocks__/MockProvider'
-import { MockNotifyService } from './__mocks__/MockNotifyService'
+import { BaseProviderMock, NotifyServiceMock } from './__mocks__'
 
 describe('SumerContract', () => {
   const chainId = 5
-  const provider = new MockProvider(chainId)
-  const notifyService = new MockNotifyService()
+  const provider = new BaseProviderMock(chainId)
+  const notifyService = new NotifyServiceMock()
 
   it('should create a valid instance', async () => {
     // Given

@@ -1,112 +1,97 @@
-import { Contract, BytesLike, ethers, Signer } from 'ethers'
+import { Contract, Signer } from 'ethers'
+import { Provider } from '@ethersproject/providers'
 import { Fragment, JsonFragment } from '@ethersproject/abi'
-import {
-  ExternalProvider,
-  JsonRpcFetchFunc,
-  Networkish,
-  Provider,
-  TransactionResponse,
-  Web3Provider,
-} from '@ethersproject/providers'
-import { NotifyService, NotifyFactory } from './Notify'
+import { NotifyService, NotifyFactory } from './services'
 import { SumerContract } from './SumerContract'
-import { SumerProvider } from './SumerProvider'
-import { ProviderError } from './Errors'
+import { SumerTarget } from './SumerTarget'
+import { Observer, ErrorObserver, TransactionObserver } from './observers'
+import { ProviderError } from './models'
 
 interface SumerInitArguments {
-  provider: ExternalProvider | JsonRpcFetchFunc
   dappKey: string
-  network?: Networkish
   dns?: string
 }
 
 /**
- * Sumer provides a tracking mechanism for errors that may occur during
+ * Sumer provides a tracking interface for errors that may occur during
  * the interaction with a contract or the provider itself
  */
 export class Sumer {
+  private static _dappKey: string
+  private static _dns: string
   private static notifyService: NotifyService
-  private static dappKey: string
-  private static chainId: number
-  private static sumerProviderInstance: SumerProvider
-  private static _currentAddress: string
+  private static sumerObservers: Observer[]
+  private static isInitialized = false
 
   private constructor() {}
 
-  static get currentAddress() {
-    return this._currentAddress
+  static get dappKey() {
+    return this._dappKey
   }
 
-  static get provider() {
-    return this.sumerProviderInstance
+  static get dns() {
+    return this._dns
   }
 
-  static init({ provider, dappKey, network, dns }: SumerInitArguments): Web3Provider {
-    if (this.sumerProviderInstance) {
-      return this.sumerProviderInstance
+  public static init({ dappKey, dns }: SumerInitArguments): void {
+    this.notifyService = NotifyFactory.create(dappKey, dns)
+    this.sumerObservers = [
+      new ErrorObserver(this.notifyService),
+      new TransactionObserver(this.notifyService),
+    ]
+    this._dappKey = dappKey
+    this._dns = dns
+    this.initializeConsoleErrorTracking()
+    this.isInitialized = true
+  }
+
+  public static observe<T>(target: T, observers: Observer[] = []): T {
+    if (!this.isInitialized) {
+      throw new Error(`Sumer client is not properly or yet initialized.`)
     }
-    // @ts-ignore
-    this.chainId = provider.networkVersion
-    this.dappKey = dappKey
-    this.notifyService = NotifyFactory.create(this.dappKey, this.chainId, dns)
-    this.sumerProviderInstance = new SumerProvider({
-      provider,
-      network,
-      notifyService: this.notifyService,
-    })
-    this.sumerProviderInstance.listAccounts().then(accounts => (this._currentAddress = accounts[0]))
-    this.notifyService.checkConnection()
-
-    return this.sumerProviderInstance
+    const sumerTarget = new SumerTarget([...this.sumerObservers, ...observers])
+    return sumerTarget.proxy(target)
   }
 
-  public static createWrappedContract(
+  public static contract(
     addressOrName: string,
     contractInterface: ReadonlyArray<Fragment | JsonFragment>,
+    chainId: number,
     signerOrProvider?: Signer | Provider,
   ): Contract {
     return new SumerContract({
       addressOrName,
       contractInterface,
       signerOrProvider,
-      chainId: this.chainId,
+      chainId,
       notifyService: this.notifyService,
     }) as Contract
   }
 
-  // Wrap sendTransaction to catch errors
-  public static async sendTransaction(
-    signedTransaction: string | Promise<string>,
-  ): Promise<TransactionResponse> {
-    try {
-      const response = await this.sumerProviderInstance.sendTransaction(signedTransaction)
-      await this.notifyService.trackTransaction({
-        chainId: this.chainId,
-        txHash: response.hash,
-      })
-
-      return response
-    } catch (error) {
-      if (!error.Sumer) {
-        let from = this.currentAddress
+  private static initializeConsoleErrorTracking() {
+    if (typeof window !== 'undefined' && !this.isInitialized) {
+      const WAGMI_ERROR_NAMES = ['UserRejectedRequestError']
+      const consoleError = window.console.error
+      window.console.error = async (...args) => {
         try {
-          from = ethers.utils.parseTransaction(signedTransaction as BytesLike).from
-        } catch (error) {
-          from = this.currentAddress
+          args.forEach(async arg => {
+            if (WAGMI_ERROR_NAMES.includes(arg.name)) {
+              this.notifyService.trackError(
+                new ProviderError({
+                  message: arg.cause?.reason,
+                  address: arg.cause?.transaction?.from,
+                  code: arg.code,
+                }),
+              )
+            }
+          })
+        } finally {
+          // Prevent Next.js from logging the hydration warning
+          if (!window['_nextSetupHydrationWarning'] && process.env.NODE_ENV !== 'test') {
+            consoleError.apply(window.console, args)
+          }
         }
-        const providerError = new ProviderError({
-          message: error.message,
-          code: error.code,
-          address: from,
-        })
-        this.notifyService.trackError(providerError)
-        error.Sumer = true
       }
-      throw error
     }
-  }
-
-  public static destroy() {
-    delete this.sumerProviderInstance
   }
 }

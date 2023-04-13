@@ -1,6 +1,5 @@
 import { NotifyService } from './NotifyService'
-import { ContractError, ProviderError } from '../Errors'
-import { Transaction } from '../Types/Transaction'
+import { ProviderError, ContractError, Transaction } from '../models'
 
 export class NotifyServiceLog implements NotifyService {
   private _chainId: number

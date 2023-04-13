@@ -1,4 +1,4 @@
-import { ContractError } from './../../src/Errors/ContractError'
+import { ContractError } from '../../src/models'
 
 describe('ContractError', () => {
   it('should set the ContractError properties', () => {

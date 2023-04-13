@@ -1,12 +1,9 @@
 {
   "extends": "./tsconfig",
+
   "compilerOptions": {
-    "target": "esnext",
-    "outDir": "build/module",
-    "rootDir": "src",
-    "module": "esnext"
-  },
-  "exclude": [
-    "tests/**/*.ts"
-  ]
+    "target": "es5",
+    "module": "commonjs",
+    "outDir": "build/module"
+  }
 }
