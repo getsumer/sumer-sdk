@@ -69,6 +69,7 @@ describe('Sumer observed provider can be used as expected', () => {
       effectiveGasPrice: transactionReceipt.effectiveGasPrice?._hex,
       cumulativeGasUsed: transactionReceipt.cumulativeGasUsed?._hex,
       status: transactionReceipt.status,
+      chainId: 1,
 
       args: [
         '0x505a3fd48d4b778c74b4583b8892d5102e3d4aabf1e035b0fdcd7a74a7b509dc',

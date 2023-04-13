@@ -10,9 +10,10 @@ export class ErrorObserver extends SumerObserver {
     if (this.isError(execution.error)) {
       this.notifyService.trackError(
         new ProviderError({
-          address: execution.target.selectedAddress,
+          address: execution.target.selectedAddress.toString(),
           code: execution.error['code'],
           message: execution.error['message'],
+          chainId: this.getChainId({ execution }),
         }),
       )
     }
@@ -24,5 +25,11 @@ export class ErrorObserver extends SumerObserver {
           ['code', 'message'].includes(propertyName),
         )
       : false
+  }
+  private getChainId({ execution }: Target): number | undefined {
+    if (execution.target.chainId) {
+      return parseInt(execution.target.chainId.toString())
+    }
+    return undefined
   }
 }

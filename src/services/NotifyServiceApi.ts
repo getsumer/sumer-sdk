@@ -6,6 +6,7 @@ interface ErrorBody {
   userAddress: string
   message: string
   errorType: string
+  chainId?: number
   metadata: Parser.ParsedResult | Record<string, string>
 }
 
@@ -49,6 +50,7 @@ export class NotifyServiceApi implements NotifyService {
         args: error.args,
         message: error.reason,
         errorType: error.type,
+        chainId: error.chainId,
         metadata: this.meta(),
       }
     } else {
@@ -57,6 +59,7 @@ export class NotifyServiceApi implements NotifyService {
         code: error.code,
         message: error.message,
         errorType: error.type,
+        chainId: error.chainId,
         metadata: this.meta(),
       }
     }
