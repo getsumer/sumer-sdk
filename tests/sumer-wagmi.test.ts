@@ -30,7 +30,7 @@ describe('sumerProvider', () => {
     const txData = new TxReceipt({
       wallet: null, // no wallet in test: no client created and no wallet name set
       chainId: 1,
-      txReceipt: txReceipt,
+      txReceipt,
     })
 
     expect(spy).toHaveBeenCalledTimes(1)

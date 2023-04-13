@@ -2,7 +2,6 @@ import { Chain, createClient, ProviderWithFallbackConfig } from '@wagmi/core'
 import { providers } from 'ethers'
 import { NotifyFactory } from './Notify'
 import { TxReceipt } from './Transactions/TxReceipt'
-import { TransactionReceipt } from '@ethersproject/providers'
 import { ProviderError } from './Errors'
 
 declare global {
@@ -48,7 +47,7 @@ export function sumerProvider<TProvider extends Provider = Provider>(
               const txData = new TxReceipt({
                 wallet: createClient({ provider }).storage.getItem('wallet'),
                 chainId: provider._network.chainId,
-                txReceipt: transactionReceipt as TransactionReceipt,
+                txReceipt: transactionReceipt,
               })
 
               await NotifyFactory.create(dappKey).trackTxReceipt(txData)

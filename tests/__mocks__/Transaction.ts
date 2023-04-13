@@ -1,7 +1,6 @@
-import { TransactionResponse, TransactionReceipt } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 
-export const transaction: TransactionResponse = {
+export const transaction = {
   hash: '0x505a3fd48d4b778c74b4583b8892d5102e3d4aabf1e035b0fdcd7a74a7b509dc',
   from: '0xb23012C7730A606F971d756795ddFe104Df64270',
   to: '0xd5B55D3Ed89FDa19124ceB5baB620328287b915d',
@@ -14,7 +13,7 @@ export const transaction: TransactionResponse = {
   chainId: 0,
 }
 
-export const receipt: TransactionReceipt = {
+export const receipt = {
   to: '0xB0a0B238AB8052D97e8935b870F4BD263Cf4195e',
   from: '0x6c91ce8f28567fb1B188A894101d9563Ab555F96',
   contractAddress: '',
