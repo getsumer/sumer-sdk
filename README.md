@@ -90,4 +90,25 @@ const contract = Sumer.contract(address, abi, chainId, signerOrProvider)
 const tx = contract.myFunction(...)
 ```
 
+* Custom _observers_ example:
+
+```JS
+import { Sumer, Observer, Target } from 'sumer-sdk'
+
+class CustomObserver implements Observer {
+  public async inspect(target: Target): Promise<void> {
+    // Use target object as needed
+  }
+}
+// ...
+const client = createClient({
+  autoConnect: true,
+  connectors: [
+    new MetaMaskConnector({ chains }),
+  ],
+  provider: Sumer.observe(provider, [new CustomObserver()]),
+})
+// ...
+```
+
 **If you have any trouble integrating with other web3 libraries, please get in touch with us to provide you [support](https://discord.com/channels/1044217387119022080/1044252595616751676).**
