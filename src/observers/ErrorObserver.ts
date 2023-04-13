@@ -1,4 +1,4 @@
-import { Target, ExecutionPayload } from './Target'
+import { Target, ExecutionPayload, TargetExecution } from './Target'
 import { SumerObserver } from './SumerObserver'
 import { ProviderError } from '../models'
 
@@ -13,7 +13,7 @@ export class ErrorObserver extends SumerObserver {
           address: execution.target.selectedAddress.toString(),
           code: execution.error['code'],
           message: execution.error['message'],
-          chainId: this.getChainId({ execution }),
+          chainId: this.getChainId(execution),
         }),
       )
     }
@@ -26,7 +26,7 @@ export class ErrorObserver extends SumerObserver {
         )
       : false
   }
-  private getChainId({ execution }: Target): number | undefined {
+  private getChainId(execution: TargetExecution): number | undefined {
     if (execution.target.chainId) {
       return parseInt(execution.target.chainId.toString())
     }

@@ -1,4 +1,4 @@
-import { Target, ExecutionPayload } from './Target'
+import { Target, ExecutionPayload, TargetExecution } from './Target'
 import { SumerObserver } from './SumerObserver'
 
 export class TransactionObserver extends SumerObserver {
@@ -14,7 +14,7 @@ export class TransactionObserver extends SumerObserver {
         to: result['to'],
 
         // Transaction Response
-        chainId: this.parseNumber(result['chainId']) || this.getChainId({ execution }),
+        chainId: this.parseNumber(result['chainId']) || this.getChainId(execution),
         nonce: this.parseNumber(result['nonce']),
         gasLimit: this.parseBigNumber(result['gasLimit']),
         maxFeePerGas: this.parseBigNumber(result['maxFeePerGas']),
@@ -66,7 +66,7 @@ export class TransactionObserver extends SumerObserver {
     }
   }
 
-  private getChainId({ execution }: Target): number | undefined {
+  private getChainId(execution: TargetExecution): number | undefined {
     if (!execution.target) {
       return undefined
     }
