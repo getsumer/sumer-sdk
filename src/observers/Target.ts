@@ -5,7 +5,7 @@ export type ExecutionPayload =
   | { [key: string]: ExecutionPayload }
 
 export interface TargetExecution {
-  target: Record<string, string>
+  target: Record<string, string | object>
   methodName: string
   args: string[]
   error?: ExecutionPayload
