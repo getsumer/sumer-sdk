@@ -14,8 +14,7 @@ export class TransactionObserver extends SumerObserver {
         to: result['to'],
 
         // Transaction Response
-        chainId:
-          this.parseNumber(result['chainId']) || this.parseNumber(this.getChainId({ execution })),
+        chainId: this.parseNumber(result['chainId']) || this.getChainId({ execution }),
         nonce: this.parseNumber(result['nonce']),
         gasLimit: this.parseBigNumber(result['gasLimit']),
         maxFeePerGas: this.parseBigNumber(result['maxFeePerGas']),
@@ -67,18 +66,18 @@ export class TransactionObserver extends SumerObserver {
     }
   }
 
-  private getChainId({ execution }: Target): string | undefined {
+  private getChainId({ execution }: Target): number | undefined {
     if (!execution.target) {
       return undefined
     }
     // providers derived from base provider
-    if (this.isObject(execution.target['_network'])) {
-      return (execution.target['_network'] as any).chainId.toString()
+    if (execution.target._network) {
+      return execution.target._network['chainId']
     }
     // external providers
-    return execution.target.chainId.toString() ?? undefined
-  }
-  private isObject(value: string | object): value is object {
-    return typeof value === 'object'
+    if (execution.target.chainId) {
+      return parseInt(execution.target.chainId.toString())
+    }
+    return undefined
   }
 }

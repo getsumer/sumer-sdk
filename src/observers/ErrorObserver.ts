@@ -4,18 +4,16 @@ import { ProviderError } from '../models'
 
 export class ErrorObserver extends SumerObserver {
   public async inspect({ execution }: Target): Promise<void> {
-    console.info('ErrorObserver.inspect', execution.target.chainId)
     if (!execution.error) {
       return
     }
     if (this.isError(execution.error)) {
-      console.info('ErrorObserver', execution.target.chainId.toString())
       this.notifyService.trackError(
         new ProviderError({
-          chainId: parseInt(execution.target.chainId.toString()) ?? undefined,
           address: execution.target.selectedAddress.toString(),
           code: execution.error['code'],
           message: execution.error['message'],
+          chainId: this.getChainId({ execution }),
         }),
       )
     }
@@ -27,5 +25,11 @@ export class ErrorObserver extends SumerObserver {
           ['code', 'message'].includes(propertyName),
         )
       : false
+  }
+  private getChainId({ execution }: Target): number | undefined {
+    if (execution.target.chainId) {
+      return parseInt(execution.target.chainId.toString())
+    }
+    return undefined
   }
 }

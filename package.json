@@ -46,6 +46,8 @@
     "@types/jest": "^27.5.2",
     "@types/node": "^18.7.18",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
+    "utf-8-validate": "^5.0.10",
+    "bufferutil": "^4.0.7",
     "eslint": "^8.34.0",
     "husky": "^8.0.3",
     "jest": "^27.5.1",
