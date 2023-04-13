@@ -70,11 +70,11 @@ export class TransactionObserver extends SumerObserver {
     if (!execution.target) {
       return undefined
     }
-    // providers derived from base provider
+    // Target extends from BaseProvider
     if (execution.target._network) {
       return execution.target._network['chainId']
     }
-    // external providers
+    // Target is an ExternalProvider
     if (execution.target.chainId) {
       return parseInt(execution.target.chainId.toString())
     }
