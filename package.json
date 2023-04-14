@@ -1,10 +1,18 @@
 {
   "name": "sumer-sdk",
   "version": "5.0.0",
-  "description": "A package that allows devs to observe provider execution on EVM-based Dapps",
+  "description": "Package that allow devs to observe provider execution on EVM-based dApps",
+  "author": "Sumer Communities SL (by Wagmi Venture Studio) <dev@getsumer.com>",
+  "license": "MIT",
   "main": "build/module/index.js",
   "module": "build/module/index.js",
   "types": "build/types/index.d.ts",
+  "homepage": "https://getsumer.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/getsumer/sumer-sdk.git"
+  },
+  "bugs": "https://github.com/getsumer/sumer-sdk/issues",
   "scripts": {
     "prepare": "husky install",
     "clean": "rm -rf ./build",
@@ -16,24 +24,6 @@
     "lint": "tslint --fix -c tslint.json 'src/**/*.ts'",
     "preversion": "npm run build"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/getsumer/sumer-sdk.git"
-  },
-  "keywords": [
-    "dapps",
-    "evm",
-    "dev-tool",
-    "web3"
-  ],
-  "author": {
-    "name": "Wagmi Venture Studio"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/getsumer/sumer-sdk/issues"
-  },
-  "homepage": "https://github.com/getsumer/sumer-sdk#readme",
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
@@ -62,5 +52,14 @@
     "build",
     "LICENSE",
     "README.md"
+  ],
+  "keywords": [
+    "dapps",
+    "evm",
+    "dev-tool",
+    "web3",
+    "ethereum",
+    "monitoring",
+    "observability"
   ]
 }
