@@ -7,6 +7,15 @@ import { CustomJsonRpcProvider, transactionResponse, replaceable } from './__moc
 const WALLET_PUBLIC_ADDRESS = '0x14791697260E4c9A71f18484C9f997B308e59325'
 const CONTRACT_ADDRESS = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
 
+global.console = {
+  ...console,
+  log: jest.fn(),
+  debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+}
+
 describe('Sumer observed provider can be used as expected', () => {
   jest.spyOn(console, 'info').mockImplementation(() => {})
   let web3Provider: Web3Provider
@@ -27,7 +36,7 @@ describe('Sumer observed provider can be used as expected', () => {
         }
       },
     }
-    Sumer.init({ dappKey: '123' })
+    Sumer.init({ dappKey: '123', standalone: false })
     web3Provider = new Web3Provider(Sumer.observe(mockWeb3Provider))
     wagmiProvider = Sumer.observe(() => new CustomJsonRpcProvider())
     jest.resetAllMocks()
