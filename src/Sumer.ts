@@ -8,7 +8,7 @@ import { Observer, ErrorObserver, TransactionObserver } from './observers'
 
 declare global {
   interface Window {
-    ethereum?: any
+    ethereum?: unknown
   }
 }
 
