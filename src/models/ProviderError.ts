@@ -10,7 +10,7 @@ export interface EipError {
 interface ProviderErrorArguments {
   chainId?: number
   message: string
-  code: any
+  code: number
   address: string
 }
 
