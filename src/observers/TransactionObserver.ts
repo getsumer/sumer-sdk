@@ -47,7 +47,7 @@ export class TransactionObserver extends SumerObserver {
   }
 
   private isCall(args: unknown[]) {
-    return args.some(arg => arg['method'] === 'eth_call')
+    return args ? args.filter(Boolean).some(arg => arg['method'] === 'eth_call') : false
   }
 
   private containsTransactionHash(result: ExecutionPayload) {
