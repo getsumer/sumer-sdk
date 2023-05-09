@@ -1,6 +1,6 @@
 {
   "name": "sumer-sdk",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Package that allow devs to observe provider execution on EVM-based dApps",
   "author": "Sumer Communities SL (by Wagmi Venture Studio) <dev@getsumer.com>",
   "license": "MIT",
