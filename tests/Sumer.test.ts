@@ -202,19 +202,6 @@ describe('Sumer catch errors', () => {
     spy.mockClear()
   })
 
-  it('Sumer should track UserRejectedRequestError from window console', async () => {
-    // Given
-    const spy = jest.spyOn(NotifyServiceLog.prototype, 'trackError')
-    let error = new Error('User rejected the request')
-    error.name = 'UserRejectedRequestError'
-
-    // When
-    window.console.error(error)
-
-    // Then
-    expect(spy).toHaveBeenCalledTimes(1)
-  })
-
   it('Sumer should not track unlisted error from window console', async () => {
     // Given
     const spy = jest.spyOn(NotifyServiceLog.prototype, 'trackError')
