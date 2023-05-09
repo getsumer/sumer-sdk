@@ -1,35 +1,20 @@
 import { Target, ExecutionPayload, TargetExecution } from './Target'
 import { SumerObserver } from './SumerObserver'
 import { ProviderError } from '../models'
-
 export class ErrorObserver extends SumerObserver {
-  private readonly KNOWN_ERROR_NAMES = ['UserRejectedRequestError']
+  private readonly NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
   public async inspect({ execution }: Target): Promise<void> {
     if (this.isError(execution.result)) {
       const { result } = execution
       this.notifyService.trackError(
         new ProviderError({
-          address: execution.target.selectedAddress?.toString(),
+          address: this.getAddress(execution),
           code: result['code'],
           message: result['message'],
           chainId: this.getChainId(execution),
         }),
       )
-    } else if (execution.args) {
-      execution.args.forEach(async (arg: string | Error) => {
-        const errorMessage = arg instanceof Error ? arg.name : arg
-        if (this.KNOWN_ERROR_NAMES.includes(errorMessage)) {
-          this.notifyService.trackError(
-            new ProviderError({
-              message: arg['cause']?.reason,
-              address: arg['cause']?.transaction?.from,
-              code: arg['code'],
-              chainId: this.getChainId(execution),
-            }),
-          )
-        }
-      })
     }
   }
 
@@ -46,5 +31,14 @@ export class ErrorObserver extends SumerObserver {
       return parseInt(execution.target.chainId.toString())
     }
     return undefined
+  }
+  private getAddress(execution: TargetExecution): string {
+    if (execution.target.selectedAddress) {
+      return execution.target.selectedAddress.toString()
+    }
+    if (execution.target._addresses && execution.target._addresses[0]) {
+      return execution.target._addresses[0].toString()
+    }
+    return this.NULL_ADDRESS
   }
 }

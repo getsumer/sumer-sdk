@@ -95,9 +95,6 @@ export class Sumer {
       if (window.ethereum && standalone) {
         window.ethereum = sumerTarget.proxy(window.ethereum)
       }
-      if (window.console && window.console.error && !standalone) {
-        window.console.error = sumerTarget.proxy(window.console.error)
-      }
     }
   }
 }
