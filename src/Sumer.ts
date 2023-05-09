@@ -5,11 +5,18 @@ import { NotifyService, NotifyFactory } from './services'
 import { SumerContract } from './SumerContract'
 import { SumerTarget } from './SumerTarget'
 import { Observer, ErrorObserver, TransactionObserver } from './observers'
-import { ProviderError } from './models'
+
+declare global {
+  interface Window {
+    ethereum?: unknown
+  }
+}
 
 interface SumerInitArguments {
   dappKey: string
   dns?: string
+  observers?: Observer[]
+  standalone?: boolean
 }
 
 /**
@@ -33,15 +40,21 @@ export class Sumer {
     return this._dns
   }
 
-  public static init({ dappKey, dns }: SumerInitArguments): void {
+  public static init({
+    dappKey,
+    dns,
+    observers = [],
+    standalone = true,
+  }: SumerInitArguments): void {
     this.notifyService = NotifyFactory.create(dappKey, dns)
     this.sumerObservers = [
+      ...observers,
       new ErrorObserver(this.notifyService),
       new TransactionObserver(this.notifyService),
     ]
     this._dappKey = dappKey
     this._dns = dns
-    this.initializeConsoleErrorTracking()
+    this.initializeWindow(standalone)
     this.isInitialized = true
   }
 
@@ -49,7 +62,7 @@ export class Sumer {
     if (!this.isInitialized) {
       throw new Error(`Sumer client is not properly or yet initialized.`)
     }
-    const sumerTarget = new SumerTarget([...this.sumerObservers, ...observers])
+    const sumerTarget = new SumerTarget([...observers, ...this.sumerObservers])
     return sumerTarget.proxy(target)
   }
 
@@ -68,29 +81,19 @@ export class Sumer {
     }) as Contract
   }
 
-  private static initializeConsoleErrorTracking() {
+  public static trackTransaction(hash: string) {
+    const validHex = /^0x[a-fA-F0-9]{64}$/
+    if (!hash.match(validHex)) {
+      throw new Error(`Transaction hash <${hash}> has not a valid 66-character hexadecimal format.`)
+    }
+    return this.notifyService.trackTransaction({ hash })
+  }
+
+  private static initializeWindow(standalone?: boolean) {
     if (typeof window !== 'undefined' && !this.isInitialized) {
-      const WAGMI_ERROR_NAMES = ['UserRejectedRequestError']
-      const consoleError = window.console.error
-      window.console.error = async (...args) => {
-        try {
-          args.forEach(async arg => {
-            if (WAGMI_ERROR_NAMES.includes(arg.name)) {
-              this.notifyService.trackError(
-                new ProviderError({
-                  message: arg.cause?.reason,
-                  address: arg.cause?.transaction?.from,
-                  code: arg.code,
-                }),
-              )
-            }
-          })
-        } finally {
-          // Prevent Next.js from logging the hydration warning
-          if (!window['_nextSetupHydrationWarning'] && process.env.NODE_ENV !== 'test') {
-            consoleError.apply(window.console, args)
-          }
-        }
+      const sumerTarget = new SumerTarget(this.sumerObservers)
+      if (window.ethereum && standalone) {
+        window.ethereum = sumerTarget.proxy(window.ethereum)
       }
     }
   }

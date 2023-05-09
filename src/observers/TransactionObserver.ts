@@ -3,13 +3,10 @@ import { SumerObserver } from './SumerObserver'
 
 export class TransactionObserver extends SumerObserver {
   public async inspect({ execution }: Target): Promise<void> {
-    if (!execution.result) {
-      return
-    }
-    if (this.isTransaction(execution.result)) {
+    if (!this.isCall(execution.args) && this.isTransaction(execution.result)) {
       const { result } = execution
       this.notifyService.trackTransaction({
-        hash: result['hash'] || result['transactionHash'],
+        hash: result['hash'] || result['transactionHash'] || result,
         from: result['from'],
         to: result['to'],
 
@@ -41,10 +38,22 @@ export class TransactionObserver extends SumerObserver {
 
   private isTransaction(result: ExecutionPayload): boolean {
     return result
-      ? Object.getOwnPropertyNames(result).some(propertyName =>
-          ['hash', 'transactionHash'].includes(propertyName),
-        )
+      ? this.isTransactionHash(result.toString()) || this.containsTransactionHash(result)
       : false
+  }
+
+  private isTransactionHash(hash: string) {
+    return /^0x([A-Fa-f0-9]{64})$/.test(hash)
+  }
+
+  private isCall(args: unknown[]) {
+    return args ? args.filter(Boolean).some(arg => arg['method'] === 'eth_call') : false
+  }
+
+  private containsTransactionHash(result: ExecutionPayload) {
+    return Object.getOwnPropertyNames(result).some(propertyName =>
+      ['hash', 'transactionHash'].includes(propertyName),
+    )
   }
 
   private parseNumber(value?: string | number): number | undefined {

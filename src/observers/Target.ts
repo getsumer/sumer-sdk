@@ -8,9 +8,8 @@ export type ExecutionPayload =
 
 export interface TargetExecution {
   target: Record<string, string | object>
-  methodName: string
-  args: string[]
-  error?: ExecutionPayload
+  methodName?: string
+  args?: unknown[]
   result?: ExecutionPayload
 }
 

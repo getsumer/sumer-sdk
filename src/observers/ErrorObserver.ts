@@ -1,18 +1,17 @@
 import { Target, ExecutionPayload, TargetExecution } from './Target'
 import { SumerObserver } from './SumerObserver'
 import { ProviderError } from '../models'
-
 export class ErrorObserver extends SumerObserver {
+  private readonly NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
+
   public async inspect({ execution }: Target): Promise<void> {
-    if (!execution.error) {
-      return
-    }
-    if (this.isError(execution.error)) {
+    if (this.isError(execution.result)) {
+      const { result } = execution
       this.notifyService.trackError(
         new ProviderError({
-          address: execution.target.selectedAddress.toString(),
-          code: execution.error['code'],
-          message: execution.error['message'],
+          address: this.getAddress(execution),
+          code: result['code'],
+          message: result['message'],
           chainId: this.getChainId(execution),
         }),
       )
@@ -26,10 +25,20 @@ export class ErrorObserver extends SumerObserver {
         )
       : false
   }
+
   private getChainId(execution: TargetExecution): number | undefined {
     if (execution.target.chainId) {
       return parseInt(execution.target.chainId.toString())
     }
     return undefined
+  }
+  private getAddress(execution: TargetExecution): string {
+    if (execution.target.selectedAddress) {
+      return execution.target.selectedAddress.toString()
+    }
+    if (execution.target._addresses && execution.target._addresses[0]) {
+      return execution.target._addresses[0].toString()
+    }
+    return this.NULL_ADDRESS
   }
 }

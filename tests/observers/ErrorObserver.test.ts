@@ -20,7 +20,7 @@ describe('ErrorObserver', () => {
         target: {
           selectedAddress: signerOrProviderAddress,
         },
-        error: { code: error.code, message: error.message },
+        result: { code: error.code, message: error.message },
       },
       observers: [],
       proxy: jest.fn(),

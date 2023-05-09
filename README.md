@@ -106,6 +106,8 @@ The SDK currently has full support on [Wagmi](https://github.com/wagmi-dev/wagmi
 <br/>
 Once integrated, all dApp activity will be captured and observable in the [Sumer App](https://app.getsumer.com/) 
 
+#### *For Ethers and Web3-React integrations, once the SDK is initialized, you are set to go!*
+
 ### Wagmi Integration
 
 The developer uses the wagmi.sh library as usual, no more software modifications are required
@@ -134,22 +136,8 @@ const client = createClient({
 </WagmiConfig>
 ```
 
-### Ethers Integration
 
-Integration done by either creating an observer on the ethers provider and/or the ethers contract
-<br/>
-The developer uses the ethers library as usual, no more software modifications are required
-
-_Provider Integration_
-
-```js
-import { Sumer } from 'sumer-sdk'
-
-const web3Provider = ethers.providers.Web3Provider(Sumer.observe(provider))
-
-// use the provider instance as usual
-const tx = web3Provider.myFunction(...)
-```
+#### Futhermore, if you want to observe your contracts, you can do it as follows:
 
 _Contract Integration_
 
@@ -160,26 +148,6 @@ const contract = Sumer.contract(address, abi, chainId, signerOrProvider)
 
 // use the contract instance as usual
 const tx = contract.myFunction(...)
-```
-
-### Web3 React Integration
-
-The developer uses the web3-react library as usual, no more software modifications are required
-
-_Provider Integration_
-
-```js
-import { Sumer } from 'sumer-sdk'
-
-function getWeb3Library(provider: any): providers.Web3Provider {
-  const library = new ethers.providers.Web3Provider(Sumer.observe(provider))
-  library.pollingInterval = 12000
-  return library
-}
-
-<Web3ReactProvider getLibrary={getWeb3Library}>
-  <YourDappComponents />
-</Web3ReactProvider>
 ```
 
 ### 3.2. Custom Observers
@@ -239,6 +207,6 @@ Documentation - [documentation](https://docs.getsumer.com/sumer/)
 
 ## 5. License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the GNU GENERAL PUBLIC LICENSE. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
