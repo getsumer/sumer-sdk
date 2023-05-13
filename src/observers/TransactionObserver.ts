@@ -5,7 +5,7 @@ export class TransactionObserver extends SumerObserver {
   public async inspect({ execution }: Target): Promise<void> {
     if (!this.isCall(execution.args) && this.isTransaction(execution.result)) {
       const { result } = execution
-      this.notifyService.trackTransaction({
+      await this.notifyService.trackTransaction({
         hash: result['hash'] || result['transactionHash'] || result,
         from: result['from'],
         to: result['to'],

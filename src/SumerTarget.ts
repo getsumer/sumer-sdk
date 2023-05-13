@@ -84,7 +84,7 @@ export class SumerTarget implements Target {
               methodName: prop.toString(),
               args,
             }
-            this.observers.map(o => o.inspect(this))
+            await Promise.all(this.observers.map(o => o.inspect(this)))
             return this.proxy(result)
           } catch (error) {
             this._execution = {
