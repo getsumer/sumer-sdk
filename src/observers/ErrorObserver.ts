@@ -11,7 +11,7 @@ export class ErrorObserver extends SumerObserver {
         new ProviderError({
           address: this.getAddress(execution),
           code: result['code'],
-          message: this.extractErrorInfo(result),
+          message: this.getErrorInfo(result),
           chainId: this.getChainId(execution),
         }),
       )
@@ -43,7 +43,7 @@ export class ErrorObserver extends SumerObserver {
     return this.NULL_ADDRESS
   }
 
-  private extractErrorInfo(payload: ExecutionPayload) {
+  private getErrorInfo(payload: ExecutionPayload) {
     if (payload['data'] && payload['data'].message) {
       return payload['data'].message
     }
