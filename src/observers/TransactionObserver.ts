@@ -4,35 +4,40 @@ import { SumerObserver } from './SumerObserver'
 export class TransactionObserver extends SumerObserver {
   public async inspect({ execution }: Target): Promise<void> {
     if (!this.isCall(execution.args) && this.isTransaction(execution.result)) {
-      const { result } = execution
-      await this.notifyService.trackTransaction({
-        hash: result['hash'] || result['transactionHash'] || result,
-        from: result['from'],
-        to: result['to'],
+      const { result, target } = execution
+      const wallet = this.getWallet(target)
 
-        // Transaction Response
-        chainId: this.parseNumber(result['chainId']) || this.getChainId(execution),
-        nonce: this.parseNumber(result['nonce']),
-        gasLimit: this.parseBigNumber(result['gasLimit']),
-        maxFeePerGas: this.parseBigNumber(result['maxFeePerGas']),
-        maxPriorityFeePerGas: this.parseBigNumber(result['maxPriorityFeePerGas']),
-        data: result['data'],
-        value: this.parseBigNumber(result['value']),
+      await this.notifyService.trackTransaction(
+        {
+          hash: result['hash'] || result['transactionHash'] || result,
+          from: result['from'],
+          to: result['to'],
 
-        // Transaction Receipt
-        blockHash: result['blockHash'],
-        blockNumber: this.parseNumber(result['blockNumber']),
-        confirmations: result['confirmations'],
-        transactionIndex: this.parseNumber(result['transactionIndex']),
-        contractAddress: result['contractAddress'],
-        gasUsed: this.parseBigNumber(result['gasUsed']),
-        effectiveGasPrice: this.parseBigNumber(result['effectiveGasPrice']),
-        cumulativeGasUsed: this.parseBigNumber(result['cumulativeGasUsed']),
-        status: this.parseNumber(result['status']),
+          // Transaction Response
+          chainId: this.parseNumber(result['chainId']) || this.getChainId(execution),
+          nonce: this.parseNumber(result['nonce']),
+          gasLimit: this.parseBigNumber(result['gasLimit']),
+          maxFeePerGas: this.parseBigNumber(result['maxFeePerGas']),
+          maxPriorityFeePerGas: this.parseBigNumber(result['maxPriorityFeePerGas']),
+          data: result['data'],
+          value: this.parseBigNumber(result['value']),
 
-        args: execution.args,
-        functionName: execution.methodName,
-      })
+          // Transaction Receipt
+          blockHash: result['blockHash'],
+          blockNumber: this.parseNumber(result['blockNumber']),
+          confirmations: result['confirmations'],
+          transactionIndex: this.parseNumber(result['transactionIndex']),
+          contractAddress: result['contractAddress'],
+          gasUsed: this.parseBigNumber(result['gasUsed']),
+          effectiveGasPrice: this.parseBigNumber(result['effectiveGasPrice']),
+          cumulativeGasUsed: this.parseBigNumber(result['cumulativeGasUsed']),
+          status: this.parseNumber(result['status']),
+
+          args: execution.args,
+          functionName: execution.methodName,
+        },
+        { ...this.meta(), wallet },
+      )
     }
   }
 

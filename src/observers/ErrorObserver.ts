@@ -6,7 +6,9 @@ export class ErrorObserver extends SumerObserver {
 
   public async inspect({ execution }: Target): Promise<void> {
     if (this.isError(execution.result)) {
-      const { result } = execution
+      const { result, target } = execution
+      const wallet = this.getWallet(target)
+
       this.notifyService.trackError(
         new ProviderError({
           address: this.getAddress(execution),
@@ -14,6 +16,7 @@ export class ErrorObserver extends SumerObserver {
           message: result['message'],
           chainId: this.getChainId(execution),
         }),
+        { ...this.meta(), wallet },
       )
     }
   }

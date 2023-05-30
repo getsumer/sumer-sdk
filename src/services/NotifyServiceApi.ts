@@ -1,4 +1,4 @@
-import bowser, { Parser } from 'bowser'
+import { Parser } from 'bowser'
 import { NotifyService } from './NotifyService'
 import { ProviderError, ContractError, Transaction } from '../models'
 
@@ -7,7 +7,7 @@ interface ErrorBody {
   message: string
   errorType: string
   chainId?: number
-  metadata: Parser.ParsedResult | Record<string, string>
+  metadata?: Parser.ParsedResult | Record<string, string>
 }
 
 interface ContractErrorBody extends ErrorBody {
@@ -33,14 +33,20 @@ export class NotifyServiceApi implements NotifyService {
     this.checkConnection()
   }
 
-  public async trackTransaction(transaction: Transaction): Promise<void> {
+  public async trackTransaction(
+    transaction: Transaction,
+    metadata: Record<string, string>,
+  ): Promise<void> {
     this.fetchPost('transactions', {
       ...transaction,
-      metadata: this.meta(),
+      metadata,
     })
   }
 
-  public async trackError(error: ContractError | ProviderError): Promise<void> {
+  public async trackError(
+    error: ContractError | ProviderError,
+    metadata: Record<string, string>,
+  ): Promise<void> {
     let body: ContractErrorBody | ProviderErrorBody
     if (error instanceof ContractError) {
       body = {
@@ -51,7 +57,7 @@ export class NotifyServiceApi implements NotifyService {
         message: error.reason,
         errorType: error.type,
         chainId: error.chainId,
-        metadata: this.meta(),
+        metadata,
       }
     } else {
       body = {
@@ -60,7 +66,7 @@ export class NotifyServiceApi implements NotifyService {
         message: error.message,
         errorType: error.type,
         chainId: error.chainId,
-        metadata: this.meta(),
+        metadata,
       }
     }
     this.fetchPost('errors', body)
@@ -87,12 +93,5 @@ export class NotifyServiceApi implements NotifyService {
     } catch (e) {
       console.warn(`[Sumer:NotifyService][fetch]`, e)
     }
-  }
-
-  private meta(): Parser.ParsedResult | Record<string, string> {
-    if (window?.navigator?.userAgent) {
-      return bowser.parse(window.navigator.userAgent)
-    }
-    return {}
   }
 }
