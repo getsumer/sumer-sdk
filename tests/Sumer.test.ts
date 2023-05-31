@@ -92,23 +92,15 @@ describe('Sumer catch errors', () => {
   })
 
   it('Sumer with Web3Provider catch failure sign message by user reject', async () => {
-    // Given
     const spy = jest.spyOn(NotifyServiceLog.prototype, 'trackError')
-    const signer = web3Provider.getSigner()
-    // const error = new ProviderError({
-    //   message: `This is a raw message`,
-    //   code: 4001,
-    //   address: WALLET_PUBLIC_ADDRESS,
-    // })
 
-    // When
+    const signer = web3Provider.getSigner()
+
     try {
       await signer.signMessage('message')
     } catch (e) {}
 
-    // Then
     expect(spy).toBeCalled()
-    //expect(spy).toHaveBeenCalledWith(expect.objectContaining(error))
     spy.mockClear()
   })
 
