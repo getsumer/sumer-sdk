@@ -4,8 +4,9 @@ import { NotifyService } from '../services'
 import bowser, { Parser } from 'bowser'
 
 enum Wallet {
-  METAMASK = 'MetaMask',
-  COINBASE = 'Coinbase',
+  BRAVEWALLET = 'isBraveWallet',
+  COINBASE = 'isCoinbaseWallet',
+  METAMASK = 'isMetaMask',
 }
 export abstract class SumerObserver implements Observer {
   protected readonly notifyService: NotifyService
@@ -16,22 +17,21 @@ export abstract class SumerObserver implements Observer {
   public abstract inspect(_target: Target): Promise<void>
 
   protected getWallet(_executionTarget: Record<string, string | object>): string | undefined {
-    if (
-      _executionTarget?.isMetaMask &&
-      typeof _executionTarget.isMetaMask === 'boolean' &&
-      _executionTarget.selectedAddress
-    ) {
-      return Wallet.METAMASK
+    const wallets = {
+      [Wallet.COINBASE]: { addressKey: '_addresses' },
+      [Wallet.BRAVEWALLET]: { addressKey: 'selectedAddress' },
+      [Wallet.METAMASK]: { addressKey: 'selectedAddress' },
     }
 
-    if (
-      _executionTarget?.isCoinbaseWallet &&
-      typeof _executionTarget.isCoinbaseWallet === 'boolean' &&
-      _executionTarget._addresses[0]
-    ) {
-      return Wallet.COINBASE
+    for (const [walletKey, { addressKey }] of Object.entries(wallets)) {
+      if (
+        _executionTarget?.[walletKey] &&
+        typeof _executionTarget[walletKey] === 'boolean' &&
+        _executionTarget[addressKey]
+      ) {
+        return walletKey
+      }
     }
-
     return undefined
   }
   protected meta(): Parser.ParsedResult | Record<string, string> {

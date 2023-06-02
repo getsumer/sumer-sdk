@@ -66,9 +66,17 @@ export class SumerTarget implements Target {
       return target[Symbol.iterator].bind(target)
     }
 
-    // if coinbase wallet installed
-    if (target.selectedProvider) {
+    // coinbase wallet installed
+    if (target.selectedProvider && target.selectedProvider[prop]) {
       target = target.selectedProvider
+    }
+
+    // brave wallet installed
+    if (target.isBraveWallet && typeof target.isBraveWallet === 'boolean') {
+      const _target = target[prop]
+      if (!(typeof _target === 'function' && prop === 'request')) {
+        return _target
+      }
     }
 
     const method = target[prop]

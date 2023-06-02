@@ -92,8 +92,14 @@ export class Sumer {
   private static initializeWindow(standalone?: boolean) {
     if (typeof window !== 'undefined' && !this.isInitialized) {
       const sumerTarget = new SumerTarget(this.sumerObservers)
+
       if (window.ethereum && standalone) {
-        window.ethereum = sumerTarget.proxy(window.ethereum)
+        const desc = Object.getOwnPropertyDescriptor(window, 'ethereum')
+        const isReadOnly = desc && !desc.writable
+
+        if (!isReadOnly) {
+          window.ethereum = sumerTarget.proxy(window.ethereum)
+        }
       }
     }
   }
