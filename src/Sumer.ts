@@ -99,6 +99,10 @@ export class Sumer {
 
         if (!isReadOnly) {
           window.ethereum = sumerTarget.proxy(window.ethereum)
+        } else {
+          console.warn(
+            'Unable to initialize in standalone mode as window.ethereum is set as readonly.',
+          )
         }
       }
     }
