@@ -1,5 +1,11 @@
 import { Target, ExecutionPayload, TargetExecution } from './Target'
 import { SumerObserver } from './SumerObserver'
+import { ErrorParams } from '../services'
+
+enum Rpc_Methods {
+  eth_sendTransaction = 'eth_sendTransaction',
+  eth_signTypedData_v4 = 'eth_signTypedData_v4',
+}
 
 export class TransactionObserver extends SumerObserver {
   public async inspect({ execution }: Target): Promise<void> {
@@ -10,8 +16,8 @@ export class TransactionObserver extends SumerObserver {
       await this.notifyService.trackTransaction(
         {
           hash: result['hash'] || result['transactionHash'] || result,
-          from: result['from'],
-          to: result['to'],
+          fromAddress: result['from'],
+          toAddress: result['to'],
 
           // Transaction Response
           chainId: this.parseNumber(result['chainId']) || this.getChainId(execution),
@@ -39,8 +45,62 @@ export class TransactionObserver extends SumerObserver {
         { ...this.meta(), wallet },
       )
     }
+
+    if (this.isNotProcessed(execution.result)) {
+      const { args, result, target } = execution
+
+      const params = this.getArgsParams(args)
+      const error = this.getErrorResult(result)
+
+      if (params) {
+        await this.notifyService.trackTransaction(
+          {
+            fromAddress: params['from'],
+            toAddress: params['to'],
+            chainId: this.getChainId(execution),
+            functionName: this.getMethodName(args),
+          },
+          { ...this.meta(), wallet: this.getWallet(target) },
+          error,
+        )
+      }
+    }
   }
 
+  private getMethodName(args: unknown[]): string | undefined {
+    if (args && args.length > 0) {
+      return args[0]['method']
+    }
+    return undefined
+  }
+
+  private getArgsParams(args: unknown[]): object | undefined {
+    // refactor needed:
+    // check: https://ethereum.github.io/execution-apis/api-documentation/
+
+    if (!(args && args.length > 0)) {
+      return undefined
+    }
+    const method = this.getMethodName(args)
+
+    if (method === Rpc_Methods.eth_sendTransaction) {
+      return args[0]['params'][0] as object
+    }
+    return undefined
+  }
+
+  private getErrorResult(result: ExecutionPayload): ErrorParams | undefined {
+    if (!this.isNotProcessed(result)) {
+      return undefined
+    }
+    return {
+      code: result['code'],
+      message: result['message'],
+    }
+  }
+  private isNotProcessed(result: ExecutionPayload): boolean {
+    return result && result['code']
+  }
   private isTransaction(result: ExecutionPayload): boolean {
     return result
       ? this.isTransactionHash(result.toString()) || this.containsTransactionHash(result)

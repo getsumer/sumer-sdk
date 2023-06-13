@@ -1,13 +1,15 @@
 import { Parser } from 'bowser'
-import { ContractError, ProviderError, Transaction } from '../models'
+import { Transaction } from '../models'
+
+export interface ErrorParams {
+  code: number
+  message: string
+}
 
 export interface NotifyService {
-  trackError(
-    error: ContractError | ProviderError,
-    metadata?: Parser.ParsedResult | Record<string, string>,
-  ): Promise<void>
   trackTransaction(
     transaction: Transaction,
     metadata?: Parser.ParsedResult | Record<string, string>,
+    error?: ErrorParams,
   ): Promise<void>
 }

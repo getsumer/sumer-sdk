@@ -1,5 +1,5 @@
-import { NotifyService } from './NotifyService'
-import { ProviderError, ContractError, Transaction } from '../models'
+import { ErrorParams, NotifyService } from './NotifyService'
+import { Transaction } from '../models'
 import { Parser } from 'bowser'
 
 export class NotifyServiceLog implements NotifyService {
@@ -12,15 +12,9 @@ export class NotifyServiceLog implements NotifyService {
   public async trackTransaction(
     transaction: Transaction,
     metadata?: Parser.ParsedResult | Record<string, string>,
+    error?: ErrorParams,
   ): Promise<void> {
-    console.info('trackTransaction Log:', transaction, metadata)
-  }
-
-  public async trackError(
-    msg: ContractError | ProviderError,
-    metadata?: Parser.ParsedResult | Record<string, string>,
-  ): Promise<void> {
-    console.info('trackError log: ', msg, metadata)
+    console.info('trackTransaction Log:', transaction, metadata, error)
   }
 
   public async checkConnection(): Promise<void> {
