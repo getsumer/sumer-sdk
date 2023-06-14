@@ -20,18 +20,18 @@ export abstract class SumerObserver implements Observer {
 
   protected getWallet(_executionTarget: Record<string, string | object>): string | undefined {
     const wallets = {
-      [Wallet.COINBASE]: { addressKey: '_addresses' },
-      [Wallet.BRAVEWALLET]: { addressKey: 'selectedAddress' },
-      [Wallet.METAMASK]: { addressKey: 'selectedAddress' },
+      [Wallet.COINBASE]: { addressKey: '_addresses', nameKey: 'Coinbase' },
+      [Wallet.BRAVEWALLET]: { addressKey: 'selectedAddress', nameKey: 'Brave' },
+      [Wallet.METAMASK]: { addressKey: 'selectedAddress', nameKey: 'Metamask' },
     }
 
-    for (const [walletKey, { addressKey }] of Object.entries(wallets)) {
+    for (const [walletKey, { addressKey, nameKey }] of Object.entries(wallets)) {
       if (
         _executionTarget?.[walletKey] &&
         typeof _executionTarget[walletKey] === 'boolean' &&
         _executionTarget[addressKey]
       ) {
-        return walletKey
+        return nameKey
       }
     }
     return undefined
