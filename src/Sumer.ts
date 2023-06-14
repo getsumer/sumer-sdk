@@ -4,7 +4,7 @@ import { Fragment, JsonFragment } from '@ethersproject/abi'
 import { NotifyService, NotifyFactory } from './services'
 import { SumerContract } from './SumerContract'
 import { SumerTarget } from './SumerTarget'
-import { Observer, ErrorObserver, TransactionObserver } from './observers'
+import { Observer, TransactionObserver } from './observers'
 
 declare global {
   interface Window {
@@ -47,11 +47,7 @@ export class Sumer {
     standalone = true,
   }: SumerInitArguments): void {
     this.notifyService = NotifyFactory.create(dappKey, dns)
-    this.sumerObservers = [
-      ...observers,
-      new ErrorObserver(this.notifyService),
-      new TransactionObserver(this.notifyService),
-    ]
+    this.sumerObservers = [...observers, new TransactionObserver(this.notifyService)]
     this._dappKey = dappKey
     this._dns = dns
     this.initializeWindow(standalone)

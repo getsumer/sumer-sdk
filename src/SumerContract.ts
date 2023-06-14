@@ -2,7 +2,6 @@ import { Contract, Signer } from 'ethers'
 import { Fragment, JsonFragment } from '@ethersproject/abi'
 import { Provider } from '@ethersproject/providers'
 import { NotifyService } from './services'
-import { ContractError } from './models'
 
 interface SumerContractArguments {
   addressOrName: string
@@ -47,19 +46,7 @@ export class SumerContract {
             })
             return result
           } catch (err) {
-            let signerOrProviderAddress: string
-            if (Signer.isSigner(signerOrProvider)) {
-              signerOrProviderAddress = await signerOrProvider.getAddress()
-            }
-            const contracError = new ContractError({
-              contractAddress: addressOrName,
-              signerOrProviderAddress,
-              name: prop,
-              args,
-              reason: err.reason,
-            })
-
-            notifyService.trackError(contracError)
+            console.info('trackError log: ', err)
             throw err
           }
         }

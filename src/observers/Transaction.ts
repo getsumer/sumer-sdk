@@ -1,10 +1,11 @@
 export interface Transaction {
-  hash: string
+  hash?: string
 
-  to?: string
-  from?: string
+  toAddress?: string
+  fromAddress?: string
   functionName?: string
   args?: any[]
+  gas?: string
 
   // Transaction Response
   nonce?: number
