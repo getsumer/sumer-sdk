@@ -4,7 +4,7 @@ import { ErrorParams } from '../services'
 
 enum Rpc_Methods {
   eth_sendTransaction = 'eth_sendTransaction',
-  eth_signTypedData_v4 = 'eth_signTypedData_v4',
+  eth_estimateGas = 'eth_estimateGas',
 }
 
 export class TransactionObserver extends SumerObserver {
@@ -55,8 +55,12 @@ export class TransactionObserver extends SumerObserver {
       if (params) {
         await this.notifyService.trackTransaction(
           {
-            fromAddress: params['from'],
-            toAddress: params['to'],
+            fromAddress: params['from'] ?? this.getAddress(execution),
+            toAddress: params['to'] ?? undefined,
+            value: params['value'] ?? undefined,
+            data: params['data'] ?? undefined,
+            gas: params['gas'] ?? undefined,
+
             chainId: this.getChainId(execution),
             functionName: this.getMethodName(args),
           },
@@ -83,10 +87,11 @@ export class TransactionObserver extends SumerObserver {
     }
     const method = this.getMethodName(args)
 
-    if (method === Rpc_Methods.eth_sendTransaction) {
+    if (method === (Rpc_Methods.eth_sendTransaction || Rpc_Methods.eth_estimateGas)) {
       return args[0]['params'][0] as object
     }
-    return undefined
+    // to be handled
+    return args[0]['params'][0]
   }
 
   private getErrorResult(result: ExecutionPayload): ErrorParams | undefined {
