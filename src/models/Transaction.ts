@@ -1,3 +1,5 @@
+import { Parser } from 'bowser'
+
 export interface Transaction {
   hash?: string
 
@@ -26,4 +28,12 @@ export interface Transaction {
   effectiveGasPrice?: string
   cumulativeGasUsed?: string
   status?: number
+
+  // Error
+  error?: {
+    code: number
+    message: string
+  }
+
+  metadata?: Parser.ParsedResult | Record<string, string>
 }

@@ -1,6 +1,5 @@
-import { ErrorParams, NotifyService } from './NotifyService'
 import { Transaction } from '../models'
-import { Parser } from 'bowser'
+import { NotifyService } from './NotifyService'
 
 export class NotifyServiceLog implements NotifyService {
   private _chainId: number
@@ -9,12 +8,8 @@ export class NotifyServiceLog implements NotifyService {
     return this._chainId
   }
 
-  public async trackTransaction(
-    transaction: Transaction,
-    metadata?: Parser.ParsedResult | Record<string, string>,
-    error?: ErrorParams,
-  ): Promise<void> {
-    console.info('trackTransaction Log:', transaction, metadata, error)
+  public async trackTransaction(transaction: Transaction): Promise<void> {
+    console.info('trackTransaction Log:', transaction)
   }
 
   public async checkConnection(): Promise<void> {
