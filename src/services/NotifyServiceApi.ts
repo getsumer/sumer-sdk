@@ -1,5 +1,4 @@
-import { Parser } from 'bowser'
-import { ErrorParams, NotifyService } from './NotifyService'
+import { NotifyService } from './NotifyService'
 import { Transaction } from '../models'
 
 export class NotifyServiceApi implements NotifyService {
@@ -15,15 +14,9 @@ export class NotifyServiceApi implements NotifyService {
     this.checkConnection()
   }
 
-  public async trackTransaction(
-    transaction: Transaction,
-    metadata: Parser.ParsedResult | Record<string, string>,
-    error: ErrorParams,
-  ): Promise<void> {
+  public async trackTransaction(transaction: Transaction): Promise<void> {
     this.fetchPost('transactions', {
       ...transaction,
-      metadata,
-      error,
     })
   }
 
@@ -38,12 +31,7 @@ export class NotifyServiceApi implements NotifyService {
     }
   }
 
-  private fetchPost(
-    uriPath: string,
-    body?: Transaction & { metadata: Parser.ParsedResult | Record<string, string> } & {
-      error: ErrorParams
-    },
-  ): void {
+  private fetchPost(uriPath: string, body?: Transaction): void {
     try {
       fetch(`${this.url}/${uriPath}`, {
         method: 'POST',

@@ -1,5 +1,9 @@
 // https://eips.ethereum.org/EIPS/eip-1193
-import { EipError } from '../ProviderError'
+export interface EipError {
+  statusCode: number
+  name: string
+  description: string
+}
 
 export const ProviderErrorsEip1193: EipError[] = [
   {
