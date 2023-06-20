@@ -4,7 +4,7 @@ import { Fragment, JsonFragment } from '@ethersproject/abi'
 import { NotifyService, NotifyFactory } from './services'
 import { SumerContract } from './SumerContract'
 import { SumerTarget } from './SumerTarget'
-import { Observer, ErrorObserver, TransactionObserver } from './observers'
+import { Observer, TransactionObserver } from './observers'
 
 declare global {
   interface Window {
@@ -47,11 +47,7 @@ export class Sumer {
     standalone = true,
   }: SumerInitArguments): void {
     this.notifyService = NotifyFactory.create(dappKey, dns)
-    this.sumerObservers = [
-      ...observers,
-      new ErrorObserver(this.notifyService),
-      new TransactionObserver(this.notifyService),
-    ]
+    this.sumerObservers = [...observers, new TransactionObserver(this.notifyService)]
     this._dappKey = dappKey
     this._dns = dns
     this.initializeWindow(standalone)
@@ -92,8 +88,18 @@ export class Sumer {
   private static initializeWindow(standalone?: boolean) {
     if (typeof window !== 'undefined' && !this.isInitialized) {
       const sumerTarget = new SumerTarget(this.sumerObservers)
+
       if (window.ethereum && standalone) {
-        window.ethereum = sumerTarget.proxy(window.ethereum)
+        const desc = Object.getOwnPropertyDescriptor(window, 'ethereum')
+        const isReadOnly = desc && !desc.writable
+
+        if (!isReadOnly) {
+          window.ethereum = sumerTarget.proxy(window.ethereum)
+        } else {
+          console.warn(
+            'Unable to initialize in standalone mode as window.ethereum is set as readonly.',
+          )
+        }
       }
     }
   }

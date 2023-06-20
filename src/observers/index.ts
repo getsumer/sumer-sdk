@@ -1,5 +1,4 @@
 export * from './Target'
 export * from './Observer'
-export * from './ErrorObserver'
 export * from './TransactionObserver'
 export * from './SumerObserver'

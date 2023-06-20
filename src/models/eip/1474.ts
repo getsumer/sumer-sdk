@@ -1,5 +1,6 @@
 // https://eips.ethereum.org/EIPS/eip-1474
-import { EipError } from '../ProviderError'
+
+import { EipError } from './1193'
 
 export const RPCErrorsEip1474: EipError[] = [
   { statusCode: -32700, name: 'Parse error', description: 'Invalid JSON' },

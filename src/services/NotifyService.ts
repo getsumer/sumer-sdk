@@ -1,6 +1,15 @@
-import { ContractError, ProviderError, Transaction } from '../models'
+import { Parser } from 'bowser'
+import { Transaction } from '../models'
+
+export interface ErrorParams {
+  code: number
+  message: string
+}
 
 export interface NotifyService {
-  trackError(error: ContractError | ProviderError): Promise<void>
-  trackTransaction(transaction: Transaction): Promise<void>
+  trackTransaction(
+    transaction: Transaction,
+    metadata?: Parser.ParsedResult | Record<string, string>,
+    error?: ErrorParams,
+  ): Promise<void>
 }

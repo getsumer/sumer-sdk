@@ -1,14 +1,17 @@
 import { Target, ExecutionPayload, TargetExecution } from './Target'
 import { SumerObserver } from './SumerObserver'
+import { ErrorParams } from '../services'
 
 export class TransactionObserver extends SumerObserver {
   public async inspect({ execution }: Target): Promise<void> {
     if (!this.isCall(execution.args) && this.isTransaction(execution.result)) {
-      const { result } = execution
+      const { result, target } = execution
+      const wallet = this.getWallet(target)
+
       await this.notifyService.trackTransaction({
         hash: result['hash'] || result['transactionHash'] || result,
-        from: result['from'],
-        to: result['to'],
+        fromAddress: result['from'],
+        toAddress: result['to'],
 
         // Transaction Response
         chainId: this.parseNumber(result['chainId']) || this.getChainId(execution),
@@ -32,10 +35,60 @@ export class TransactionObserver extends SumerObserver {
 
         args: execution.args,
         functionName: execution.methodName,
+        metadata: { ...this.meta(), wallet },
       })
+    }
+
+    if (this.isNotProcessed(execution.result)) {
+      const { args, result, target } = execution
+
+      const params = this.getArgsParams(args)
+      const error = this.getErrorResult(result)
+
+      if (params) {
+        await this.notifyService.trackTransaction({
+          fromAddress: params['from'] ?? this.getAddress(execution),
+          toAddress: params['to'] ?? undefined,
+          value: params['value'] ?? undefined,
+          data: params['data'] ?? undefined,
+          gas: params['gas'] ?? undefined,
+
+          chainId: this.getChainId(execution),
+          functionName: this.getMethodName(args),
+
+          metadata: { ...this.meta(), wallet: this.getWallet(target) },
+          error,
+        })
+      }
     }
   }
 
+  private getMethodName(args: unknown[]): string | undefined {
+    if (args && args.length > 0) {
+      return args[0]['method']
+    }
+    return undefined
+  }
+
+  private getArgsParams(args: unknown[]): object | undefined {
+    if (!(args && args.length > 0)) {
+      return undefined
+    }
+    return args[0]['params'][0] as object
+  }
+
+  private getErrorResult(result: ExecutionPayload): ErrorParams | undefined {
+    if (!this.isNotProcessed(result)) {
+      return undefined
+    }
+    return {
+      code: result['code'],
+      message: result['message'],
+    }
+  }
+  private isNotProcessed(result: ExecutionPayload): boolean {
+    return result && result['code']
+  }
   private isTransaction(result: ExecutionPayload): boolean {
     return result
       ? this.isTransactionHash(result.toString()) || this.containsTransactionHash(result)

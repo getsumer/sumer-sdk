@@ -1,10 +1,13 @@
-export interface Transaction {
-  hash: string
+import { Parser } from 'bowser'
 
-  to?: string
-  from?: string
+export interface Transaction {
+  hash?: string
+
+  toAddress?: string
+  fromAddress?: string
   functionName?: string
   args?: any[]
+  gas?: string
 
   // Transaction Response
   nonce?: number
@@ -25,4 +28,12 @@ export interface Transaction {
   effectiveGasPrice?: string
   cumulativeGasUsed?: string
   status?: number
+
+  // Error
+  error?: {
+    code: number
+    message: string
+  }
+
+  metadata?: Parser.ParsedResult | Record<string, string>
 }
