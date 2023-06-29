@@ -95,7 +95,6 @@ export class SumerTarget implements Target {
             this._execution = {
               result,
               target,
-              methodName: prop.toString(),
               args,
             }
             await Promise.all(this.observers.map(o => o.inspect(this)))
@@ -104,7 +103,6 @@ export class SumerTarget implements Target {
             this._execution = {
               result: error,
               target,
-              methodName: prop.toString(),
               args,
             }
             this.observers.map(o => o.inspect(this))

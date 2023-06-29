@@ -5,8 +5,8 @@ export interface Transaction {
 
   toAddress?: string
   fromAddress?: string
-  functionName?: string
-  args?: any[]
+  rpcMethodName?: string
+  rpcMethodArgs?: unknown[]
   gas?: string
 
   // Transaction Response

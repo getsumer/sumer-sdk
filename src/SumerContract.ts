@@ -41,8 +41,6 @@ export class SumerContract {
             notifyService.trackTransaction({
               chainId,
               hash: result.hash,
-              functionName: prop,
-              args,
             })
             return result
           } catch (err) {
