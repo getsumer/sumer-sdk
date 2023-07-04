@@ -79,7 +79,8 @@ export class TransactionObserver extends SumerObserver {
     if (!(args[0]['params'] && args[0]['params'][0])) {
       return undefined
     }
-    return args[0]['params'][0] as unknown[]
+
+    return args[0]['params'] as unknown[]
   }
 
   private getErrorResult(result: ExecutionPayload): ErrorParams | undefined {
