@@ -33,7 +33,7 @@ export class TransactionObserver extends SumerObserver {
         cumulativeGasUsed: this.parseBigNumber(result['cumulativeGasUsed']),
         status: this.parseNumber(result['status']),
 
-        rpcMethodArgs: this.getArgsParams(execution.args),
+        rpcMethodArgs: new Array(this.getArgsParams(execution.args)),
         rpcMethodName: this.getMethodName(execution.args),
 
         metadata: { ...this.meta(), wallet },
@@ -56,7 +56,7 @@ export class TransactionObserver extends SumerObserver {
 
           chainId: this.getChainId(execution),
           rpcMethodName: this.getMethodName(args),
-          rpcMethodArgs: params,
+          rpcMethodArgs: new Array(params),
 
           metadata: { ...this.meta(), wallet: this.getWallet(target) },
           error,
@@ -72,7 +72,7 @@ export class TransactionObserver extends SumerObserver {
     return undefined
   }
 
-  private getArgsParams(args: unknown[]): unknown[] | undefined {
+  private getArgsParams(args: unknown[]): object | undefined {
     if (!(args && args.length > 0)) {
       return undefined
     }
@@ -80,7 +80,7 @@ export class TransactionObserver extends SumerObserver {
       return undefined
     }
 
-    return args[0]['params'] as unknown[]
+    return args[0]['params'][0] as object
   }
 
   private getErrorResult(result: ExecutionPayload): ErrorParams | undefined {
