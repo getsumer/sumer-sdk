@@ -9,12 +9,11 @@ export type ExecutionPayload =
 export interface TargetExecution {
   target: Record<string, string | object>
   methodName?: string
-  args?: unknown[]
+  methodArgs?: unknown[]
   result?: ExecutionPayload
 }
 
 export interface Target {
   readonly execution: TargetExecution
   readonly observers: Observer[]
-  proxy<T>(target: T): T
 }

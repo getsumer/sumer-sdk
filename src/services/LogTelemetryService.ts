@@ -1,7 +1,7 @@
+import { TelemetryService } from '../core'
 import { Transaction } from '../models'
-import { NotifyService } from './NotifyService'
 
-export class NotifyServiceLog implements NotifyService {
+export class LogTelemetryService implements TelemetryService {
   private _chainId: number
 
   get chainId() {

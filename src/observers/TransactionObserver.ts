@@ -1,112 +1,39 @@
-import { Target, ExecutionPayload, TargetExecution } from './Target'
-import { SumerObserver } from './SumerObserver'
-import { ErrorParams } from '../services'
+import { TargetExecution, ExecutionPayload, Observer } from '../core'
+import { TransactionError } from '../models'
 
-export class TransactionObserver extends SumerObserver {
-  public async inspect({ execution }: Target): Promise<void> {
-    if (!this.isCall(execution.args) && this.isTransaction(execution.result)) {
-      const { result, target } = execution
-      const wallet = this.getWallet(target)
-
-      await this.notifyService.trackTransaction({
-        hash: result['hash'] || result['transactionHash'] || result,
-        fromAddress: result['from'],
-        toAddress: result['to'],
-
-        // Transaction Response
+export class TransactionObserver extends Observer {
+  public async inspect(execution: TargetExecution): Promise<void> {
+    if (this.isTransaction(execution)) {
+      const { result } = execution
+      const methodArgs = this.getMethodArgs(execution)
+      await this.telemetryService.trackTransaction({
         chainId: this.parseNumber(result['chainId']) || this.getChainId(execution),
-        nonce: this.parseNumber(result['nonce']),
-        gasLimit: this.parseBigNumber(result['gasLimit']),
-        maxFeePerGas: this.parseBigNumber(result['maxFeePerGas']),
-        maxPriorityFeePerGas: this.parseBigNumber(result['maxPriorityFeePerGas']),
-        data: result['data'],
-        value: this.parseBigNumber(result['value']),
+        hash: this.getTransactionHash(result),
 
-        // Transaction Receipt
-        blockHash: result['blockHash'],
-        blockNumber: this.parseNumber(result['blockNumber']),
-        confirmations: result['confirmations'],
-        transactionIndex: this.parseNumber(result['transactionIndex']),
-        contractAddress: result['contractAddress'],
-        gasUsed: this.parseBigNumber(result['gasUsed']),
-        effectiveGasPrice: this.parseBigNumber(result['effectiveGasPrice']),
-        cumulativeGasUsed: this.parseBigNumber(result['cumulativeGasUsed']),
-        status: this.parseNumber(result['status']),
+        fromAddress: methodArgs['from'] ?? this.getAddress(execution),
+        toAddress: methodArgs['to'] ?? undefined,
+        value: this.parseBigNumber(methodArgs['value']) ?? undefined,
+        data: methodArgs['data'] ?? undefined,
+        gas: methodArgs['gas'] ?? undefined,
+        rpcMethodName: this.getMethodName(execution),
+        ...(Array.isArray(methodArgs) && {
+          rpcMethodArgs: methodArgs,
+        }),
 
-        args: execution.args,
-        functionName: execution.methodName,
-        metadata: { ...this.meta(), wallet },
+        error: this.getTransactionError(result),
+        metadata: this.getMetadata(execution),
       })
     }
+  }
 
-    if (this.isNotProcessed(execution.result)) {
-      const { args, result, target } = execution
-
-      const params = this.getArgsParams(args)
-      const error = this.getErrorResult(result)
-
-      if (params) {
-        await this.notifyService.trackTransaction({
-          fromAddress: params['from'] ?? this.getAddress(execution),
-          toAddress: params['to'] ?? undefined,
-          value: params['value'] ?? undefined,
-          data: params['data'] ?? undefined,
-          gas: params['gas'] ?? undefined,
-
-          chainId: this.getChainId(execution),
-          functionName: this.getMethodName(args),
-
-          metadata: { ...this.meta(), wallet: this.getWallet(target) },
-          error,
-        })
+  private getTransactionError(result: ExecutionPayload): TransactionError | undefined {
+    if (result['code']) {
+      return {
+        code: result['code'],
+        message: result['message'],
       }
     }
-  }
-
-  private getMethodName(args: unknown[]): string | undefined {
-    if (args && args.length > 0) {
-      return args[0]['method']
-    }
     return undefined
-  }
-
-  private getArgsParams(args: unknown[]): object | undefined {
-    if (!(args && args.length > 0)) {
-      return undefined
-    }
-    return args[0]['params'][0] as object
-  }
-
-  private getErrorResult(result: ExecutionPayload): ErrorParams | undefined {
-    if (!this.isNotProcessed(result)) {
-      return undefined
-    }
-    return {
-      code: result['code'],
-      message: result['message'],
-    }
-  }
-  private isNotProcessed(result: ExecutionPayload): boolean {
-    return result && result['code']
-  }
-  private isTransaction(result: ExecutionPayload): boolean {
-    return result
-      ? this.isTransactionHash(result.toString()) || this.containsTransactionHash(result)
-      : false
-  }
-
-  private isTransactionHash(hash: string) {
-    return /^0x([A-Fa-f0-9]{64})$/.test(hash)
-  }
-
-  private isCall(args: unknown[]) {
-    return args ? args.filter(Boolean).some(arg => arg['method'] === 'eth_call') : false
-  }
-
-  private containsTransactionHash(result: ExecutionPayload) {
-    return Object.getOwnPropertyNames(result).some(propertyName =>
-      ['hash', 'transactionHash'].includes(propertyName),
-    )
   }
 
   private parseNumber(value?: string | number): number | undefined {
@@ -126,20 +53,5 @@ export class TransactionObserver extends SumerObserver {
       default:
         return value['hex'] || value['_hex']
     }
-  }
-
-  private getChainId(execution: TargetExecution): number | undefined {
-    if (!execution.target) {
-      return undefined
-    }
-    // Target extends from BaseProvider
-    if (execution.target._network) {
-      return execution.target._network['chainId']
-    }
-    // Target is an ExternalProvider
-    if (execution.target.chainId) {
-      return parseInt(execution.target.chainId.toString())
-    }
-    return undefined
   }
 }

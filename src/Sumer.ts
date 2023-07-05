@@ -1,10 +1,11 @@
 import { Contract, Signer } from 'ethers'
 import { Provider } from '@ethersproject/providers'
 import { Fragment, JsonFragment } from '@ethersproject/abi'
-import { NotifyService, NotifyFactory } from './services'
+import { Observer, TelemetryService } from './core'
+import { TransactionObserver } from './observers'
+import { TelemetryServiceFactory } from './services'
+import { ProxyTarget } from './targets'
 import { SumerContract } from './SumerContract'
-import { SumerTarget } from './SumerTarget'
-import { Observer, TransactionObserver } from './observers'
 
 declare global {
   interface Window {
@@ -20,13 +21,13 @@ interface SumerInitArguments {
 }
 
 /**
- * Sumer provides a tracking interface for errors that may occur during
+ * Sumer provides a tracking interface for transactions that may occur during
  * the interaction with a contract or the provider itself
  */
 export class Sumer {
   private static _dappKey: string
   private static _dns: string
-  private static notifyService: NotifyService
+  private static telemetryService: TelemetryService
   private static sumerObservers: Observer[]
   private static isInitialized = false
 
@@ -46,11 +47,13 @@ export class Sumer {
     observers = [],
     standalone = true,
   }: SumerInitArguments): void {
-    this.notifyService = NotifyFactory.create(dappKey, dns)
-    this.sumerObservers = [...observers, new TransactionObserver(this.notifyService)]
+    this.telemetryService = TelemetryServiceFactory.create(dappKey, dns)
+    this.sumerObservers = [...observers, new TransactionObserver(this.telemetryService)]
     this._dappKey = dappKey
     this._dns = dns
-    this.initializeWindow(standalone)
+    if (standalone) {
+      this.initializeWindow()
+    }
     this.isInitialized = true
   }
 
@@ -58,8 +61,8 @@ export class Sumer {
     if (!this.isInitialized) {
       throw new Error(`Sumer client is not properly or yet initialized.`)
     }
-    const sumerTarget = new SumerTarget([...observers, ...this.sumerObservers])
-    return sumerTarget.proxy(target)
+    const proxyTarget = new ProxyTarget([...observers, ...this.sumerObservers])
+    return proxyTarget.proxy(target)
   }
 
   public static contract(
@@ -73,7 +76,7 @@ export class Sumer {
       contractInterface,
       signerOrProvider,
       chainId,
-      notifyService: this.notifyService,
+      telemetryService: this.telemetryService,
     }) as Contract
   }
 
@@ -82,24 +85,21 @@ export class Sumer {
     if (!hash.match(validHex)) {
       throw new Error(`Transaction hash <${hash}> has not a valid 66-character hexadecimal format.`)
     }
-    return this.notifyService.trackTransaction({ hash })
+    return this.telemetryService.trackTransaction({ hash })
   }
 
-  private static initializeWindow(standalone?: boolean) {
-    if (typeof window !== 'undefined' && !this.isInitialized) {
-      const sumerTarget = new SumerTarget(this.sumerObservers)
+  private static initializeWindow() {
+    if (!this.isInitialized && typeof window !== 'undefined' && window.ethereum) {
+      const proxyTarget = new ProxyTarget(this.sumerObservers)
+      const desc = Object.getOwnPropertyDescriptor(window, 'ethereum')
+      const isReadOnly = desc && !desc.writable
 
-      if (window.ethereum && standalone) {
-        const desc = Object.getOwnPropertyDescriptor(window, 'ethereum')
-        const isReadOnly = desc && !desc.writable
-
-        if (!isReadOnly) {
-          window.ethereum = sumerTarget.proxy(window.ethereum)
-        } else {
-          console.warn(
-            'Unable to initialize in standalone mode as window.ethereum is set as readonly.',
-          )
-        }
+      if (!isReadOnly) {
+        window.ethereum = proxyTarget.proxy(window.ethereum)
+      } else {
+        console.warn(
+          'Unable to initialize in standalone mode as window.ethereum is set as readonly.',
+        )
       }
     }
   }
