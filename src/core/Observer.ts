@@ -1,7 +1,7 @@
 import bowser from 'bowser'
 import { Metadata } from '../models'
 import { TelemetryService } from './TelemetryService'
-import { TargetExecution, ExecutionPayload } from './Target'
+import { TargetExecution, ExecutionResult } from './Target'
 
 enum Wallet {
   BRAVE = 'isBraveWallet',
@@ -44,13 +44,13 @@ export abstract class Observer {
     return /^0x([A-Fa-f0-9]{64})$/.test(hash)
   }
 
-  protected containsTransactionHash(result: ExecutionPayload) {
+  protected containsTransactionHash(result: ExecutionResult) {
     return Object.getOwnPropertyNames(result).some(propertyName =>
       ['hash', 'transactionHash'].includes(propertyName),
     )
   }
 
-  protected getTransactionHash(result: ExecutionPayload): string {
+  protected getTransactionHash(result: ExecutionResult): string {
     return this.isTransactionHash(result.toString())
       ? result.toString()
       : result['hash'] || result['transactionHash']
@@ -73,7 +73,7 @@ export abstract class Observer {
 
   protected getMetadata(execution: TargetExecution): Metadata {
     const metadata: Metadata = {
-      walletName: this.getWallet(execution),
+      walletName: this.getWalletName(execution),
     }
     if (typeof window !== 'undefined' && window.navigator?.userAgent) {
       const { browser, os, platform } = bowser.parse(window.navigator.userAgent)
@@ -86,7 +86,7 @@ export abstract class Observer {
     return metadata
   }
 
-  protected getWallet({ target }: TargetExecution): string | undefined {
+  protected getWalletName({ target }: TargetExecution): string | undefined {
     const wallets = {
       [Wallet.BRAVE]: { addressKey: 'selectedAddress', nameKey: 'Brave' },
       [Wallet.COINBASE]: { addressKey: '_addresses', nameKey: 'Coinbase' },
@@ -100,7 +100,7 @@ export abstract class Observer {
     return undefined
   }
 
-  protected getAddress(execution: TargetExecution): string {
+  protected getWalletAddress(execution: TargetExecution): string {
     if (execution.target.selectedAddress) {
       return execution.target.selectedAddress.toString()
     }
@@ -108,6 +108,20 @@ export abstract class Observer {
       return execution.target._addresses[0].toString()
     }
     return this.NULL_ADDRESS
+  }
+
+  protected isNumber(result: ExecutionResult): result is number {
+    return typeof result === 'number'
+  }
+
+  protected isString(result: ExecutionResult): result is string {
+    return typeof result === 'string'
+  }
+
+  protected isObject(
+    result: ExecutionResult,
+  ): result is Record<string, string | number | boolean | object> {
+    return typeof result === 'object'
   }
 
   private isCall(args: unknown[]) {

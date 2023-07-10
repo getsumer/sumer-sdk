@@ -1,4 +1,4 @@
-import { TargetExecution, ExecutionPayload, Observer } from '../core'
+import { Observer, TargetExecution, ExecutionResult } from '../core'
 import { TransactionError } from '../models'
 
 export class TransactionObserver extends Observer {
@@ -10,7 +10,7 @@ export class TransactionObserver extends Observer {
         chainId: this.parseNumber(result['chainId']) || this.getChainId(execution),
         hash: this.getTransactionHash(result),
 
-        fromAddress: methodArgs['from'] ?? this.getAddress(execution),
+        fromAddress: methodArgs['from'] ?? this.getWalletAddress(execution),
         toAddress: methodArgs['to'] ?? undefined,
         value: this.parseBigNumber(methodArgs['value']) ?? undefined,
         data: methodArgs['data'] ?? undefined,
@@ -26,7 +26,7 @@ export class TransactionObserver extends Observer {
     }
   }
 
-  private getTransactionError(result: ExecutionPayload): TransactionError | undefined {
+  private getTransactionError(result: ExecutionResult): TransactionError | undefined {
     if (result['code']) {
       return {
         code: result['code'],
@@ -45,7 +45,7 @@ export class TransactionObserver extends Observer {
     }
   }
 
-  private parseBigNumber(value?: ExecutionPayload): string | undefined {
+  private parseBigNumber(value?: ExecutionResult): string | undefined {
     switch (typeof value) {
       case 'string':
       case 'undefined':
