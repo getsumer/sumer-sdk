@@ -1,13 +1,13 @@
 import { Contract, Signer } from 'ethers'
 import { Fragment, JsonFragment } from '@ethersproject/abi'
 import { Provider } from '@ethersproject/providers'
-import { NotifyService } from './services'
+import { TelemetryService } from './core'
 
 interface SumerContractArguments {
   addressOrName: string
   contractInterface: ReadonlyArray<Fragment | JsonFragment>
   signerOrProvider?: Signer | Provider
-  notifyService: NotifyService
+  telemetryService: TelemetryService
   chainId: number
 }
 
@@ -21,7 +21,7 @@ export class SumerContract {
     contractInterface,
     signerOrProvider,
     chainId,
-    notifyService,
+    telemetryService,
   }: SumerContractArguments) {
     const contract = new Contract(addressOrName, contractInterface, signerOrProvider)
 
@@ -36,13 +36,13 @@ export class SumerContract {
         }
         return async (...args: any) => {
           try {
-            const bindedMethod = method.bind(target)
-            const result = await bindedMethod(...args)
-            notifyService.trackTransaction({
+            const bindMethod = method.bind(target)
+            const result = await bindMethod(...args)
+            telemetryService.trackTransaction({
               chainId,
               hash: result.hash,
-              functionName: prop,
-              args,
+              rpcMethodName: prop,
+              rpcMethodArgs: args,
             })
             return result
           } catch (err) {

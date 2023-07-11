@@ -1,20 +1,15 @@
 import { Observer } from './Observer'
 
-export type ExecutionPayload =
-  | number
-  | string
-  | { [key: number]: ExecutionPayload }
-  | { [key: string]: ExecutionPayload }
+export type ExecutionResult = number | string | Record<string, string | number | boolean | object>
 
 export interface TargetExecution {
   target: Record<string, string | object>
   methodName?: string
-  args?: unknown[]
-  result?: ExecutionPayload
+  methodArgs?: unknown[]
+  result?: ExecutionResult
 }
 
 export interface Target {
   readonly execution: TargetExecution
   readonly observers: Observer[]
-  proxy<T>(target: T): T
 }

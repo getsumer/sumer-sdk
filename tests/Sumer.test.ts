@@ -1,6 +1,6 @@
-import { Sumer } from '../src/Sumer'
-import { NotifyServiceLog } from '../src/services'
 import { Web3Provider } from '@ethersproject/providers'
+import { LogTelemetryService } from '../src/services'
+import { Sumer } from '../src/Sumer'
 import { CustomJsonRpcProvider, transactionResponse, replaceable } from './__mocks__'
 
 const WALLET_PUBLIC_ADDRESS = '0x14791697260E4c9A71f18484C9f997B308e59325'
@@ -52,7 +52,7 @@ describe('Sumer observed provider can be used as expected', () => {
   })
 
   it('Sumer with Wagmi providers should track processed transaction', async () => {
-    const spy = jest.spyOn(NotifyServiceLog.prototype, 'trackTransaction')
+    const spy = jest.spyOn(LogTelemetryService.prototype, 'trackTransaction')
 
     const provider = wagmiProvider({ chainId: 1 })
 

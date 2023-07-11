@@ -1,4 +1,3 @@
-export * from './NotifyService'
-export * from './NotifyFactory'
-export * from './NotifyServiceApi'
-export * from './NotifyServiceLog'
+export * from './LogTelemetryService'
+export * from './SumerTelemetryService'
+export * from './TelemetryServiceFactory'

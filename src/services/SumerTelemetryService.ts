@@ -1,13 +1,13 @@
-import { NotifyService } from './NotifyService'
+import { TelemetryService } from '../core'
 import { Transaction } from '../models'
 
-export class NotifyServiceApi implements NotifyService {
+export class SumerTelemetryService implements TelemetryService {
   private headers: HeadersInit
   private url: string
 
   constructor(apikey: string, dns?: string) {
     this.headers = {
-      authorization: `${apikey}`,
+      authorization: apikey,
       'Content-Type': 'application/json',
     }
     this.url = dns ?? 'https://api.getsumer.com'
@@ -15,9 +15,7 @@ export class NotifyServiceApi implements NotifyService {
   }
 
   public async trackTransaction(transaction: Transaction): Promise<void> {
-    this.fetchPost('transactions', {
-      ...transaction,
-    })
+    this.fetchPost('transactions', transaction)
   }
 
   private async checkConnection(): Promise<void> {
@@ -31,12 +29,12 @@ export class NotifyServiceApi implements NotifyService {
     }
   }
 
-  private fetchPost(uriPath: string, body?: Transaction): void {
+  private fetchPost(uriPath: string, body: Transaction): void {
     try {
       fetch(`${this.url}/${uriPath}`, {
         method: 'POST',
         headers: this.headers,
-        body: body ? JSON.stringify(body) : undefined,
+        body: JSON.stringify(body),
       })
     } catch (e) {
       console.warn(`[Sumer:NotifyService][fetch]`, e)

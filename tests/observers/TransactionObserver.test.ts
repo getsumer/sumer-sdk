@@ -1,50 +1,49 @@
-import { Target, TransactionObserver } from '../../src/observers'
+import { Target } from '../../src/core'
+import { TransactionObserver } from '../../src/observers'
 import { Transaction } from '../../src/models'
-import { NotifyServiceMock } from '../__mocks__'
+import { TelemetryServiceMock } from '../__mocks__'
 
 describe('TransactionObserver', () => {
   it('should track transaction', () => {
     // Given
     const hash = '0x388c818ca8b9251b393131c08a736a67ccb19297'
-    const notifyService = new NotifyServiceMock()
-    const observer = new TransactionObserver(notifyService)
+    const telemetryService = new TelemetryServiceMock()
+    const observer = new TransactionObserver(telemetryService)
     const transaction: Transaction = {
       hash,
     }
     const target: Target = {
       execution: {
-        args: [],
         methodName: 'method',
+        methodArgs: [],
         target: {},
         result: { hash: transaction.hash },
       },
       observers: [],
-      proxy: jest.fn(),
     }
 
     // When
-    observer.inspect(target)
+    observer.inspect(target.execution)
 
     // Then
-    expect(notifyService.trackTransaction).toHaveBeenCalled()
+    expect(telemetryService.trackTransaction).toHaveBeenCalled()
   })
 
   it('should not track transaction', () => {
     // Given
-    const notifyService = new NotifyServiceMock()
+    const notifyService = new TelemetryServiceMock()
     const observer = new TransactionObserver(notifyService)
     const target: Target = {
       execution: {
-        args: [],
         methodName: 'method',
+        methodArgs: [],
         target: {},
       },
       observers: [],
-      proxy: jest.fn(),
     }
 
     // When
-    observer.inspect(target)
+    observer.inspect(target.execution)
 
     // Then
     expect(notifyService.trackTransaction).toHaveBeenCalledTimes(0)

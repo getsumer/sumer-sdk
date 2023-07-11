@@ -1,8 +1,8 @@
-import { Target, TargetExecution, Observer } from './observers'
+import { Target, TargetExecution, Observer } from '../core'
 
 export type TargetFunction = (...args: any) => object | undefined
 
-export class SumerTarget implements Target {
+export class ProxyTarget implements Target {
   private _observers: Observer[]
   private _execution: TargetExecution
 
@@ -26,7 +26,6 @@ export class SumerTarget implements Target {
       case 'object':
         return this.proxyObject(target as object) as T
       default:
-        console.debug(`[SumerSDK] Unsupported Target of type <${targetType}>`)
         return target
     }
   }
@@ -55,9 +54,9 @@ export class SumerTarget implements Target {
     }
     this._execution = {
       target: _thisArg,
-      args,
+      methodArgs: args,
     }
-    this.observers.map(o => o.inspect(this))
+    this.observers.map(o => o.inspect(this.execution))
     return targetResult
   }
 
@@ -90,24 +89,24 @@ export class SumerTarget implements Target {
             if (prop === 'then') {
               return this.handlePromise(target)
             }
-            const bindedMethod = method.bind(target)
-            const result = await bindedMethod(...args)
+            const bindMethod = method.bind(target)
+            const result = await bindMethod(...args)
             this._execution = {
               result,
               target,
               methodName: prop.toString(),
-              args,
+              methodArgs: args,
             }
-            await Promise.all(this.observers.map(o => o.inspect(this)))
+            await Promise.all(this.observers.map(o => o.inspect(this.execution)))
             return this.proxy(result)
           } catch (error) {
             this._execution = {
               result: error,
               target,
               methodName: prop.toString(),
-              args,
+              methodArgs: args,
             }
-            this.observers.map(o => o.inspect(this))
+            this.observers.map(o => o.inspect(this.execution))
             throw error
           }
         }
@@ -124,7 +123,7 @@ export class SumerTarget implements Target {
           target: JSON.parse(JSON.stringify(target)),
           methodName: 'then',
         }
-        this.observers.map(o => o.inspect(this))
+        this.observers.map(o => o.inspect(this.execution))
         return this.proxy(result)
       })
       .catch((error: any) => {
@@ -133,7 +132,7 @@ export class SumerTarget implements Target {
           target: JSON.parse(JSON.stringify(target)),
           methodName: 'then',
         }
-        this.observers.map(o => o.inspect(this))
+        this.observers.map(o => o.inspect(this.execution))
         throw error
       })
   }

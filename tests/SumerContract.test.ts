@@ -1,12 +1,12 @@
 import { SumerContract } from '../src/SumerContract'
 import { abi } from './fixtures/build/IERC20.json'
 import { Contract } from 'ethers'
-import { BaseProviderMock, NotifyServiceMock } from './__mocks__'
+import { BaseProviderMock, TelemetryServiceMock } from './__mocks__'
 
 describe('SumerContract', () => {
   const chainId = 5
   const provider = new BaseProviderMock(chainId)
-  const notifyService = new NotifyServiceMock()
+  const telemetryService = new TelemetryServiceMock()
 
   it('should create a valid instance', async () => {
     // Given
@@ -18,7 +18,7 @@ describe('SumerContract', () => {
       contractInterface: abi,
       signerOrProvider: provider,
       chainId,
-      notifyService,
+      telemetryService,
     })
     const contract = new Contract(address, abi, provider)
 

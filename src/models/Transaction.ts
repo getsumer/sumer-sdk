@@ -1,13 +1,18 @@
-import { Parser } from 'bowser'
+import { Metadata } from './Metadata'
+
+export interface TransactionError {
+  code: number
+  message: string
+}
 
 export interface Transaction {
   hash?: string
 
   toAddress?: string
   fromAddress?: string
-  functionName?: string
-  args?: any[]
   gas?: string
+  rpcMethodName?: string
+  rpcMethodArgs?: unknown[]
 
   // Transaction Response
   nonce?: number
@@ -29,11 +34,6 @@ export interface Transaction {
   cumulativeGasUsed?: string
   status?: number
 
-  // Error
-  error?: {
-    code: number
-    message: string
-  }
-
-  metadata?: Parser.ParsedResult | Record<string, string>
+  error?: TransactionError
+  metadata?: Metadata
 }
