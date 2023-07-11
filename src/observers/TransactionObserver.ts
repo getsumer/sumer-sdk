@@ -16,10 +16,7 @@ export class TransactionObserver extends Observer {
         data: methodArgs['data'] ?? undefined,
         gas: methodArgs['gas'] ?? undefined,
         rpcMethodName: this.getMethodName(execution),
-        ...(Array.isArray(methodArgs) && {
-          rpcMethodArgs: methodArgs,
-        }),
-
+        rpcMethodArgs: Array.isArray(methodArgs) ? methodArgs : [JSON.stringify(methodArgs)],
         error: this.getTransactionError(result),
         metadata: this.getMetadata(execution),
       })

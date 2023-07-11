@@ -24,8 +24,10 @@ export abstract class Observer {
 
   protected getMethodArgs({ methodArgs }: TargetExecution): string[] | Record<string, string> {
     if (methodArgs && methodArgs.length && methodArgs[0]['params']) {
-      if (methodArgs[0]['params'].length > 1) {
-        return methodArgs[0]['params'].filter((p: unknown) => typeof p === 'string')
+      if (methodArgs[0]['params'].length >= 1) {
+        return methodArgs[0]['params'].map((p: unknown) =>
+          typeof p === 'string' ? p : JSON.stringify(p),
+        )
       }
       return methodArgs[0]['params'][0]
     }
