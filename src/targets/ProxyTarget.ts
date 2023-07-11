@@ -26,7 +26,6 @@ export class ProxyTarget implements Target {
       case 'object':
         return this.proxyObject(target as object) as T
       default:
-        console.debug(`[SumerSDK] Unsupported Target of type <${targetType}>`)
         return target
     }
   }
@@ -90,8 +89,8 @@ export class ProxyTarget implements Target {
             if (prop === 'then') {
               return this.handlePromise(target)
             }
-            const bindedMethod = method.bind(target)
-            const result = await bindedMethod(...args)
+            const bindMethod = method.bind(target)
+            const result = await bindMethod(...args)
             this._execution = {
               result,
               target,
