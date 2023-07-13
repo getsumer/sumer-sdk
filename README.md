@@ -11,7 +11,7 @@
 
 <!-- PROJECT TITLES & BADGES -->
 
-<h3 align="center">The Sumer SDK</h3>
+<h3 align="center">The SumerSDK</h3>
 
   <p align="center">
     A Monitoring Platform for EVM-Based dApps
@@ -87,7 +87,7 @@ yarn add sumer-sdk
 
 ### 2.3. Initialization
 
-Initialize the Sumer SDK
+Initialize the SumerSDK
 
 ```js
 import { Sumer } from 'sumer-sdk'
@@ -104,7 +104,7 @@ Sumer.init({ dappKey: 'YOUR_DAPP_KEY' })
 
 The SDK currently has full support on [Wagmi](https://github.com/wagmi-dev/wagmi), [Ethers](https://github.com/ethers-io/ethers.js/) and [Web3-React](https://github.com/Uniswap/web3-react)
 <br/>
-Once integrated, all dApp activity will be captured and observable in the [Sumer App](https://app.getsumer.com/) 
+Once integrated, all transactional activity will be observed and available for monitoring in the [Sumer App](https://app.getsumer.com/)
 
 #### *For Ethers and Web3-React integrations, once the SDK is initialized, you are set to go!*
 
@@ -137,7 +137,7 @@ const client = createClient({
 ```
 
 
-#### Futhermore, if you want to observe your contracts, you can do it as follows:
+#### Furthermore, if you want to observe your contracts, you can do it as follows:
 
 _Contract Integration_
 
@@ -155,15 +155,13 @@ const tx = contract.myFunction(...)
 The SDK allows the developer to create a customized observer targeting the desired object
 
 ```js
-import { Sumer, Observer, Target } from 'sumer-sdk'
+import { Sumer, Observer, TargetExecution } from 'sumer-sdk'
 
-class CustomObserver implements Observer {
-  public async inspect(target: Target): Promise<void> {
-    // use target object as needed
+class CustomObserver extends Observer {
+  public async inspect(execution: TargetExecution): Promise<void> {
+    // use execution object as needed
   }
 }
-
-// ...
 
 const client = createClient({
   autoConnect: true,
@@ -172,8 +170,6 @@ const client = createClient({
   ],
   provider: Sumer.observe(provider, [new CustomObserver()]),
 })
-
-// ...
 ```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -181,7 +177,7 @@ const client = createClient({
 
 ## 4. Contact
 
-If you have any trouble integrating the SDK or visualizing the monitored activity, do not hesistate to contact the developers team. Also contat us for any features/support that you would like to request.
+If you have any trouble integrating the SDK or visualizing the monitored activity, do not hesitate to contact the developers team. Also contact us for any features/support that you would like to request.
 <br/>
 <br/>
 General Contact - team@getsumer.com
