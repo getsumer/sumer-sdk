@@ -98,7 +98,7 @@ export class ProxyTarget implements Target {
               methodArgs: args,
             }
             await Promise.all(this.observers.map(o => o.inspect(this.execution)))
-            return this.proxy(result)
+            return result
           } catch (error) {
             this._execution = {
               result: error,
