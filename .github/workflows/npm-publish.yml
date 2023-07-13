@@ -8,7 +8,12 @@ on:
     types: [published]
 
 jobs:
-  build:
+  tests:
+    name: Tests
+    uses: ./.github/workflows/tests-pipeline.yml
+
+  publish:
+    needs: [tests]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -24,4 +29,11 @@ jobs:
       - run: npm test
       - run: npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  notify:
+    needs: [publish]
+    name: Notify release status
+    uses: ./.github/workflows/notify-release.yml
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
